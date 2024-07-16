@@ -161,6 +161,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  dart_model:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: dd1837ed5063e4c687b05d3eca83bbf8f6d2dd21
+      url: "https://github.com/DerWolf01/dart_model.git"
+    source: git
+    version: "1.0.0"
   dart_style:
     dependency: transitive
     description:
@@ -562,4 +571,4 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
+  dart: ">=3.4.3 <4.0.0"
