@@ -30,6 +30,7 @@ class DDLService {
 
       // Execute the SQL statements to set constraints
       for (final sql in sqlStatements) {
+        print(sql);
         await _executeSQL(sql);
       }
     }
@@ -74,6 +75,7 @@ class DDLService {
   }
 
   Future<void> createTables() async {
+    await dropTables();
     // Get all classes in the current package
     final classes = _getClasses();
 
@@ -81,8 +83,9 @@ class DDLService {
     final List<EntityDecl> entityDecls = [];
 
     for (final c in classes) {
-      _makeEntityDecl(c);
+      entityDecls.add(_makeEntityDecl(c));
     }
+    print("entityDecls $entityDecls");
 
     // Create tables for each model class
     for (final entityDecl in entityDecls) {
@@ -90,10 +93,13 @@ class DDLService {
       final columns = _getColumns(entityDecl.classType);
 
       // Generate SQL statement to create table
-      final sql = _generateCreateTableStatement(tableName, columns);
+      final sql =
+          _generateCreateTableStatement(tableName.toLowerCase(), columns);
 
       // Execute the SQL statement to create the table
+      print("executing $sql");
       await _executeSQL(sql);
+      print("Table $tableName created");
     }
     await setConstraints();
   }
@@ -104,17 +110,17 @@ class DDLService {
 
   EntityDecl _makeEntityDecl(ClassMirror classType) {
     final classAnnotations = classType.metadata;
-    final Entity entityAnnotation = classAnnotations
-        .firstWhere(
-          (annotation) => annotation.reflectee is Entity,
-        )
-        .reflectee as Entity;
+    final Entity entityAnnotation = classAnnotations.firstWhere((annotation) {
+      print(
+          "annotation.reflectee ${annotation.reflectee} ${annotation.reflectee is Entity}");
+      return annotation.reflectee is Entity;
+    }).reflectee as Entity;
     return EntityDecl(classType, entityAnnotation);
   }
 
-  String _getTableName(EntityDecl entityDecl) {
-    return entityDecl.entity.name ?? entityDecl.classType.simpleName.toString();
-  }
+  String _getTableName(EntityDecl entityDecl) =>
+      entityDecl.entity.name ??
+      MirrorSystem.getName(entityDecl.classType.simpleName);
 
   List<Column> _getColumns(ClassMirror classMirror) {
     final List<Column> columns = [];
@@ -145,21 +151,54 @@ class DDLService {
   }
 
   String _generateCreateTableStatement(String tableName, List<Column> columns) {
-    final columnDefinitions = columns.map((column) {
+    final String columnDefinitions = columns.map((column) {
       final columnName = column.name;
       final dataType = column.dataType;
       final nullable = column.nullable ? 'NULL' : 'NOT NULL';
-      return '$columnName $dataType $nullable';
+      return '$columnName ${dataType.runtimeType.toString()} $nullable';
     }).join(', ');
+    if (columnDefinitions.isEmpty) {
+      throw Exception("No columns found for entity $tableName");
+    }
+    var sql = 'CREATE TABLE IF NOT EXISTS $tableName ( $columnDefinitions )';
+    print(sql);
+    return sql;
+  }
 
-    return 'CREATE TABLE $tableName ($columnDefinitions)';
+  Future<void> dropTables() async {
+    // Get all classes in the current package
+    final classes = _getClasses();
+
+    // Filter classes annotated with @Model
+    final List<EntityDecl> entityDecls = [];
+
+    for (final c in classes) {
+      entityDecls.add(_makeEntityDecl(c));
+    }
+
+    // Drop tables for each model class
+    for (final entityDecl in entityDecls) {
+      final tableName = _getTableName(entityDecl);
+
+      // Generate SQL statement to drop table
+      final sql = _generateDropTableStatement(tableName);
+      print(sql);
+      // Execute the SQL statement to drop the table
+      await _executeSQL(sql);
+      print("Table $tableName dropped");
+    }
+  }
+
+  String _generateDropTableStatement(String tableName) {
+    return 'DROP TABLE IF EXISTS $tableName';
   }
 
   Future<void> _executeSQL(String sql) async {
     await dartStore.execute(sql);
   }
 }
-
+// TODO 
+// Add constraintts, columns <Datatype, FieldName> to EntityDecl
 class EntityDecl {
   const EntityDecl(this.classType, this.entity);
   final ClassMirror classType;

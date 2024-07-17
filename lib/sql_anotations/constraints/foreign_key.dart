@@ -1,6 +1,16 @@
+import 'dart:mirrors';
+
 import 'package:dart_persistence_api/sql_anotations/constraints/constraint.dart';
 
-class ForeignKey<ReferencedTable> extends SQLConstraint {}
+class ForeignKeyConnection extends ConstraintField {
+  const ForeignKeyConnection(this.referencingTable, this.referencedTable);
+  final ClassMirror referencingTable;
+  final ClassMirror referencedTable;
+}
+
+abstract class ForeignKey<ReferencedTable> extends SQLConstraint {
+  const ForeignKey();
+}
 
 class OneToMany<ReferencedTable> extends ForeignKey<ReferencedTable> {}
 

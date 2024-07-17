@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dart_persistence_api/database/database_connection.dart';
 import 'package:dart_persistence_api/services/ddl_service.dart';
+import 'package:postgres/postgres.dart';
 
 DartStore get dartStore => DartStore();
 
@@ -25,18 +26,6 @@ class DartStore implements DatabaseConnection {
   }
 
   @override
-  FutureOr<void> create(String statement) async => connection.create(statement);
-
-  @override
-  FutureOr<void> delete(String statement) async => connection.delete(statement);
-
-  @override
-  FutureOr<void> execute(String statement) async =>
+  FutureOr<Result> execute(String statement) async =>
       connection.execute(statement);
-
-  @override
-  FutureOr<int> insert(String statement) async => connection.insert(statement);
-
-  @override
-  FutureOr<int> update(String statement) async => connection.update(statement);
 }

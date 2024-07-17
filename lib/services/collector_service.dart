@@ -4,16 +4,17 @@ class CollectorService {
   List<ClassMirror> searchClassesWithAnnotation<T>() {
     var classes = <Type>[];
 
-    currentMirrorSystem().libraries.values.forEach((libraryMirror) {
-      libraryMirror.declarations.values.forEach((declarationMirror) {
+    for (var libraryMirror in currentMirrorSystem().libraries.values) {
+      for (var declarationMirror in libraryMirror.declarations.values) {
         if (declarationMirror is ClassMirror) {
-          var classMirror = declarationMirror as ClassMirror;
+          var classMirror = declarationMirror;
           if (classMirror.metadata.any((meta) => meta.reflectee is T)) {
             classes.add(classMirror.reflectedType);
           }
         }
-      });
-    });
+      }
+    }
+    
 
     return classes.map((e) => reflectClass(e)).toList();
   }
