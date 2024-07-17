@@ -46,6 +46,7 @@ class DMLService with DartStoreUtility {
   Future<void> delete<T>(String tableName,
       {required WhereCollection where}) async {
     final query = 'DELETE FROM $tableName ${where.chain()}';
+    print(query);
     await executeSQL(query);
   }
 
