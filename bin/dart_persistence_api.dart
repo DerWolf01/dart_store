@@ -4,26 +4,31 @@ import 'package:dart_persistence_api/dart_store.dart';
 import 'package:dart_persistence_api/database/database_connection.dart';
 import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
 import 'package:dart_persistence_api/sql_anotations/data_types/integer.dart';
+import 'package:dart_persistence_api/sql_anotations/data_types/serial.dart';
 import 'package:dart_persistence_api/sql_anotations/data_types/varchar.dart';
 import 'package:dart_persistence_api/sql_anotations/entity.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()
 class UserEntity {
+  const UserEntity(
+      {this.id = 0, this.name = '', this.email = '', this.password = ''});
   @PrimaryKey(autoIncrement: true)
-  @Integer()
-  int? id;
+  @Serial()
+  final int id;
   @Varchar()
-  String? name;
+  final String name;
   @Varchar()
-  String? email;
+  final String email;
   @Varchar()
-  String? password;
+  final String password;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
-  print(await dartStore.execute('SELECT * FROM users'));
+
+  print(await dartStore.save<UserEntity>(
+      UserEntity(email: "test@email.com", name: "test", password: "test")));
 }
 
 class PostgresConnection extends DatabaseConnection {

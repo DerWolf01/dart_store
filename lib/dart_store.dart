@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dart_persistence_api/database/database_connection.dart';
 import 'package:dart_persistence_api/services/ddl_service.dart';
+import 'package:dart_persistence_api/services/dml_service.dart';
 import 'package:postgres/postgres.dart';
 
 DartStore get dartStore => DartStore();
@@ -28,4 +29,13 @@ class DartStore implements DatabaseConnection {
   @override
   FutureOr<Result> execute(String statement) async =>
       connection.execute(statement);
+
+  Future<int> save<T extends Object>(T model) async {
+    var res = await DMLService().insert<T>(model);
+
+    var id = (await dartStore.execute("SELECT currval('userentity_id_seq');"))
+        .first
+        .first;
+    return id as int;
+  }
 }

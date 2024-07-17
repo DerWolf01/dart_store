@@ -1,7 +1,5 @@
 import 'dart:mirrors';
 
-import 'package:dart_persistence_api/sql_anotations/data_types/data_type.dart';
-
 class ConverterService {
   static Map<String, dynamic> objectToMap(Object object) {
     var mirror = reflect(object);
@@ -13,13 +11,6 @@ class ConverterService {
       if (declaration is VariableMirror && !declaration.isStatic) {
         var fieldName = MirrorSystem.getName(symbol);
         var fieldValue = mirror.getField(symbol).reflectee;
-
-        var fieldAnnotation = declaration.metadata.firstWhere(
-          (annotation) => annotation.reflectee is SQLDataType,
-        );
-
-        var convertToSql = fieldAnnotation.reflectee as SQLDataType;
-        fieldValue = convertToSql.convert(fieldValue);
 
         map[fieldName] = fieldValue;
       }
