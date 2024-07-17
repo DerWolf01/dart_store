@@ -39,7 +39,7 @@ class DartStore implements DatabaseConnection {
     var res = await DMLService().insert(model);
 
     var id = (await dartStore.execute(
-            "SELECT currval('${entityDecl(type: model.runtimeType).name}');"))
+            "SELECT currval('${entityDecl(type: model.runtimeType).name}_id_seq');"))
         .first
         .first;
     return id as int;
