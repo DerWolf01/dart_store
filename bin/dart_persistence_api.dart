@@ -1,74 +1,61 @@
-import 'package:dart_persistence_api/model/model.dart';
-import 'package:dart_persistence_api/reflector/reflector.dart';
-import 'package:reflectable/reflectable.dart';
+import 'dart:async';
 
-import 'dart_persistence_api.reflectable.dart';
+import 'package:dart_persistence_api/dart_store.dart';
+import 'package:dart_persistence_api/database/database_connection.dart';
+import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
+import 'package:dart_persistence_api/sql_anotations/data_types/integer.dart';
+import 'package:dart_persistence_api/sql_anotations/data_types/serial.dart';
+import 'package:dart_persistence_api/sql_anotations/data_types/varchar.dart';
+import 'package:dart_persistence_api/sql_anotations/entity.dart';
+import 'package:postgres/postgres.dart';
 
-void main(List<String> arguments) async {
-  initializeReflectable();
-
-  ClassCollector.collect();
+@Entity()
+class UserEntity {
+  const UserEntity(
+      {this.id = 0, this.name = '', this.email = '', this.password = ''});
+  @PrimaryKey(autoIncrement: true)
+  @Serial()
+  final int id;
+  @Varchar()
+  final String name;
+  @Varchar()
+  final String email;
+  @Varchar()
+  final String password;
 }
 
-class ClassCollector {
-  findByName(String name) => reflector.annotatedClasses
-      .where((element) => element.simpleName == name)
-      .firstOrNull;
+void main(List<String> arguments) async {
+  await DartStore.init(await PostgresConnection.init());
 
-  List<ClassMirror> findByType(Type type) =>
-      reflector.annotatedClasses.where((element) {
-        try {
-          return element.isAssignableTo(reflector.reflectType(type));
-        } catch (e) {
-          return false;
-        }
-      }).toList();
+  print(await dartStore.save<UserEntity>(
+      UserEntity(email: "test@email.com", name: "test", password: "test")));
+}
 
-  List<ClassMirror> findByAnnotationType(Type type) =>
-      collectWhere((c) => c.isAssignableTo(reflector.reflectType(type)))
-          .toList();
+class PostgresConnection extends DatabaseConnection {
+  PostgresConnection._internal(this.connection);
+  Connection connection;
+  static Future<PostgresConnection> init() async {
+    Connection? connection;
 
-  static collect() {
-    for (var lib in reflector.libraries.entries) {
-      print(
-          "---------------------------------------------------------------: ${lib.key} :---------------------------------------------------------------");
-      print(lib.value);
-      for (var dec in lib.value.declarations.entries) {
-        try {
-          if (dec.value is ClassMirror &&
-              (dec.value as ClassMirror)
-                  .isAssignableTo(reflector.reflectType(Model))) {
-            print(
-                "---------------------------------------------------------------: ${dec.key} :---------------------------------------------------------------");
+    connection = await Connection.open(
+        Endpoint(
+            host: 'localhost',
+            database: 'ebay_watcher',
+            username: 'ebay_watcher',
+            password: 'ebay_watcher'),
+        settings: ConnectionSettings(
+            onOpen: (connection) async =>
+                print('Connected to the database $connection'),
+            sslMode: SslMode.disable));
 
-            print(dec.value);
-          }
-        } catch (e) {
-          print(e);
-        }
-      }
+    if (connection == null) {
+      throw Exception('Connection not initialized');
     }
+    return PostgresConnection._internal(connection);
   }
 
-  static collectWhere(bool Function(ClassMirror classMirror) callback) {
-    List<ClassMirror> res = [];
-    for (var lib in reflector.libraries.entries) {
-      // print(
-      //     "---------------------------------------------------------------: ${lib.key} :---------------------------------------------------------------");
-      // print(lib.value);
-      for (var dec in lib.value.declarations.entries) {
-        try {
-          if (dec.value is ClassMirror && callback(dec.value as ClassMirror)) {
-            // print(
-            //     "---------------------------------------------------------------: ${dec.key} :---------------------------------------------------------------");
-            res.add(dec.value as ClassMirror);
-            // print(dec.value);
-          }
-        } catch (e) {
-          print(e);
-        }
-      }
-    }
-    return res;
+  @override
+  FutureOr<Result> execute(String statement) async {
+    return await connection.execute(statement);
   }
 }
