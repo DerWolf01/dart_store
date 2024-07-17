@@ -26,7 +26,7 @@ class DMLService with DartStoreUtility {
     for (final valueEntry in values.entries) {
       if (fieldsStatement.isEmpty) {
         fieldsStatement += valueEntry.key;
-        valuesStatement += valueEntry.value;
+        valuesStatement += valueEntry.value.toString();
         continue;
       }
       fieldsStatement += ", ${valueEntry.key}";
