@@ -1,13 +1,17 @@
 library dart_store;
 
-import 'dart:async';
-export 'package:dart_store/sql_anotations/sql_anotations.dart';
+export 'package:dart_store/sql/declarations/declarations.dart';
+export 'package:dart_store/sql/clauses/clauses.dart';
+export 'package:dart_store/sql/sql_anotations/sql_anotations.dart';
 export 'package:dart_store/database/database_connection.dart';
 
+import 'dart:async';
 import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/services/ddl_service.dart';
 import 'package:dart_store/services/dml_service.dart';
-import 'package:dart_store/sql_anotations/sql_anotations.dart';
+import 'package:dart_store/sql/clauses/where.dart';
+import 'package:dart_store/sql/declarations/declarations.dart';
 import 'package:postgres/postgres.dart';
 
 DartStore get dartStore => DartStore();
@@ -38,6 +42,20 @@ class DartStore implements DatabaseConnection {
   Future<int> save(dynamic model) async {
     var id = await DMLService().insert(model);
     return id;
+  }
+
+  Future<void> delete(dynamic model) async {
+    await DMLService().delete(entityDecl(type: model.runtimeType).name,
+        where: WhereCollection(
+            wheres: ConverterService.objectToMap(model)
+                .entries
+                .map(
+                  (e) => Where(
+                      field: e.key,
+                      compareTo: e.value,
+                      comporator: WhereOperator.equals),
+                )
+                .toList()));
   }
 
   Future<void> drop<T>() async {

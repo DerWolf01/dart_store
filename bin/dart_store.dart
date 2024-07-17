@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/sql_anotations/entity.dart';
+import 'package:dart_store/sql/sql_anotations/entity.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()

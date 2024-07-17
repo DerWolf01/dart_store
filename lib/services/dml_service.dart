@@ -1,6 +1,7 @@
 import 'package:dart_store/services/converter_service.dart';
-import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
-import 'package:dart_store/sql_anotations/declarations/primary_key_decl.dart';
+import 'package:dart_store/sql/clauses/where.dart';
+import 'package:dart_store/sql/declarations/entity_decl.dart';
+import 'package:dart_store/sql/declarations/primary_key_decl.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class DMLService with DartStoreUtility {
@@ -40,9 +41,13 @@ class DMLService with DartStoreUtility {
     return await _lastInsertedId(_entityDecl.name);
   }
 
-  Future<void> update<T>(T entity) async {}
+  Future<void> update<T>(Object entity) async {}
 
-  Future<void> delete<T>(T entity) async {}
+  Future<void> delete<T>(String tableName,
+      {required WhereCollection where}) async {
+    final query = 'DELETE FROM $tableName ${where.chain()}';
+    await executeSQL(query);
+  }
 
   Future<int> _lastInsertedId(String tableName) async {
     final query = "SELECT currval('${tableName}_id_seq');";
