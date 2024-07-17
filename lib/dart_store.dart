@@ -45,17 +45,19 @@ class DartStore implements DatabaseConnection {
   }
 
   Future<void> delete(dynamic model) async {
-    await DMLService().delete(entityDecl(type: model.runtimeType).name,
+    final _entityDecl = entityDecl(type: model.runtimeType);
+    await DMLService().delete(_entityDecl.name,
         where: WhereCollection(
-            wheres: ConverterService.objectToMap(model)
-                .entries
-                .map(
-                  (e) => Where(
-                      field: e.key,
-                      compareTo: e.value,
-                      comporator: WhereOperator.equals),
-                )
-                .toList()));
+            wheres: ConverterService.objectToMap(model).entries.map(
+          (e) {
+            final column = _entityDecl.column
+                .firstWhere((element) => element.name == e.key);
+            return Where(
+                field: e.key,
+                compareTo: column.dataType.convert(e.value),
+                comporator: WhereOperator.equals);
+          },
+        ).toList()));
   }
 
   Future<void> drop<T>() async {
