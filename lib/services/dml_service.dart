@@ -2,10 +2,9 @@ import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
 import 'package:dart_store/sql_anotations/declarations/primary_key_decl.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:postgres/postgres.dart';
 
 class DMLService with DartStoreUtility {
-  Future<Result> insert(Object entity) async {
+  Future<int> insert(Object entity) async {
     final modelMap = ConverterService.objectToMap(entity);
 
     final EntityDecl _entityDecl = entityDecl(type: entity.runtimeType);
@@ -36,11 +35,18 @@ class DMLService with DartStoreUtility {
 
     final query =
         'INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement)';
-    print(query);
-    return await executeSQL(query);
+
+    await executeSQL(query);
+    return await _lastInsertedId(_entityDecl.name);
   }
 
   Future<void> update<T>(T entity) async {}
 
   Future<void> delete<T>(T entity) async {}
+
+  Future<int> _lastInsertedId(String tableName) async {
+    final query = "SELECT currval('${tableName}_id_seq');";
+    final result = await executeSQL(query);
+    return result.first.first as int;
+  }
 }

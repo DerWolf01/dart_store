@@ -3,12 +3,9 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/sql_anotations/constraints/constraint.dart';
-import 'package:dart_store/sql_anotations/constraints/not_null.dart';
 import 'package:dart_store/sql_anotations/data_types/data_type.dart';
-import 'package:dart_store/sql_anotations/declarations/column_decl.dart';
-import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
-import 'package:dart_store/sql_anotations/declarations/primary_key_decl.dart';
 import 'package:dart_store/sql_anotations/entity.dart';
+import 'package:postgres/postgres.dart';
 
 class DDLService {
   Future<void> createTables() async {
@@ -38,7 +35,22 @@ class DDLService {
     }
     for (final entityDecl in entityDecls) {
       await ConstraintService().setCoinstraints(entityDecl);
+      enableUpdatedAtTrigger(_getTableName(entityDecl));
     }
+    return;
+  }
+
+  Future<void> createTable(EntityDecl entityDecl) async {
+    final tableName = _getTableName(entityDecl);
+    final columns = _getColumns(entityDecl.classMirror);
+    // Generate SQL statement to create table
+    final sql = _generateCreateTableStatement(tableName.toLowerCase(), columns);
+    // Execute the SQL statement to create the table
+    // print("executing $sql");
+    await _executeSQL(sql);
+    print("Entity ${tableName.toLowerCase()} created");
+    await ConstraintService().setCoinstraints(entityDecl);
+    enableUpdatedAtTrigger(_getTableName(entityDecl));
     return;
   }
 
@@ -61,7 +73,7 @@ class DDLService {
 
   String _getTableName(EntityDecl entityDecl) =>
       entityDecl.entity.name ??
-      MirrorSystem.getName(entityDecl.classMirror.simpleName);
+      MirrorSystem.getName(entityDecl.classMirror.simpleName).toLowerCase();
 
   List<ColumnDecl> _getColumns(ClassMirror classMirror) {
     final List<ColumnDecl> columns = [];
@@ -102,18 +114,22 @@ class DDLService {
 
   String _generateCreateTableStatement(
       String tableName, List<ColumnDecl> columns) {
-    final String columnDefinitions = columns.map((column) {
-      final columnName = column.name;
-      final dataType = column.dataType;
-      final nullable = column.nullable ? 'NULL' : 'NOT NULL';
-      final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
+    final String columnDefinitions = [
+      ...columns.map((column) {
+        final columnName = column.name;
+        final dataType = column.dataType;
+        final nullable = column.nullable ? 'NULL' : 'NOT NULL';
+        final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
 
-      return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
-    }).join(', ');
+        return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
+      }),
+      "created_at timestamp with time zone NOT NULL DEFAULT now()",
+      "updated_at timestamp with time zone NOT NULL DEFAULT now()"
+    ].join(', ');
     if (columnDefinitions.isEmpty) {
       throw Exception("No columns found for entity $tableName");
     }
-    var sql = 'CREATE TABLE IF NOT EXISTS $tableName ( $columnDefinitions )';
+    var sql = 'CREATE TABLE IF NOT EXISTS $tableName ( $columnDefinitions ) ';
     print(sql);
     return sql;
   }
@@ -149,6 +165,26 @@ class DDLService {
   Future<void> _executeSQL(String sql) async {
     await dartStore.execute(sql);
   }
+
+  /// enables trigger and extension for updated_at column
+  /// catches exception if trigger already exists and ignores it
+  /// reason for that being that "IF NOT EXISTS" is not supported for triggers
+  enableUpdatedAtTrigger(String tableName) async {
+    try {
+      await _executeSQL("CREATE EXTENSION IF NOT EXISTS moddatetime;");
+      await _executeSQL(
+          "CREATE TRIGGER update_timestamp BEFORE UPDATE ON $tableName FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);");
+    } catch (e) {
+      if (e is ServerException &&
+          e.message.contains(
+              'trigger "update_timestamp" for relation "$tableName" already exists')) {
+        return;
+      }
+      throw Exception("Error enabling updatedAt trigger: $e");
+    }
+    return;
+  }
 }
-// TODO 
+
+// TODO
 // Add constraintts, columns <Datatype, FieldName> to EntityDecl

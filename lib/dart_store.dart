@@ -36,13 +36,8 @@ class DartStore implements DatabaseConnection {
       connection.execute(statement);
 
   Future<int> save(dynamic model) async {
-    var res = await DMLService().insert(model);
-
-    var id = (await dartStore.execute(
-            "SELECT currval('${entityDecl(type: model.runtimeType).name}_id_seq');"))
-        .first
-        .first;
-    return id as int;
+    var id = await DMLService().insert(model);
+    return id;
   }
 
   Future<void> drop<T>() async {
@@ -52,16 +47,6 @@ class DartStore implements DatabaseConnection {
   }
 
   Future<void> create<T>() async {
-    final _entityDecl = entityDecl<T>(type: T);
-    final query =
-        'CREATE TABLE IF NOT EXISTS ${_entityDecl.name} ( ${_entityDecl.column.map((column) {
-      final columnName = column.name;
-      final dataType = column.dataType;
-      final nullable = column.nullable ? 'NULL' : 'NOT NULL';
-      final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
-
-      return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
-    }).join(', ')})';
-    await execute(query);
+    return await DDLService().createTable(entityDecl<T>());
   }
 }
