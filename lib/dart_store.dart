@@ -7,6 +7,7 @@ export 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/services/ddl_service.dart';
 import 'package:dart_store/services/dml_service.dart';
+import 'package:dart_store/sql_anotations/sql_anotations.dart';
 import 'package:postgres/postgres.dart';
 
 DartStore get dartStore => DartStore();
@@ -37,7 +38,8 @@ class DartStore implements DatabaseConnection {
   Future<int> save(dynamic model) async {
     var res = await DMLService().insert(model);
 
-    var id = (await dartStore.execute("SELECT currval('userentity_id_seq');"))
+    var id = (await dartStore.execute(
+            "SELECT currval('${entityDecl(type: model.runtimeType).name}');"))
         .first
         .first;
     return id as int;
