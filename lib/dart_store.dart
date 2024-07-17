@@ -1,4 +1,8 @@
+library dart_store;
+
 import 'dart:async';
+export 'package:dart_store/sql_anotations/sql_anotations.dart';
+export 'package:dart_store/database/database_connection.dart';
 
 import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/services/ddl_service.dart';
