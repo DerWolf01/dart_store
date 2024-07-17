@@ -19,8 +19,8 @@ class ColumnDecl {
   PrimaryKey? get primaryKey => constraints.whereType<PrimaryKey>().firstOrNull;
 }
 
-List<ColumnDecl> columnDecls<T>() {
-  final classMirror = reflectClass(T);
+List<ColumnDecl> columnDecls<T>({Type? type}) {
+  final classMirror = reflectClass(type ?? T);
   final List<ColumnDecl> columns = [];
 
   final fields = classMirror.declarations.values.whereType<VariableMirror>();

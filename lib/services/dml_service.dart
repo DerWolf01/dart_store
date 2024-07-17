@@ -5,10 +5,10 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
 class DMLService with DartStoreUtility {
-  Future<Result> insert<T extends Object>(T entity) async {
+  Future<Result> insert(Object entity) async {
     final modelMap = ConverterService.objectToMap(entity);
 
-    final EntityDecl _entityDecl = entityDecl<T>();
+    final EntityDecl _entityDecl = entityDecl(type: entity.runtimeType);
     final columnDecls = _entityDecl.column;
 
     final Map<String, dynamic> values = {};
@@ -19,7 +19,7 @@ class DMLService with DartStoreUtility {
     String fieldsStatement = "";
     String valuesStatement = "";
 
-    final _primaryKeyDecl = primaryKeyDecl<T>();
+    final _primaryKeyDecl = primaryKeyDecl(type: entity.runtimeType);
     if (_primaryKeyDecl.primaryKey.autoIncrement == true) {
       values.remove(_primaryKeyDecl.name);
     }

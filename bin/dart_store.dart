@@ -27,7 +27,7 @@ class UserEntity {
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
 
-  print(await dartStore.save<UserEntity>(
+  print(await dartStore.save(
       UserEntity(email: "test@email.com", name: "test", password: "test")));
 }
 

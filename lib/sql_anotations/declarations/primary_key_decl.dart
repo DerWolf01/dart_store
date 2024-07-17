@@ -7,9 +7,9 @@ class PrimaryKeyDecl {
   final PrimaryKey primaryKey;
 }
 
-PrimaryKeyDecl primaryKeyDecl<T>() {
+PrimaryKeyDecl primaryKeyDecl<T>({Type? type}) {
   late PrimaryKeyDecl primaryKeyDecl;
-  for (final c in columnDecls<T>()) {
+  for (final c in columnDecls<T>(type: type ?? T)) {
     final primaryKey = c.constraints.whereType<PrimaryKey>().firstOrNull;
     if (primaryKey != null) {
       primaryKeyDecl = PrimaryKeyDecl(c.name, primaryKey);

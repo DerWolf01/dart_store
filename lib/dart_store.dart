@@ -34,8 +34,8 @@ class DartStore implements DatabaseConnection {
   FutureOr<Result> execute(String statement) async =>
       connection.execute(statement);
 
-  Future<int> save<T extends Object>(T model) async {
-    var res = await DMLService().insert<T>(model);
+  Future<int> save(dynamic model) async {
+    var res = await DMLService().insert(model);
 
     var id = (await dartStore.execute("SELECT currval('userentity_id_seq');"))
         .first

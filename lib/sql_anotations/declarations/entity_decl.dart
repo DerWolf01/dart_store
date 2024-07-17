@@ -14,8 +14,8 @@ class EntityDecl {
       entity.name ?? MirrorSystem.getName(classMirror.simpleName).toLowerCase();
 }
 
-EntityDecl entityDecl<T>() {
-  final classMirror = reflectClass(T);
+EntityDecl entityDecl<T>({Type? type}) {
+  final classMirror = reflectClass(type ?? T);
   final classAnnotations = classMirror.metadata;
   final Entity entityAnnotation = classAnnotations.firstWhere((annotation) {
     print(
@@ -25,5 +25,5 @@ EntityDecl entityDecl<T>() {
   return EntityDecl(
       classMirror: classMirror,
       entity: entityAnnotation,
-      column: columnDecls<T>());
+      column: columnDecls(type: type ?? T));
 }
