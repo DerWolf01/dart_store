@@ -41,10 +41,6 @@ class PostgresConnection extends DatabaseConnection {
             onOpen: (connection) async =>
                 print('Connected to the database $connection'),
             sslMode: SslMode.disable));
-
-    if (connection == null) {
-      throw Exception('Connection not initialized');
-    }
     return PostgresConnection._internal(connection);
   }
 

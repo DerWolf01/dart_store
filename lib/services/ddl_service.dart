@@ -34,7 +34,7 @@ class DDLService {
       // Execute the SQL statement to create the table
       // print("executing $sql");
       await _executeSQL(sql);
-      print("Entity $tableName created");
+      print("Entity ${tableName.toLowerCase()} created");
     }
     for (final entityDecl in entityDecls) {
       await ConstraintService().setCoinstraints(entityDecl);
