@@ -1,4 +1,4 @@
-import 'package:dart_persistence_api/dart_store.dart';
+import 'package:dart_store/dart_store.dart';
 import 'package:postgres/postgres.dart';
 
 mixin class DartStoreUtility {

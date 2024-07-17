@@ -1,14 +1,14 @@
 import 'dart:mirrors';
-import 'package:dart_persistence_api/dart_store.dart';
-import 'package:dart_persistence_api/services/collector_service.dart';
-import 'package:dart_persistence_api/services/constraint_service.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/constraint.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/not_null.dart';
-import 'package:dart_persistence_api/sql_anotations/data_types/data_type.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/column_decl.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/entity_decl.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/primary_key_decl.dart';
-import 'package:dart_persistence_api/sql_anotations/entity.dart';
+import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/services/collector_service.dart';
+import 'package:dart_store/services/constraint_service.dart';
+import 'package:dart_store/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/sql_anotations/constraints/not_null.dart';
+import 'package:dart_store/sql_anotations/data_types/data_type.dart';
+import 'package:dart_store/sql_anotations/declarations/column_decl.dart';
+import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
+import 'package:dart_store/sql_anotations/declarations/primary_key_decl.dart';
+import 'package:dart_store/sql_anotations/entity.dart';
 
 class DDLService {
   Future<void> createTables() async {

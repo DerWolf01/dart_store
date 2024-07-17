@@ -1,5 +1,5 @@
-import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/column_decl.dart';
+import 'package:dart_store/sql_anotations/constraints/primary_key.dart';
+import 'package:dart_store/sql_anotations/declarations/column_decl.dart';
 
 class PrimaryKeyDecl {
   const PrimaryKeyDecl(this.name, this.primaryKey);

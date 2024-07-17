@@ -1,7 +1,7 @@
-import 'package:dart_persistence_api/services/converter_service.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/entity_decl.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/primary_key_decl.dart';
-import 'package:dart_persistence_api/utility/dart_store_utility.dart';
+import 'package:dart_store/services/converter_service.dart';
+import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
+import 'package:dart_store/sql_anotations/declarations/primary_key_decl.dart';
+import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
 class DMLService with DartStoreUtility {

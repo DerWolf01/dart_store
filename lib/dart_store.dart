@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dart_persistence_api/database/database_connection.dart';
-import 'package:dart_persistence_api/services/ddl_service.dart';
-import 'package:dart_persistence_api/services/dml_service.dart';
+import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/services/ddl_service.dart';
+import 'package:dart_store/services/dml_service.dart';
 import 'package:postgres/postgres.dart';
 
 DartStore get dartStore => DartStore();

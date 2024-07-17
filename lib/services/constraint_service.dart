@@ -1,11 +1,11 @@
 import 'dart:mirrors';
 
-import 'package:dart_persistence_api/dart_store.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/constraint.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/foreign_key.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/not_null.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
-import 'package:dart_persistence_api/sql_anotations/declarations/entity_decl.dart';
+import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/sql_anotations/constraints/foreign_key.dart';
+import 'package:dart_store/sql_anotations/constraints/not_null.dart';
+import 'package:dart_store/sql_anotations/constraints/primary_key.dart';
+import 'package:dart_store/sql_anotations/declarations/entity_decl.dart';
 
 class ConstraintService {
   List<String> getConstraints(EntityDecl entityDecl) {

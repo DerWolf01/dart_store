@@ -1,7 +1,7 @@
 import 'dart:mirrors';
 
-import 'package:dart_persistence_api/sql_anotations/declarations/column_decl.dart';
-import 'package:dart_persistence_api/sql_anotations/entity.dart';
+import 'package:dart_store/sql_anotations/declarations/column_decl.dart';
+import 'package:dart_store/sql_anotations/entity.dart';
 
 class EntityDecl {
   const EntityDecl(

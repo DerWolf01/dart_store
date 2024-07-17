@@ -1,8 +1,8 @@
 import 'dart:mirrors';
-import 'package:dart_persistence_api/sql_anotations/constraints/constraint.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/not_null.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
-import 'package:dart_persistence_api/sql_anotations/data_types/data_type.dart';
+import 'package:dart_store/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/sql_anotations/constraints/not_null.dart';
+import 'package:dart_store/sql_anotations/constraints/primary_key.dart';
+import 'package:dart_store/sql_anotations/data_types/data_type.dart';
 
 class ColumnDecl {
   ColumnDecl(

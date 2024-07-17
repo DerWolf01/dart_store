@@ -1,4 +1,4 @@
-import 'package:dart_persistence_api/sql_anotations/data_types/data_type.dart';
+import 'package:dart_store/sql_anotations/data_types/data_type.dart';
 
 class Double extends SQLDataType<double> {
   const Double();

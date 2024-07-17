@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dart_persistence_api/dart_store.dart';
-import 'package:dart_persistence_api/database/database_connection.dart';
-import 'package:dart_persistence_api/sql_anotations/constraints/primary_key.dart';
-import 'package:dart_persistence_api/sql_anotations/data_types/integer.dart';
-import 'package:dart_persistence_api/sql_anotations/data_types/serial.dart';
-import 'package:dart_persistence_api/sql_anotations/data_types/varchar.dart';
-import 'package:dart_persistence_api/sql_anotations/entity.dart';
+import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/sql_anotations/constraints/primary_key.dart';
+import 'package:dart_store/sql_anotations/data_types/integer.dart';
+import 'package:dart_store/sql_anotations/data_types/serial.dart';
+import 'package:dart_store/sql_anotations/data_types/varchar.dart';
+import 'package:dart_store/sql_anotations/entity.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()
