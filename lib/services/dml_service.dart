@@ -20,7 +20,7 @@ class DMLService with DartStoreUtility {
     String valuesStatement = "";
 
     final _primaryKeyDecl = primaryKeyDecl<T>();
-    if (_primaryKeyDecl.primaryKey.autoIncrement) {
+    if (_primaryKeyDecl.primaryKey.autoIncrement == true) {
       values.remove(_primaryKeyDecl.name);
     }
     for (final valueEntry in values.entries) {
