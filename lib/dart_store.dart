@@ -45,8 +45,8 @@ class DartStore implements DatabaseConnection {
     return id as int;
   }
 
-  Future<void> drop<T>({Type? type}) async {
-    final _entityDecl = entityDecl(type: type ?? T);
+  Future<void> drop<T>() async {
+    final _entityDecl = entityDecl<T>(type: T);
     final query = 'DROP TABLE IF EXISTS ${_entityDecl.name}';
     await execute(query);
   }
