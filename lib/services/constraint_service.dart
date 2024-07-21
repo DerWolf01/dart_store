@@ -2,6 +2,8 @@ import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/services/dml_service.dart';
+import 'package:dart_store/services/dql_service.dart';
+import 'package:postgres/postgres.dart';
 
 class ConstraintService {
   List<String> getConstraints(EntityDecl entityDecl) {
@@ -136,6 +138,78 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         return await lastInsertedId(_entityDecl.name);
       }
     }
+  }
+
+  @override
+  Future<dynamic> query<T>(dynamic id) async {
+    final _entityDecl = entityDecl<T>();
+    final List<dynamic> queryResult = [];
+    final foreignFields = _entityDecl.column.where(
+      (element) => element.dataType is ForeignField,
+    );
+
+    for (final foreignField in foreignFields) {
+      final foreignKey = foreignField.getForeignKey();
+      if (foreignKey is ManyToOne) {
+        final connection = ManyToOneConnection(
+            _entityDecl,
+            entityDecl(
+                type: reflect(foreignKey)
+                    .type
+                    .typeArguments
+                    .first
+                    .reflectedType));
+        final query =
+            'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE ${connection.referencingColumn} = $id';
+        final result = await executeSQL(query);
+        for (final row in result) {
+          final Result foreignFieldsResult = await executeSQL(
+              "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
+          return ConverterService.mapToObject(
+              foreignFieldsResult.first.toColumnMap(),
+              type: reflect(foreignKey).type.typeArguments.first.reflectedType);
+        }
+      }
+      if (foreignKey is OneToOne) {
+        final connection = OneToOneConnection(
+            _entityDecl,
+            entityDecl(
+                type: reflect(foreignKey)
+                    .type
+                    .typeArguments
+                    .first
+                    .reflectedType));
+        final query =
+            'SELECT (${connection.referencedEntity.name}_id) FROM ${connection.connectionTableName} WHERE ${connection.referencingEntity}_id = $id';
+        final result = await executeSQL(query);
+        for (final row in result) {
+          final Result foreignFieldsResult = await executeSQL(
+              "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
+          return ConverterService.mapToObject(
+              foreignFieldsResult.first.toColumnMap(),
+              type: reflect(foreignKey).type.typeArguments.first.reflectedType);
+        }
+      }
+      if (foreignKey is OneToMany) {
+        final connection = OneToManyConnection(
+            _entityDecl,
+            entityDecl(
+                type: reflect(foreignKey)
+                    .type
+                    .typeArguments
+                    .first
+                    .reflectedType));
+        final query =
+            'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
+        final result = await executeSQL(query);
+        for (final row in result) {
+          queryResult.add(ConverterService.mapToObject(row.toColumnMap(),
+              type:
+                  reflect(foreignKey).type.typeArguments.first.reflectedType));
+        }
+      }
+    }
+    return queryResult;
   }
 }
 

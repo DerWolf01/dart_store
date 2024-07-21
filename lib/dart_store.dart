@@ -19,6 +19,7 @@ DartStore get dartStore => DartStore();
 class DartStore implements DatabaseConnection {
   static DartStore? _instance;
   DatabaseConnection connection;
+
   DartStore._internal(this.connection);
 
   static Future<DartStore> init(DatabaseConnection connection) async {
@@ -38,6 +39,10 @@ class DartStore implements DatabaseConnection {
   @override
   FutureOr<Result> execute(String statement) async =>
       connection.execute(statement);
+
+  Future<List<T>> query<T>(WhereCollection where) async {
+
+  }
 
   Future<int> save(dynamic model) async {
     var id = await DMLService().insert(model);

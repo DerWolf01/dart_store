@@ -19,8 +19,8 @@ class ConverterService {
     return map;
   }
 
-  static T mapToObject<T>(Map<String, dynamic> map) {
-    var classMirror = reflectClass(T);
+  static T mapToObject<T>(Map<String, dynamic> map, {Type? type}) {
+    var classMirror = reflectClass(type ?? T);
     var instance = classMirror.newInstance(const Symbol(''), []);
 
     map.forEach((key, value) {
