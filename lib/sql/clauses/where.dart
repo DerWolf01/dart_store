@@ -1,18 +1,23 @@
 class WhereCollection {
   chain() {
-    return "WHERE ${wheres.map((where) => "${where.field} ${where.comporator.operator()} ${where.compareTo}").join(" AND ")}";
+    return "WHERE ${wheres.map((where) => "${where.field} ${where.comporator.operator()} ${where.getCompareTo}").join(" AND ")}";
   }
 
   List<Where> wheres;
+
   WhereCollection({required this.wheres});
 }
 
 class Where {
   Where(
       {required this.field, required this.comporator, required this.compareTo});
+
   final String field;
   final WhereOperator comporator;
   final dynamic compareTo;
+
+  String get getCompareTo =>
+      compareTo is String ? "'$compareTo'" : compareTo.toString();
 }
 
 enum WhereOperator {
