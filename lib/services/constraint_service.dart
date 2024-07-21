@@ -1,8 +1,7 @@
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/services/converter_service.dart';
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/services/dml_service.dart';
-import 'package:dart_store/services/dql_service.dart';
 import 'package:postgres/postgres.dart';
 
 class ConstraintService {
@@ -77,7 +76,7 @@ class ForeignKeyService extends DMLService {
               type: reflect(foreignKey).type.typeArguments.first.reflectedType),
         );
 
-        final modelMap = ConverterService.objectToMap(entity);
+        final modelMap = ConversionService.objectToMap(entity);
 
         final EntityDecl _foreignFieldEntityDecl =
             entityDecl(type: entity.runtimeType);
@@ -165,7 +164,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          return ConverterService.mapToObject(
+          return ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
@@ -185,7 +184,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          return ConverterService.mapToObject(
+          return ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
@@ -203,7 +202,8 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
             'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
         final result = await executeSQL(query);
         for (final row in result) {
-          queryResult.add(ConverterService.mapToObject(row.toColumnMap(),
+
+          queryResult.add(ConversionService.mapToObject(row.toColumnMap(),
               type:
                   reflect(foreignKey).type.typeArguments.first.reflectedType));
         }

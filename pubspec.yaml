@@ -13,9 +13,9 @@ dependencies:
   path: ^1.9.0
   reflectable: ^4.0.5
   sqflite_common_ffi: ^2.3.1
-  dart_model:
+  dart_conversion:
     git:
-      url: https://github.com/DerWolf01/dart_model.git
+      url: https://github.com/DerWolf01/dart_conversion.git
       ref: main
   postgres: ^3.2.1
   # path: ^1.8.0

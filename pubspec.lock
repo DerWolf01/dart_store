@@ -177,13 +177,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
-  dart_model:
+  dart_conversion:
     dependency: "direct main"
     description:
       path: "."
       ref: main
-      resolved-ref: dd1837ed5063e4c687b05d3eca83bbf8f6d2dd21
-      url: "https://github.com/DerWolf01/dart_model.git"
+      resolved-ref: "6a1d9f53cead9d04de341a75fe065711d1261cd4"
+      url: "https://github.com/DerWolf01/dart_conversion.git"
     source: git
     version: "1.0.0"
   dart_style:

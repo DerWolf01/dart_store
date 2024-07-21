@@ -1,6 +1,6 @@
 import 'dart:mirrors';
 
-class ConverterService {
+class ConverterServiceOld {
   static Map<String, dynamic> objectToMap(Object object) {
     var mirror = reflect(object);
     var classMirror = mirror.type;

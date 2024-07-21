@@ -1,6 +1,6 @@
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
-import 'package:dart_store/services/converter_service.dart';
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class DqlService extends DartStoreUtility {
@@ -16,7 +16,7 @@ class DqlService extends DartStoreUtility {
       )) {
         modelMap[foreignKey.name] = ForeignKeyService().query(modelMap["id"]);
       }
-      queryResult.add(ConverterService.mapToObject<T>(modelMap));
+      queryResult.add(ConversionService.mapToObject<T>(modelMap));
     }
     return queryResult;
   }

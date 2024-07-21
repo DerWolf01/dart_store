@@ -7,7 +7,7 @@ export 'package:dart_store/database/database_connection.dart';
 
 import 'dart:async';
 import 'package:dart_store/database/database_connection.dart';
-import 'package:dart_store/services/converter_service.dart';
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/services/ddl_service.dart';
 import 'package:dart_store/services/dml_service.dart';
 import 'package:dart_store/services/dql_service.dart';
@@ -54,7 +54,7 @@ class DartStore implements DatabaseConnection {
     final _entityDecl = entityDecl(type: model.runtimeType);
     await DMLService().delete(_entityDecl.name,
         where: WhereCollection(
-            wheres: ConverterService.objectToMap(model).entries.map(
+            wheres: ConversionService.objectToMap(model).entries.map(
           (e) {
             final column = _entityDecl.column
                 .firstWhere((element) => element.name == e.key);

@@ -2,14 +2,14 @@ import 'dart:mirrors';
 
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
-import 'package:dart_store/services/converter_service.dart';
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/sql/clauses/where.dart';
 import 'package:dart_store/sql/declarations/primary_key_decl.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class DMLService with DartStoreUtility {
   Future<int> insert(dynamic entity) async {
-    final modelMap = ConverterService.objectToMap(entity);
+    final modelMap = ConversionService.objectToMap(entity);
 
     final EntityDecl _entityDecl = entityDecl(type: entity.runtimeType);
     final List<ColumnDecl> columnDecls = _entityDecl.column;
