@@ -228,6 +228,7 @@ class OneToManyConnection extends ForeignKeyConnection {
   @override
   get connectionStatements => [
         "ALTER TABLE ${referencedEntity.name} ADD COLUMN IF NOT EXISTS $referencingColumn ${referencingEntity.primaryKeyType.runtimeType}",
+        "ALTER TABLE ${referencedEntity.name} DROP CONSTRAINT IF EXISTS $referencingColumn",
         'ALTER TABLE ${referencedEntity.name} ADD FOREIGN KEY  ($referencingColumn) REFERENCES ${referencingEntity.name}(id)'
       ];
 }
@@ -243,6 +244,7 @@ class ManyToOneConnection extends ForeignKeyConnection {
   @override
   get connectionStatements => [
         "ALTER TABLE ${referencingEntity.name} ADD COLUMN IF NOT EXISTS $referencingColumn ${referencingEntity.primaryKeyType.runtimeType}",
+        "ALTER TABLE  ${referencingEntity.name} DROP CONSTRAINT IF EXISTS $referencingColumn",
         'ALTER TABLE ${referencingEntity.name} ADD FOREIGN KEY  ($referencingColumn) REFERENCES ${referencedEntity.name}(id)'
       ];
 }
