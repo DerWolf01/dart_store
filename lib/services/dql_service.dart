@@ -2,7 +2,6 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-‚
 
 class DqlService extends DartStoreUtility {
   Future<List<T>> query<T>({WhereCollection? where}) async {
