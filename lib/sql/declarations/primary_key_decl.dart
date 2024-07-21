@@ -1,9 +1,8 @@
 import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/sql/declarations/column_decl.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/primary_key.dart';
 
 class PrimaryKeyDecl {
   const PrimaryKeyDecl(this.name, this.primaryKey, this.dataType);
+
   final String name;
   final PrimaryKey primaryKey;
   final SQLDataType dataType;

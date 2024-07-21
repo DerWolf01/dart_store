@@ -1,2 +1,2 @@
-export './column_decl.dart';
 export 'entity_decl.dart';
+export 'column_decl.dart';
