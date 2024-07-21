@@ -10,6 +10,7 @@ import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/services/ddl_service.dart';
 import 'package:dart_store/services/dml_service.dart';
+import 'package:dart_store/services/dql_service.dart';
 import 'package:dart_store/sql/clauses/where.dart';
 import 'package:dart_store/sql/declarations/declarations.dart';
 import 'package:postgres/postgres.dart';
@@ -40,8 +41,8 @@ class DartStore implements DatabaseConnection {
   FutureOr<Result> execute(String statement) async =>
       connection.execute(statement);
 
-  Future<List<T>> query<T>(WhereCollection where) async {
-
+  Future<List<T>> query<T>({WhereCollection? where}) async {
+    return DqlService().query<T>(where: where);
   }
 
   Future<int> save(dynamic model) async {
