@@ -60,7 +60,7 @@ class DartStore implements DatabaseConnection {
                 .firstWhere((element) => element.name == e.key);
             return Where(
                 field: e.key,
-                compareTo: column.dataType.convert(e.value),
+                compareTo: e.value,
                 comporator: WhereOperator.equals);
           },
         ).toList()));
