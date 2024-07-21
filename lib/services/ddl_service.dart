@@ -37,7 +37,7 @@ class DDLService {
     }
     for (final entityDecl in entityDecls) {
       await ConstraintService().setCoinstraints(entityDecl);
-      enableUpdatedAtTrigger(_getTableName(entityDecl));
+      // enableUpdatedAtTrigger(_getTableName(entityDecl));
     }
     return;
   }
@@ -52,7 +52,7 @@ class DDLService {
     await _executeSQL(sql);
     print("Entity ${tableName.toLowerCase()} created");
     await ConstraintService().setCoinstraints(entityDecl);
-    enableUpdatedAtTrigger(_getTableName(entityDecl));
+    // enableUpdatedAtTrigger(_getTableName(entityDecl));
     return;
   }
 
@@ -133,8 +133,8 @@ class DDLService {
 
         return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
       }),
-      "created_at timestamp with time zone NOT NULL DEFAULT now()",
-      "updated_at timestamp with time zone NOT NULL DEFAULT now()"
+      // "created_at timestamp with time zone NOT NULL DEFAULT now()",
+      // "updated_at timestamp with time zone NOT NULL DEFAULT now()"
     ].join(', ');
     if (columnDefinitions.isEmpty) {
       throw Exception("No columns found for entity $tableName");

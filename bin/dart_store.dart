@@ -22,20 +22,29 @@ class UserEntity {
   final int id;
   @Varchar()
   final String name;
+
   @Varchar()
   final String email;
   @Varchar()
   final String password;
 
-  @OneToMany<Role>()
-  final List<Role> role;
+  @ManyToOne<Role>()
+  final Role role;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
   print(await dartStore.save(Role(0, "admin")));
   print(await dartStore.save(
-      UserEntity(-1, "test@email.com", "test", "test", [Role(0, "admin")])));
+      UserEntity(-1, "test@email.com", "test", "test", Role(0, "admin"))));
+
+  print(await dartStore.query<UserEntity>(
+      where: WhereCollection(wheres: [
+    Where(
+        field: "name",
+        compareTo: "test@email.com",
+        comporator: WhereOperator.equals)
+  ])));
 }
 
 class PostgresConnection extends DatabaseConnection {

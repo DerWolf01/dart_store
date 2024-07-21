@@ -142,12 +142,14 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
   @override
   Future<dynamic> query<T>(dynamic id) async {
     final _entityDecl = entityDecl<T>();
-    final List<dynamic> queryResult = [];
+    late dynamic queryResult;
     final foreignFields = _entityDecl.column.where(
       (element) => element.dataType is ForeignField,
     );
 
     for (final foreignField in foreignFields) {
+      print(
+          "foreign-field --> ${foreignField.name} ${foreignField.getForeignKey()}  ");
       final foreignKey = foreignField.getForeignKey();
       if (foreignKey is ManyToOne) {
         final connection = ManyToOneConnection(
@@ -159,12 +161,16 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
                     .first
                     .reflectedType));
         final query =
-            'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE ${connection.referencingColumn} = $id';
+            'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE id = $id';
+        print("ManyToOne first --> $query");
         final result = await executeSQL(query);
+        print("ManyToOne first --> $result");
+
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          return ConversionService.mapToObject(
+          print("foreign-query --> ${result.first.toColumnMap()}");
+          queryResult = ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
@@ -184,12 +190,13 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          return ConversionService.mapToObject(
+          queryResult = ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
       }
       if (foreignKey is OneToMany) {
+        queryResult = [];
         final connection = OneToManyConnection(
             _entityDecl,
             entityDecl(
@@ -202,7 +209,6 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
             'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
         final result = await executeSQL(query);
         for (final row in result) {
-
           queryResult.add(ConversionService.mapToObject(row.toColumnMap(),
               type:
                   reflect(foreignKey).type.typeArguments.first.reflectedType));

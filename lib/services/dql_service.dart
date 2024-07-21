@@ -11,11 +11,13 @@ class DqlService extends DartStoreUtility {
     for (final row
         in (await executeSQL(generateQueryString<T>(where: where)))) {
       final modelMap = row.toColumnMap();
+      print("modelMap --> $modelMap");
       for (final foreignKey in _entityDecl.column.where(
         (e) => e.dataType is ForeignField,
       )) {
-        modelMap[foreignKey.name] = ForeignKeyService().query(modelMap["id"]);
+        modelMap[foreignKey.name] = await ForeignKeyService().query<T>(modelMap["id"]);
       }
+
       queryResult.add(ConversionService.mapToObject<T>(modelMap));
     }
     return queryResult;
