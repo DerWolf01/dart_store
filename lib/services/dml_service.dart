@@ -1,7 +1,9 @@
+import 'dart:mirrors';
+
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/services/converter_service.dart';
 import 'package:dart_store/sql/clauses/where.dart';
-import 'package:dart_store/sql/declarations/entity_decl.dart';
 import 'package:dart_store/sql/declarations/primary_key_decl.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
@@ -10,11 +12,30 @@ class DMLService with DartStoreUtility {
     final modelMap = ConverterService.objectToMap(entity);
 
     final EntityDecl _entityDecl = entityDecl(type: entity.runtimeType);
-    final columnDecls = _entityDecl.column;
+    final List<ColumnDecl> columnDecls = _entityDecl.column;
 
     final Map<String, dynamic> values = {};
     for (final column in columnDecls) {
       print(modelMap[column.name]);
+      if (column.isForeignKey()) {
+        final foreignField = column.getForeignKey();
+        if (foreignField is ManyToOne) {
+          final connection = ManyToOneConnection(
+              _entityDecl,
+              entityDecl(
+                  type: reflect(foreignField)
+                      .type
+                      .typeArguments
+                      .first
+                      .reflectedType));
+
+          values[connection.referencingColumn] = reflect(entity)
+              .getField(Symbol(column.name))
+              .getField(Symbol("id"))
+              .reflectee;
+        }
+        continue;
+      }
       values[column.name] = (column.dataType.convert(modelMap[column.name]));
     }
     String fieldsStatement = "";
@@ -36,13 +57,16 @@ class DMLService with DartStoreUtility {
     }
 
     final query =
-        'INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement)';
-
+        '''INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement) 
+ON CONFLICT (id) DO UPDATE 
+SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
+    print("executing -->  $query");
     await executeSQL(query);
+    await ForeignKeyService().insertForeignFields(entity);
     if (_primaryKeyDecl.dataType is! Serial) {
       return entity.id;
     }
-    return await _lastInsertedId(_entityDecl.name);
+    return await lastInsertedId(_entityDecl.name);
   }
 
   Future<void> update<T>(Object entity) async {}
@@ -54,7 +78,7 @@ class DMLService with DartStoreUtility {
     await executeSQL(query);
   }
 
-  Future<int> _lastInsertedId(String tableName) async {
+  Future<int> lastInsertedId(String tableName) async {
     final query = "SELECT currval('${tableName}_id_seq');";
     final result = await executeSQL(query);
     return result.first.first as int;

@@ -1,6 +1,6 @@
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
 
-abstract class ForeignKey<ReferencedTable> extends SQLConstraint {
+abstract class ForeignKey<ReferencedEntity> extends SQLConstraint {
   const ForeignKey();
 }
 
@@ -12,6 +12,6 @@ class OneToOne<ReferencedTable> extends ForeignKey<ReferencedTable> {
   const OneToOne();
 }
 
-class ManyToMany<ReferencedTable> extends ForeignKey<ReferencedTable> {
-  const ManyToMany();
+class ManyToOne<ReferencedTable> extends ForeignKey<ReferencedTable> {
+  const ManyToOne();
 }

@@ -5,6 +5,7 @@ import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/sql/declarations/entity_decl.dart';
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
+import 'package:dart_store/sql/sql_anotations/data_types/pseudo_types.dart';
 import 'package:dart_store/sql/sql_anotations/entity.dart';
 import 'package:postgres/postgres.dart';
 
@@ -62,8 +63,6 @@ class DDLService {
   EntityDecl _makeEntityDecl(ClassMirror classMirror) {
     final classAnnotations = classMirror.metadata;
     final Entity entityAnnotation = classAnnotations.firstWhere((annotation) {
-      print(
-          "annotation.reflectee ${annotation.reflectee} ${annotation.reflectee is Entity}");
       return annotation.reflectee is Entity;
     }).reflectee as Entity;
     return EntityDecl(
@@ -81,18 +80,24 @@ class DDLService {
 
     final fields = classMirror.declarations.values.whereType<VariableMirror>();
 
-    for (final field in fields) {
+    // TODO create FieldMirror that includes if is entity or not
+    for (final Field field in fields.map(
+      (e) => Field(variableMirror: e),
+    )) {
       final fieldAnnotations = field.metadata;
-
-      List<SQLDataType> dataTypes = fieldAnnotations
-          .map((annotation) => annotation.reflectee)
-          .whereType<SQLDataType>()
-          .toList();
 
       List<SQLConstraint> constraints = fieldAnnotations
           .map((annotation) => annotation.reflectee)
           .whereType<SQLConstraint>()
           .toList();
+
+      List<SQLDataType> dataTypes =
+          constraints.whereType<ForeignKey>().isNotEmpty
+              ? [ForeignField()]
+              : fieldAnnotations
+                  .map((annotation) => annotation.reflectee)
+                  .whereType<SQLDataType>()
+                  .toList();
 
       if (dataTypes.isEmpty) {
         print(
@@ -100,12 +105,12 @@ class DDLService {
         continue;
       }
 
-      final columnName = MirrorSystem.getName(field.simpleName);
+      final columnName = MirrorSystem.getName(field.variableMirror.simpleName);
       final dataType = dataTypes.first;
 
       columns.add(ColumnDecl(
           name: columnName,
-          field: field,
+          field: field.variableMirror,
           dataType: dataType,
           constraints: constraints));
     }
@@ -116,7 +121,11 @@ class DDLService {
   String _generateCreateTableStatement(
       String tableName, List<ColumnDecl> columns) {
     final String columnDefinitions = [
-      ...columns.map((column) {
+      ...columns
+          .where(
+        (element) => element.dataType is! ForeignField,
+      )
+          .map((column) {
         final columnName = column.name;
         final dataType = column.dataType;
         final nullable = column.nullable ? 'NULL' : 'NOT NULL';
@@ -189,3 +198,14 @@ class DDLService {
 
 // TODO
 // Add constraintts, columns <Datatype, FieldName> to EntityDecl
+
+class Field {
+  const Field({required this.variableMirror});
+
+  final VariableMirror variableMirror;
+
+  bool get isEntity =>
+      metadata.where((element) => element.reflectee is Entity).isNotEmpty;
+
+  List<InstanceMirror> get metadata => variableMirror.metadata;
+}
