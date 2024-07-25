@@ -130,6 +130,7 @@ class DDLService {
         final dataType = column.dataType;
         final nullable = column.nullable ? 'NULL' : 'NOT NULL';
         final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
+        final isUnique = column.unique ? 'UNIQUE' : '';
 
         return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
       }),

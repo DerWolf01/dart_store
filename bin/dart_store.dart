@@ -24,8 +24,11 @@ class UserEntity {
   final String name;
 
   @Varchar()
+  @Unique()
   final String email;
+
   @Varchar()
+  @Unique()
   final String password;
 
   @ManyToOne<Role>()

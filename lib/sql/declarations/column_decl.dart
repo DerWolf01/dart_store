@@ -19,6 +19,8 @@ class ColumnDecl {
 
   bool get nullable => constraints.any((c) => c is NotNull);
 
+  bool get unique => constraints.any((c) => c is Unique);
+
   bool get isPrimaryKey => constraints.any((c) => c is PrimaryKey);
 
   PrimaryKey? get primaryKey => constraints.whereType<PrimaryKey>().firstOrNull;
@@ -74,7 +76,9 @@ List<ColumnDecl> columnDecls<T>({Type? type}) {
         constraints: constraints));
   }
 
-  print("columns: ${columns.map((e) => "${e.name} ${e.dataType} ${e.constraints}",)}");
+  print("columns: ${columns.map(
+    (e) => "${e.name} ${e.dataType} ${e.constraints}",
+  )}");
 
   return columns;
 }

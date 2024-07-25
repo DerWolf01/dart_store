@@ -16,6 +16,8 @@ class ConstraintService {
       for (final constraint in constraints) {
         final constraintStatement =
             _generateConstraintStatement(entityDecl, column, constraint);
+        print("Constraint Statement: $constraintStatement");
+        if (constraintStatement == null) continue;
         constraintStatements.addAll(constraintStatement);
       }
     }
