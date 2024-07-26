@@ -57,7 +57,8 @@ class DMLService with DartStoreUtility {
     }
 
     final query =
-        '''INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement) 
+    '''INSERT INTO ${_entityDecl
+        .name} ($fieldsStatement) VALUES ($valuesStatement) 
 ON CONFLICT (id) DO UPDATE 
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
     print("executing -->  $query");
@@ -81,8 +82,14 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
   }
 
   Future<int> lastInsertedId(String tableName) async {
-    final query = "SELECT currval('${tableName}_id_seq');";
-    final result = await executeSQL(query);
-    return result.first.first as int;
+    try {
+      final query = "SELECT currval('${tableName}_id_seq');";
+      final result = await executeSQL(query);
+      return result.first.first as int;
+    }
+    catch (e) {
+      final query = "SELECT NEXTVAL('${tableName}_id_seq');";
+      final result = await executeSQL(query);
+      return result.first.first as int;
+    }
   }
-}
