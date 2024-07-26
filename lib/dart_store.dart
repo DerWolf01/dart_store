@@ -50,6 +50,10 @@ class DartStore implements DatabaseConnection {
     return id;
   }
 
+  Future<int> update(dynamic model) async {
+    return await DMLService().update(model);
+  }
+
   Future<void> delete(dynamic model) async {
     final _entityDecl = entityDecl(type: model.runtimeType);
     await DMLService().delete(_entityDecl.name,

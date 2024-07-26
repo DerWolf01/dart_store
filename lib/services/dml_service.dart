@@ -42,7 +42,7 @@ class DMLService with DartStoreUtility {
     String valuesStatement = "";
 
     final _primaryKeyDecl = primaryKeyDecl(type: entity.runtimeType);
-    if (_primaryKeyDecl.primaryKey.autoIncrement == true) {
+    if (_primaryKeyDecl.dataType is Serial && entity.id == -1) {
       values.remove(_primaryKeyDecl.name);
     }
     for (final valueEntry in values.entries) {
@@ -69,7 +69,9 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
     return await lastInsertedId(_entityDecl.name);
   }
 
-  Future<void> update<T>(Object entity) async {}
+  Future<int> update<T>(Object entity) async {
+    return await insert(entity);
+  }
 
   Future<void> delete<T>(String tableName,
       {required WhereCollection where}) async {
