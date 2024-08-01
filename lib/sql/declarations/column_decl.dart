@@ -59,11 +59,9 @@ List<ColumnDecl> columnDecls<T>({Type? type}) {
     final isForeignField =
         constraints.where((element) => element is ForeignKey).isNotEmpty;
     if (isForeignField) {
-      print("is foreign key");
+
     } else if (dataTypes.isEmpty) {
-      print(
-          "No data type found for field $field. Will not be included in table!");
-      continue;
+continue;
     }
 
     final columnName = MirrorSystem.getName(field.simpleName);
@@ -76,9 +74,7 @@ List<ColumnDecl> columnDecls<T>({Type? type}) {
         constraints: constraints));
   }
 
-  print("columns: ${columns.map(
-    (e) => "${e.name} ${e.dataType} ${e.constraints}",
-  )}");
+
 
   return columns;
 }

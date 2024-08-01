@@ -16,12 +16,12 @@ class ConstraintService {
       for (final constraint in constraints) {
         final constraintStatement =
             _generateConstraintStatement(entityDecl, column, constraint);
-        print("Constraint Statement: $constraintStatement");
+
         if (constraintStatement == null) continue;
         constraintStatements.addAll(constraintStatement);
       }
     }
-    print("Constraints: $constraintStatements");
+
     return constraintStatements;
   }
 
@@ -42,7 +42,6 @@ class ConstraintService {
             type: reflect(constraint).type.typeArguments.first.reflectedType),
       ).connectionStatements;
     } else if (constraint is ManyToOne) {
-      print("is many to one");
       return ManyToOneConnection(
         _entityDecl,
         entityDecl(
@@ -55,7 +54,6 @@ class ConstraintService {
     final constraints = getConstraints(entityDecl);
 
     for (final constraint in constraints) {
-      print("executing --> $constraint");
       await dartStore.execute(constraint);
     }
 
@@ -86,7 +84,6 @@ class ForeignKeyService extends DMLService {
 
         final Map<String, dynamic> values = {};
         for (final column in _foreignFieldEntityColumns) {
-          print(modelMap[column.name]);
           if (column.isForeignKey()) {
             final foreignField = column.getForeignKey();
             if (foreignField is ManyToOne) {
@@ -122,7 +119,7 @@ class ForeignKeyService extends DMLService {
             continue;
           }
           fieldsStatement += ", ${valueEntry.key}";
-          print(valueEntry.value);
+
           valuesStatement += ", ${valueEntry.value}";
         }
 
@@ -130,7 +127,7 @@ class ForeignKeyService extends DMLService {
             '''INSERT INTO ${_entityDecl.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
 ON CONFLICT (id) DO UPDATE 
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
-        print(query);
+
         await executeSQL(query);
         await insertForeignFields(entity);
         if (_primaryKeyDecl.dataType is! Serial) {
@@ -150,8 +147,6 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
     );
 
     for (final foreignField in foreignFields) {
-      print(
-          "foreign-field --> ${foreignField.name} ${foreignField.getForeignKey()}  ");
       final foreignKey = foreignField.getForeignKey();
       if (foreignKey is ManyToOne) {
         final connection = ManyToOneConnection(
@@ -164,14 +159,14 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
                     .reflectedType));
         final query =
             'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE id = $id';
-        print("ManyToOne first --> $query");
+
         final result = await executeSQL(query);
-        print("ManyToOne first --> $result");
+
 
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          print("foreign-query --> ${result.first.toColumnMap()}");
+
           queryResult = ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);

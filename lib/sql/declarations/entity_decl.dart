@@ -27,8 +27,6 @@ EntityDecl entityDecl<T>({Type? type}) {
   final classMirror = reflectClass(type ?? T);
   final classAnnotations = classMirror.metadata;
   final Entity entityAnnotation = classAnnotations.firstWhere((annotation) {
-    print(
-        "annotation.reflectee ${annotation.reflectee} ${annotation.reflectee is Entity}");
     return annotation.reflectee is Entity;
   }).reflectee as Entity;
   return EntityDecl(

@@ -16,7 +16,7 @@ class DMLService with DartStoreUtility {
 
     final Map<String, dynamic> values = {};
     for (final column in columnDecls) {
-      print(modelMap[column.name]);
+
       if (column.isForeignKey()) {
         final foreignField = column.getForeignKey();
         if (foreignField is ManyToOne) {
@@ -52,7 +52,7 @@ class DMLService with DartStoreUtility {
         continue;
       }
       fieldsStatement += ", ${valueEntry.key}";
-      print(valueEntry.value);
+
       valuesStatement += ", ${valueEntry.value}";
     }
 
@@ -60,7 +60,7 @@ class DMLService with DartStoreUtility {
         '''INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement) 
 ON CONFLICT (id) DO UPDATE 
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
-    print("executing -->  $query");
+
     await executeSQL(query);
     await ForeignKeyService().insertForeignFields(entity);
     if (_primaryKeyDecl.dataType is! Serial) {
@@ -76,7 +76,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
   Future<void> delete<T>(String tableName,
       {required WhereCollection where}) async {
     final query = 'DELETE FROM $tableName ${where.chain()}';
-    print(query);
+
     await executeSQL(query);
   }
 

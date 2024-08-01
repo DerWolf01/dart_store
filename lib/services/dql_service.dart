@@ -11,7 +11,7 @@ class DqlService extends DartStoreUtility {
     for (final row
         in (await executeSQL(generateQueryString<T>(where: where)))) {
       final modelMap = row.toColumnMap();
-      print("modelMap --> $modelMap");
+
       for (final foreignKey in _entityDecl.column.where(
         (e) => e.dataType is ForeignField,
       )) {
@@ -31,7 +31,7 @@ class DqlService extends DartStoreUtility {
         )
         .map((e) => e.name)
         .join(", ");
-    print("where --> ${where?.chain()}");
+
     final tableName = _entityDecl.name;
     return "SELECT $columnNames FROM $tableName ${where?.chain() ?? ""}";
   }

@@ -31,8 +31,7 @@ class DDLService {
           _generateCreateTableStatement(tableName.toLowerCase(), columns);
 
       // Execute the SQL statement to create the table
-      // print("executing $sql");
-      await _executeSQL(sql);
+
       print("Entity ${tableName.toLowerCase()} created");
     }
     for (final entityDecl in entityDecls) {
@@ -50,7 +49,7 @@ class DDLService {
     // Execute the SQL statement to create the table
     // print("executing $sql");
     await _executeSQL(sql);
-    print("Entity ${tableName.toLowerCase()} created");
+
     await ConstraintService().setCoinstraints(entityDecl);
     // enableUpdatedAtTrigger(_getTableName(entityDecl));
     return;
@@ -141,7 +140,7 @@ class DDLService {
       throw Exception("No columns found for entity $tableName");
     }
     var sql = 'CREATE TABLE IF NOT EXISTS $tableName ( $columnDefinitions ) ';
-    print(sql);
+
     return sql;
   }
 
@@ -162,10 +161,9 @@ class DDLService {
 
       // Generate SQL statement to drop table
       final sql = _generateDropTableStatement(tableName);
-      print(sql);
+
       // Execute the SQL statement to drop the table
       await _executeSQL(sql);
-      print("Table $tableName dropped");
     }
   }
 
