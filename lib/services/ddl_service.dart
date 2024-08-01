@@ -30,6 +30,7 @@ class DDLService {
       final sql =
           _generateCreateTableStatement(tableName.toLowerCase(), columns);
 
+      await _executeSQL(sql);
       // Execute the SQL statement to create the table
 
       print("Entity ${tableName.toLowerCase()} created");
