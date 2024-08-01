@@ -1,6 +1,6 @@
 class WhereCollection {
   chain() {
-    return "WHERE ${wheres.map((where) => "${where.field} ${where.comporator.operator()} ${where.lowerCase ? where.getCompareTo.toLowerCase() : where.getCompareTo}").join(" AND ")}";
+    return "WHERE ${wheres.map((where) => where.lowerCase ? "${where.field} ILIKE ${where.getCompareTo}" : "${where.field} ${where.comporator.operator()} ${where.getCompareTo}").join(" AND ")}";
   }
 
   List<Where> wheres;
