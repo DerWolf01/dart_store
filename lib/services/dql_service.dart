@@ -34,17 +34,7 @@ class DqlService extends DartStoreUtility {
         .where(
           (element) => element.dataType is! ForeignField,
         )
-        .map((e) => (
-              where?.wheres
-                          .where(
-                            (element) => element.field == e.name,
-                          )
-                          .firstOrNull
-                          ?.lowerCase ==
-                      true
-                  ? "LOWER(${e.name})"
-                  : e.name,
-            ))
+        .map((e) => (e.name,))
         .join(", ");
 
     final tableName = _entityDecl.name;
