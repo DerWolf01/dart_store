@@ -15,7 +15,8 @@ class DqlService extends DartStoreUtility {
       for (final foreignKey in _entityDecl.column.where(
         (e) => e.dataType is ForeignField,
       )) {
-        modelMap[foreignKey.name] = await ForeignKeyService().query<T>(modelMap["id"]);
+        modelMap[foreignKey.name] =
+            await ForeignKeyService().query<T>(modelMap["id"]);
       }
 
       queryResult.add(ConversionService.mapToObject<T>(modelMap));
@@ -29,7 +30,17 @@ class DqlService extends DartStoreUtility {
         .where(
           (element) => element.dataType is! ForeignField,
         )
-        .map((e) => e.name)
+        .map((e) => (
+              where?.wheres
+                          .where(
+                            (element) => element.field == e.name,
+                          )
+                          .firstOrNull
+                          ?.lowerCase ==
+                      true
+                  ? "LOWER(${e.name})"
+                  : e.name,
+            ))
         .join(", ");
 
     final tableName = _entityDecl.name;

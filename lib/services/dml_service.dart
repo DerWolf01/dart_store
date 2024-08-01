@@ -16,7 +16,6 @@ class DMLService with DartStoreUtility {
 
     final Map<String, dynamic> values = {};
     for (final column in columnDecls) {
-
       if (column.isForeignKey()) {
         final foreignField = column.getForeignKey();
         if (foreignField is ManyToOne) {
@@ -69,7 +68,9 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
     return await lastInsertedId(_entityDecl.name);
   }
 
-  Future<int> update<T>(Object entity) async {
+  //TODO implement where statement for update method
+  Future<int> update<T>(Object entity,
+      {WhereCollection? whereCollection}) async {
     return await insert(entity);
   }
 
