@@ -29,7 +29,7 @@ class DDLService {
       // Generate SQL statement to create table
       final sql =
           _generateCreateTableStatement(tableName.toLowerCase(), columns);
-
+      print(sql);
       await _executeSQL(sql);
       // Execute the SQL statement to create the table
 
@@ -128,7 +128,8 @@ class DDLService {
           .map((column) {
         final columnName = column.name;
         final dataType = column.dataType;
-        final nullable = column.nullable ? 'NULL' : 'NOT NULL';
+        final nullable = column.nullable ? 'NOT NULL' : "";
+        print("${column.name} --> nullable: ${column.nullable} ");
         final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
         final isUnique = column.unique ? 'UNIQUE' : '';
 
