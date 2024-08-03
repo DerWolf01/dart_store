@@ -5,6 +5,11 @@ class Varchar extends SQLDataType<String> {
 
   @override
   convert(value) {
+    if (value == null && isNullable == false) {
+      throw Exception('Value cannot be null');
+    } else if (value == null && isNullable == true) {
+      return null;
+    }
     return "'$value'";
   }
 }

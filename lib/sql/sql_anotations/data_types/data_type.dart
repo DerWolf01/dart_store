@@ -6,7 +6,16 @@ export './varchar.dart';
 export './pseudo_types.dart';
 
 abstract class SQLDataType<PrimtiveType> {
-  const SQLDataType();
+  const SQLDataType({this.isNullable = false});
 
-  convert(PrimtiveType value) => value;
+  final bool? isNullable;
+
+  convert(PrimtiveType? value) {
+    if (value == null && isNullable == false) {
+      throw Exception('Value cannot be null');
+    } else if (value == null && isNullable == true) {
+      return null;
+    }
+    return value;
+  }
 }

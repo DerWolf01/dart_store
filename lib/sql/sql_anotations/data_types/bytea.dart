@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:dart_store/dart_store.dart';
 
 class Bytea extends SQLDataType<File> {
-  const Bytea();
+  const Bytea({super.isNullable});
 
   @override
   convert(value) {
-    return value.readAsBytesSync();
+    if (value == null && isNullable == true) {
+      return null;
+    } else if (value == null && isNullable == false) {
+      throw Exception("Value cannot be null");
+    }
+    return value!.readAsBytesSync();
   }
 }
-
