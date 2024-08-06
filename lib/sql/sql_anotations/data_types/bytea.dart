@@ -8,14 +8,15 @@ class Bytea extends SQLDataType<dynamic> {
 
   @override
   String? convert(value) {
-    if (value == null && isNullable == true) {
-      return null;
-    } else if (value == null && isNullable == false) {
-      throw Exception("Value cannot be null");
-    }
-    if (value is File) {
-      return "'${base64.encode(value.readAsBytesSync())}'";
-    }
-    return "'${base64.encode(value)}'";
+    //TODO implement convert
+    // if (value == null && isNullable == true) {
+    //   return null;
+    // } else if (value == null && isNullable == false) {
+    //   throw Exception("Value cannot be null");
+    // }
+    // if (value is File) {
+    //   return "'${base64.encode(value.readAsBytesSync())}'";
+    // }
+    return "'$value'";
   }
 }
