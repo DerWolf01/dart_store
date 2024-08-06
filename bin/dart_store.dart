@@ -4,42 +4,42 @@ import 'package:postgres/postgres.dart';
 
 @Entity()
 class Role {
-  const Role(this.id, this.name);
-
+  Role.init(this.id, this.name);
+  Role();
   @PrimaryKey()
   @Integer()
-  final int id;
+  late final int id;
   @Varchar()
-  final String name;
+  late final String name;
 }
 
 @Entity()
 class UserEntity {
-  const UserEntity(this.id, this.name, this.email, this.password, this.role);
-
+  UserEntity.init(this.id, this.name, this.email, this.password, this.role);
+  UserEntity();
   @PrimaryKey(autoIncrement: true)
   @Serial()
-  final int id;
+  late final int id;
   @Varchar()
-  final String name;
+  late final String name;
 
   @Varchar()
   @Unique()
-  final String email;
+  late final String email;
 
   @Varchar()
   @Unique()
-  final String password;
+  late final String password;
 
   @ManyToOne<Role>()
-  final Role role;
+  late final Role role;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
-  print(await dartStore.save(Role(0, "admin")));
-  print(await dartStore.save(
-      UserEntity(-1, "test@email.com", "test", "test", Role(0, "admin"))));
+  print(await dartStore.save(Role.init(0, "admin")));
+  print(await dartStore.save(UserEntity.init(
+      -1, "test@email.com", "test", "test", Role.init(0, "admin"))));
 
   print(await dartStore.query<UserEntity>(
       where: WhereCollection(wheres: [
