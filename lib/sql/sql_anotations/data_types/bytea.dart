@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dart_store/dart_store.dart';
 
-class Bytea extends SQLDataType<File> {
+class Bytea extends SQLDataType<dynamic> {
   const Bytea({super.isNullable});
 
   @override
@@ -13,6 +13,9 @@ class Bytea extends SQLDataType<File> {
     } else if (value == null && isNullable == false) {
       throw Exception("Value cannot be null");
     }
-    return "'${base64.encode(value!.readAsBytesSync())}'";
+    if (value is File) {
+      return "'${base64.encode(value.readAsBytesSync())}'";
+    }
+    return "'${base64.encode(value)}'";
   }
 }
