@@ -29,11 +29,9 @@ class DDLService {
       // Generate SQL statement to create table
       final sql =
           _generateCreateTableStatement(tableName.toLowerCase(), columns);
-      print(sql);
+
       await _executeSQL(sql);
       // Execute the SQL statement to create the table
-
-      print("Entity ${tableName.toLowerCase()} created");
     }
     for (final entityDecl in entityDecls) {
       await ConstraintService().setCoinstraints(entityDecl);
@@ -129,7 +127,7 @@ class DDLService {
         final columnName = column.name;
         final dataType = column.dataType;
         final nullable = column.nullable ? 'NOT NULL' : "";
-        print("${column.name} --> nullable: ${column.nullable} ");
+
         final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
         final isUnique = column.unique ? 'UNIQUE' : '';
 
