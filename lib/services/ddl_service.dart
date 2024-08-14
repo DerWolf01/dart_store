@@ -4,8 +4,8 @@ import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/sql/declarations/entity_decl.dart';
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/created_at.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/updated_at.dart';
+import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
+import 'package:dart_store/sql/sql_anotations/data_types/updated_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/pseudo_types.dart';
 import 'package:dart_store/sql/sql_anotations/entity.dart';
@@ -102,7 +102,7 @@ class DDLService {
 
       if (dataTypes.isEmpty) {
         print(
-            "No data type found for field $field. Will not be included in table!");
+            "No data type found for field ${field.variableMirror.simpleName}. Will not be included in table!");
         continue;
       }
 
@@ -125,11 +125,11 @@ class DDLService {
     for (final column in columns.where(
       (element) => element.dataType is! ForeignField,
     )) {
-      if (column.getConstraint<CreatedAt>() != null) {
+      if (column.dataType is CreatedAt) {
         columnDefinitions.add(
             "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
         continue;
-      } else if (column.getConstraint<UpdatedAt>() != null) {
+      } else if (column.dataType is UpdatedAt) {
         await enableUpdatedAtTrigger(tableName, column.name);
         columnDefinitions.add(
             "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
