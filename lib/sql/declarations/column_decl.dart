@@ -1,9 +1,6 @@
 import 'dart:mirrors';
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/not_null.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/primary_key.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
-import 'package:dart_store/sql/sql_anotations/data_types/pseudo_types.dart';
 
 class ColumnDecl {
   ColumnDecl(
@@ -59,9 +56,8 @@ List<ColumnDecl> columnDecls<T>({Type? type}) {
     final isForeignField =
         constraints.where((element) => element is ForeignKey).isNotEmpty;
     if (isForeignField) {
-
     } else if (dataTypes.isEmpty) {
-continue;
+      continue;
     }
 
     final columnName = MirrorSystem.getName(field.simpleName);
@@ -73,8 +69,6 @@ continue;
         dataType: dataType,
         constraints: constraints));
   }
-
-
 
   return columns;
 }

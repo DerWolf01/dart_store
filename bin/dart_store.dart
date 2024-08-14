@@ -1,53 +1,24 @@
 import 'dart:async';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()
-class Role {
-  Role.init(this.id, this.name);
-  Role();
-  @PrimaryKey()
-  @Integer()
-  late final int id;
-  @Varchar()
-  late final String name;
-}
+class CreatedAtTest {
+  CreatedAtTest.init(this.id, this.createdat);
+  CreatedAtTest();
 
-@Entity()
-class UserEntity {
-  UserEntity.init(this.id, this.name, this.email, this.password, this.role);
-  UserEntity();
-  @PrimaryKey(autoIncrement: true)
+  @PrimaryKey()
   @Serial()
   late final int id;
-  @Varchar()
-  late final String name;
 
-  @Varchar()
-  @Unique()
-  late final String email;
-
-  @Varchar()
-  @Unique()
-  late final String password;
-
-  @ManyToOne<Role>()
-  late final Role role;
+  @CreatedAt()
+  late final DateTime createdat;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
-  print(await dartStore.save(Role.init(0, "admin")));
-  print(await dartStore.save(UserEntity.init(
-      -1, "test@email.com", "test", "test", Role.init(0, "admin"))));
-
-  print(await dartStore.query<UserEntity>(
-      where: WhereCollection(wheres: [
-    Where(
-        field: "name",
-        compareTo: "test@email.com",
-        comporator: WhereOperator.equals)
-  ])));
+  print((await dartStore.query<CreatedAtTest>()).first.createdat);
 }
 
 class PostgresConnection extends DatabaseConnection {

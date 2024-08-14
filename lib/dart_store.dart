@@ -80,3 +80,17 @@ class DartStore implements DatabaseConnection {
     return await DDLService().createTable(entityDecl<T>());
   }
 }
+
+extension StringFormatter on String {
+  String camelCaseToSnakeCase() {
+    return replaceAllMapped(RegExp(r'[A-Z]'), (match) {
+      return '_${match.group(0)!.toLowerCase()}';
+    });
+  }
+
+  String snakeCaseToCamelCase() {
+    return replaceAllMapped(RegExp(r'_[a-z]'), (match) {
+      return match.group(0)!.toUpperCase().substring(1);
+    });
+  }
+}
