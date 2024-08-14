@@ -38,9 +38,9 @@ class DqlService extends DartStoreUtility {
         .where(
           (element) => element.dataType is! ForeignField,
         )
-        .map((e) => (e.name,))
+        .map((e) => e.name)
         .join(", ");
-
+    print("columnNames: $columnNames");
     final tableName = _entityDecl.name;
     final queryString =
         "SELECT $columnNames FROM $tableName ${where?.chain() ?? ""}";
