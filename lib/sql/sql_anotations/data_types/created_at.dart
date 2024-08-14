@@ -3,4 +3,9 @@ import 'package:postgres/postgres.dart';
 
 class CreatedAt extends SQLDataType<DateTime> {
   const CreatedAt();
+
+  @override
+  convert(DateTime? value) {
+    return "'${super.convert(value)}'";
+  }
 }
