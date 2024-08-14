@@ -146,12 +146,10 @@ class DDLService {
           .add('$columnName ${dataType.sqlTypeName()} $nullable $isPrimaryKey');
     }
 
-    // "created_at timestamp with time zone NOT NULL DEFAULT now()",
-    // "updated_at timestamp with time zone NOT NULL DEFAULT now()"
-
     if (columnDefinitions.isEmpty) {
       throw Exception("No columns found for entity $tableName");
     }
+    print("Creating table $tableName with columns $columnDefinitions");
     var sql =
         'CREATE TABLE IF NOT EXISTS $tableName ( ${columnDefinitions.join(", ")} ) ';
 
