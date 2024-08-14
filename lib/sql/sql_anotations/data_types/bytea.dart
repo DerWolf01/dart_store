@@ -3,8 +3,13 @@ import 'dart:io';
 
 import 'package:dart_store/dart_store.dart';
 
-class Bytea extends SQLDataType<dynamic> {
-  const Bytea({super.isNullable});
+class BinaryData extends SQLDataType<dynamic> {
+  const BinaryData({super.isNullable});
+
+  @override
+  String sqlTypeName() {
+    return 'TEXT';
+  }
 
   @override
   String? convert(value) {

@@ -131,7 +131,7 @@ class DDLService {
         final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
         final isUnique = column.unique ? 'UNIQUE' : '';
 
-        return '$columnName ${dataType.runtimeType.toString()} $nullable $isPrimaryKey';
+        return '$columnName ${dataType.sqlTypeName()} $nullable $isPrimaryKey';
       }),
       // "created_at timestamp with time zone NOT NULL DEFAULT now()",
       // "updated_at timestamp with time zone NOT NULL DEFAULT now()"

@@ -10,6 +10,8 @@ abstract class SQLDataType<PrimtiveType> {
 
   final bool? isNullable;
 
+  String sqlTypeName() => runtimeType.toString();
+
   convert(PrimtiveType? value) {
     if (value == null && isNullable == false) {
       throw Exception('Value cannot be null');
