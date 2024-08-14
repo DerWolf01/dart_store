@@ -1,9 +1,7 @@
 import 'dart:mirrors';
-
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/sql/clauses/where.dart';
 import 'package:dart_store/sql/declarations/primary_key_decl.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
@@ -59,7 +57,7 @@ class DMLService with DartStoreUtility {
         '''INSERT INTO ${_entityDecl.name} ($fieldsStatement) VALUES ($valuesStatement) 
 ON CONFLICT (id) DO UPDATE 
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
-
+    print("inserting/updating --> $query");
     await executeSQL(query);
     await ForeignKeyService().insertForeignFields(entity);
     if (_primaryKeyDecl.dataType is! Serial) {
