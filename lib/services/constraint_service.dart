@@ -52,8 +52,9 @@ class ConstraintService {
 
   Future<void> setCoinstraints(EntityDecl entityDecl) async {
     final constraints = getConstraints(entityDecl);
-
+    print("Constraints: $constraints");
     for (final constraint in constraints) {
+      print("Executing $constraint");
       await dartStore.execute(constraint);
     }
 
@@ -161,7 +162,6 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
             'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE id = $id';
 
         final result = await executeSQL(query);
-
 
         for (final row in result) {
           final Result foreignFieldsResult = await executeSQL(

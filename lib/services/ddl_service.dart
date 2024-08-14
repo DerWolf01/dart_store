@@ -31,7 +31,7 @@ class DDLService {
       // Generate SQL statement to create table
       final sql =
           await _generateCreateTableStatement(tableName.toLowerCase(), columns);
-
+      print("executing $sql");
       await _executeSQL(sql);
       // Execute the SQL statement to create the table
     }
