@@ -42,6 +42,9 @@ class DqlService extends DartStoreUtility {
         .join(", ");
 
     final tableName = _entityDecl.name;
-    return "SELECT $columnNames FROM $tableName ${where?.chain() ?? ""}";
+    final queryString =
+        "SELECT $columnNames FROM $tableName ${where?.chain() ?? ""}";
+    print(queryString);
+    return queryString;
   }
 }
