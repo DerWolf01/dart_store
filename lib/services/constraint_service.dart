@@ -263,6 +263,6 @@ class OneToOneConnection extends ForeignKeyConnection {
 
   @override
   List<String> get connectionStatements => [
-        'CREATE TABLE IF NOT EXISTS $connectionTableName (${referencingEntity.name}_id ${referencingEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencingEntity.name}(id), ${referencedEntity.name}_id ${referencedEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencedEntity.name}(id}), PRIMARY KEY(${referencingEntity.name}_id, ${referencedEntity.name}_id)'
+        'CREATE TABLE IF NOT EXISTS $connectionTableName (${referencingEntity.name}_id ${referencingEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencingEntity.name}(id), ${referencedEntity.name}_id ${referencedEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencedEntity.name}(id), PRIMARY KEY(${referencingEntity.name}_id, ${referencedEntity.name}_id)'
       ];
 }
