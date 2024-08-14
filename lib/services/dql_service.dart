@@ -5,26 +5,31 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 
 class DqlService extends DartStoreUtility {
   Future<List<T>> query<T>({WhereCollection? where}) async {
-    final _entityDecl = entityDecl<T>();
-    final List<T> queryResult = [];
+    try {
+      final _entityDecl = entityDecl<T>();
+      final List<T> queryResult = [];
 
-    for (final row
-        in (await executeSQL(generateQueryString<T>(where: where)))) {
-      final modelMap = row.toColumnMap();
+      for (final row
+          in (await executeSQL(generateQueryString<T>(where: where)))) {
+        final modelMap = row.toColumnMap();
 
-      for (final foreignKey in _entityDecl.column.where(
-        (e) => e.dataType is ForeignField,
-      )) {
-        modelMap[foreignKey.name] =
-            await ForeignKeyService().query<T>(modelMap["id"]);
+        for (final foreignKey in _entityDecl.column.where(
+          (e) => e.dataType is ForeignField,
+        )) {
+          modelMap[foreignKey.name] =
+              await ForeignKeyService().query<T>(modelMap["id"]);
+        }
+        try {
+          queryResult.add(ConversionService.mapToObject<T>(modelMap));
+        } catch (e, s) {
+          print("Error: $e StackTrace: $s");
+        }
       }
-      try {
-        queryResult.add(ConversionService.mapToObject<T>(modelMap));
-      } catch (e, s) {
-        print("Error: $e StackTrace: $s");
-      }
+      return queryResult;
+    } catch (e, s) {
+      print("Error: $e StackTrace: $s");
+      return [];
     }
-    return queryResult;
   }
 
   String generateQueryString<T>({WhereCollection? where}) {
