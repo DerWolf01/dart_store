@@ -4,6 +4,8 @@ import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/sql/declarations/entity_decl.dart';
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/sql/sql_anotations/constraints/created_at.dart';
+import 'package:dart_store/sql/sql_anotations/constraints/updated_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/pseudo_types.dart';
 import 'package:dart_store/sql/sql_anotations/entity.dart';
@@ -123,7 +125,13 @@ class DDLService {
           .where(
         (element) => element.dataType is! ForeignField,
       )
-          .map((column) {
+          .map((column) async {
+        if (column.getConstraint<CreatedAt>() != null) {
+          return "${column.name} timestamp with time zone NOT NULL DEFAULT now()";
+        } else if (column.getConstraint<UpdatedAt>() != null) {
+          await enableUpdatedAtTrigger(tableName, column.name);
+          return "${column.name} timestamp with time zone NOT NULL DEFAULT now()";
+        }
         final columnName = column.name;
         final dataType = column.dataType;
         final nullable = column.nullable ? 'NOT NULL' : "";
@@ -136,6 +144,7 @@ class DDLService {
       // "created_at timestamp with time zone NOT NULL DEFAULT now()",
       // "updated_at timestamp with time zone NOT NULL DEFAULT now()"
     ].join(', ');
+
     if (columnDefinitions.isEmpty) {
       throw Exception("No columns found for entity $tableName");
     }
@@ -178,11 +187,11 @@ class DDLService {
   /// enables trigger and extension for updated_at column
   /// catches exception if trigger already exists and ignores it
   /// reason for that being that "IF NOT EXISTS" is not supported for triggers
-  enableUpdatedAtTrigger(String tableName) async {
+  Future enableUpdatedAtTrigger(String tableName, String triggerName) async {
     try {
       await _executeSQL("CREATE EXTENSION IF NOT EXISTS moddatetime;");
       await _executeSQL(
-          "CREATE TRIGGER update_timestamp BEFORE UPDATE ON $tableName FOR EACH ROW EXECUTE PROCEDURE moddatetime(updated_at);");
+          "CREATE TRIGGER update_timestamp BEFORE UPDATE ON $tableName FOR EACH ROW EXECUTE PROCEDURE moddatetime($triggerName);");
     } catch (e) {
       if (e is ServerException &&
           e.message.contains(
