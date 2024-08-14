@@ -30,7 +30,7 @@ class DDLService {
 
       // Generate SQL statement to create table
       final sql =
-          _generateCreateTableStatement(tableName.toLowerCase(), columns);
+          await _generateCreateTableStatement(tableName.toLowerCase(), columns);
 
       await _executeSQL(sql);
       // Execute the SQL statement to create the table
@@ -46,7 +46,8 @@ class DDLService {
     final tableName = _getTableName(entityDecl);
     final columns = _getColumns(entityDecl.classMirror);
     // Generate SQL statement to create table
-    final sql = _generateCreateTableStatement(tableName.toLowerCase(), columns);
+    final sql =
+        await _generateCreateTableStatement(tableName.toLowerCase(), columns);
     // Execute the SQL statement to create the table
     // print("executing $sql");
     await _executeSQL(sql);
@@ -118,37 +119,41 @@ class DDLService {
     return columns;
   }
 
-  String _generateCreateTableStatement(
-      String tableName, List<ColumnDecl> columns) {
-    final String columnDefinitions = [
-      ...columns
-          .where(
-        (element) => element.dataType is! ForeignField,
-      )
-          .map((column) async {
-        if (column.getConstraint<CreatedAt>() != null) {
-          return "${column.name} timestamp with time zone NOT NULL DEFAULT now()";
-        } else if (column.getConstraint<UpdatedAt>() != null) {
-          await enableUpdatedAtTrigger(tableName, column.name);
-          return "${column.name} timestamp with time zone NOT NULL DEFAULT now()";
-        }
-        final columnName = column.name;
-        final dataType = column.dataType;
-        final nullable = column.nullable ? 'NOT NULL' : "";
+  Future<String> _generateCreateTableStatement(
+      String tableName, List<ColumnDecl> columns) async {
+    final List<String> columnDefinitions = [];
+    for (final column in columns.where(
+      (element) => element.dataType is! ForeignField,
+    )) {
+      if (column.getConstraint<CreatedAt>() != null) {
+        columnDefinitions.add(
+            "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
+        continue;
+      } else if (column.getConstraint<UpdatedAt>() != null) {
+        await enableUpdatedAtTrigger(tableName, column.name);
+        columnDefinitions.add(
+            "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
+        continue;
+      }
+      final columnName = column.name;
+      final dataType = column.dataType;
+      final nullable = column.nullable ? 'NOT NULL' : "";
 
-        final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
-        final isUnique = column.unique ? 'UNIQUE' : '';
+      final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
+      final isUnique = column.unique ? 'UNIQUE' : '';
 
-        return '$columnName ${dataType.sqlTypeName()} $nullable $isPrimaryKey';
-      }),
-      // "created_at timestamp with time zone NOT NULL DEFAULT now()",
-      // "updated_at timestamp with time zone NOT NULL DEFAULT now()"
-    ].join(', ');
+      columnDefinitions
+          .add('$columnName ${dataType.sqlTypeName()} $nullable $isPrimaryKey');
+    }
+
+    // "created_at timestamp with time zone NOT NULL DEFAULT now()",
+    // "updated_at timestamp with time zone NOT NULL DEFAULT now()"
 
     if (columnDefinitions.isEmpty) {
       throw Exception("No columns found for entity $tableName");
     }
-    var sql = 'CREATE TABLE IF NOT EXISTS $tableName ( $columnDefinitions ) ';
+    var sql =
+        'CREATE TABLE IF NOT EXISTS $tableName ( ${columnDefinitions.join(", ")} ) ';
 
     return sql;
   }
