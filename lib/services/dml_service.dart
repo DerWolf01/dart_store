@@ -59,7 +59,17 @@ ON CONFLICT (id) DO UPDATE
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
     print("inserting/updating --> $query");
     await executeSQL(query);
-    reflect(entity).setField(#id, await lastInsertedId(_entityDecl.name));
+    try {
+      reflect(entity).setField(#id, await lastInsertedId(_entityDecl.name));
+    } catch (e) {
+      try {
+        final id = values["id"] != -1 ? values["id"] : 0;
+        reflect(entity).setField(#id, id);
+      } catch (e, s) {
+        print(e, s);
+        rethrow;
+      }
+    }
     await ForeignKeyService().insertForeignFields(entity);
     if (_primaryKeyDecl.dataType is! Serial) {
       return entity.id;
