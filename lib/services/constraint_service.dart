@@ -38,9 +38,9 @@ class ConstraintService {
       ).connectionStatements;
     } else if (constraint is OneToOne) {
       return OneToOneConnection(
-        _entityDecl,
         entityDecl(
             type: reflect(constraint).type.typeArguments.first.reflectedType),
+        _entityDecl,
       ).connectionStatements;
     } else if (constraint is ManyToOne) {
       return ManyToOneConnection(
