@@ -66,7 +66,10 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
         final id = values["id"] != -1 ? values["id"] : 0;
         reflect(entity).setField(#id, id);
       } catch (e, s) {
-        print(e, s);
+        print(
+          e,
+        );
+        print(s);
         rethrow;
       }
     }
