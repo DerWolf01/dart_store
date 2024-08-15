@@ -43,6 +43,7 @@ class DMLService with DartStoreUtility {
       values.remove(_primaryKeyDecl.name);
     }
     for (final valueEntry in values.entries) {
+      
       if (fieldsStatement.isEmpty) {
         fieldsStatement += valueEntry.key;
         valuesStatement += valueEntry.value.toString();

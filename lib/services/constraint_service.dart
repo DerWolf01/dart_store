@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_conversion/dart_conversion.dart';
@@ -70,7 +71,18 @@ class ForeignKeyService extends DMLService {
         _entityDecl.column.where((element) => element.isForeignKey());
     for (final foreignKeyColumn in foreignKeyColumns) {
       final foreignKey = foreignKeyColumn.getForeignKey();
-      if (foreignKey is OneToMany) {
+
+      if (foreignKey is OneToOne) {
+        final connection = OneToOneConnection(
+            entityDecl(
+                type:
+                    reflect(foreignKey).type.typeArguments.first.reflectedType),
+            _entityDecl);
+
+        await executeSQL(
+            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id"))}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name))})");
+        return await lastInsertedId(connection.connectionTableName);
+      } else if (foreignKey is OneToMany) {
         final connection = OneToManyConnection(
           _entityDecl,
           entityDecl(
@@ -137,6 +149,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         return await lastInsertedId(_entityDecl.name);
       }
     }
+    return null;
   }
 
   @override
