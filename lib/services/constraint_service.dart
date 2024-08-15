@@ -80,7 +80,7 @@ class ForeignKeyService extends DMLService {
             _entityDecl);
 
         final String insertQuery =
-            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id")).reflectee}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).reflectee}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id"))}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}";
+            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id")).reflectee}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).getField(#id).reflectee}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id")).reflectee}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).getField(#id).reflectee}";
 
         print("insertQuery: $insertQuery");
         await executeSQL(insertQuery);
