@@ -68,7 +68,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
 
     final entityMap = ConversionService.objectToMap(entity)
       ..["id"] = await lastInsertedId(_entityDecl.name);
-    entity = ConversionService.mapToObject(entity, type: entity.runtimeType);
+    entity = ConversionService.mapToObject(entityMap, type: entity.runtimeType);
     await ForeignKeyService().insertForeignFields(entity);
     return entity.id;
   }
