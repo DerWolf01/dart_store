@@ -184,8 +184,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
-      }
-      if (foreignKey is OneToOne) {
+      } else if (foreignKey is OneToOne) {
         final connection = OneToOneConnection(
             _entityDecl,
             entityDecl(
@@ -203,9 +202,9 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
           queryResult = ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
+          return queryResult;
         }
-      }
-      if (foreignKey is OneToMany) {
+      } else if (foreignKey is OneToMany) {
         queryResult = [];
         final connection = OneToManyConnection(
             _entityDecl,
