@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
@@ -73,11 +74,17 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
         rethrow;
       }
     }
-    await ForeignKeyService().insertForeignFields(entity);
+
     if (_primaryKeyDecl.dataType is! Serial) {
+      await ForeignKeyService().insertForeignFields(entity);
       return entity.id;
     }
-    return await lastInsertedId(_entityDecl.name);
+
+    final entityMap = ConversionService.objectToMap(entity)
+      ..["id"] = await lastInsertedId(_entityDecl.name);
+    entity = ConversionService.mapToObject(entity, type: entity.runtimeType);
+    await ForeignKeyService().insertForeignFields(entity);
+    return entity.id;
   }
 
   //TODO implement where statement for update method
