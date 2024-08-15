@@ -79,8 +79,11 @@ class ForeignKeyService extends DMLService {
                     reflect(foreignKey).type.typeArguments.first.reflectedType),
             _entityDecl);
 
-        await executeSQL(
-            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id"))}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name))})");
+        final String insertQuery =
+            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id"))}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id"))}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}";
+
+        print("insertQuery: $insertQuery");
+        await executeSQL(insertQuery);
         return await lastInsertedId(connection.connectionTableName);
       } else if (foreignKey is OneToMany) {
         final connection = OneToManyConnection(
