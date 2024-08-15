@@ -43,7 +43,6 @@ class DMLService with DartStoreUtility {
       values.remove(_primaryKeyDecl.name);
     }
     for (final valueEntry in values.entries) {
-      
       if (fieldsStatement.isEmpty) {
         fieldsStatement += valueEntry.key;
         valuesStatement += valueEntry.value.toString();
@@ -60,6 +59,7 @@ ON CONFLICT (id) DO UPDATE
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
     print("inserting/updating --> $query");
     await executeSQL(query);
+    reflect(entity).setField(#id, lastInsertedId(_entityDecl.name));
     await ForeignKeyService().insertForeignFields(entity);
     if (_primaryKeyDecl.dataType is! Serial) {
       return entity.id;

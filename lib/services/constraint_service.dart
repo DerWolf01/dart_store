@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:js_interop';
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_conversion/dart_conversion.dart';
@@ -80,7 +81,7 @@ class ForeignKeyService extends DMLService {
             _entityDecl);
 
         final String insertQuery =
-            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id"))}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id"))}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}";
+            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id")).reflectee}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).reflectee}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id"))}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name))}";
 
         print("insertQuery: $insertQuery");
         await executeSQL(insertQuery);
