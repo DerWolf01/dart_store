@@ -21,7 +21,7 @@ class DqlService extends DartStoreUtility {
           (e) => e.dataType is ForeignField,
         )) {
           modelMap[foreignKey.name] =
-              await ForeignKeyService().query<T>(modelMap["id"]);
+              await ForeignKeyService().query<T>(modelMap["id"], type: type);
         }
         try {
           print("modelMap: $modelMap");

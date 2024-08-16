@@ -11,7 +11,7 @@ import 'package:dart_store/sql/connection/one_to_one/one_to_one_instance.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
 import 'package:postgres/legacy.dart';
-import 'package:postgres/postgres.dart';
+import 'package:postgres/postgres.dart' as pg;
 
 class ConstraintService {
   List<String> getConstraints(EntityMirror entityMirror) {
@@ -175,8 +175,8 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
     return null;
   }
 
-  Future<dynamic> query<T>(dynamic id) async {
-    final entityMirror = EntityMirror<T>.byType();
+  Future<dynamic> query<T>(dynamic id, {Type? type}) async {
+    final entityMirror = EntityMirror<T>.byType(type: type);
     late dynamic queryResult;
     final foreignFields = entityMirror.column.where(
       (element) => element.dataType is ForeignField,
@@ -199,7 +199,7 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         final result = await executeSQL(query);
 
         for (final row in result) {
-          final Result foreignFieldsResult = await executeSQL(
+          final pg.Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
 
           queryResult = ConversionService.mapToObject(
