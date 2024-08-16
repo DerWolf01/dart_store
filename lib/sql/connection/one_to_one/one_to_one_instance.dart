@@ -39,6 +39,7 @@ class OneToOneConnectionInstance with DartStoreUtility {
       // TODO evaluate if ON CONFLICT should be included
       final statement =
           "INSERT INTO $connectionTableName ($id1Name, $id2Name) VALUES ($id1, $id2)";
+      print("OneToOneConnectionInstance.insert() --> $statement");
       await executeSQL(statement);
     } on PostgreSQLException catch (e, s) {
       print(e);
