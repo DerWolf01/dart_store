@@ -4,20 +4,20 @@ import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class DqlService extends DartStoreUtility {
-  Future<List<T>> query<T>({WhereCollection? where}) async {
+  Future<List<T>> query<T>({WhereCollection? where, Type? type}) async {
     try {
-      final _entityDecl = entityDecl<T>();
+      final entityMirror = EntityMirror<T>.byType(type: type);
       final List<T> queryResult = [];
 
-      for (final row
-          in (await executeSQL(generateQueryString<T>(where: where)))) {
+      for (final row in (await executeSQL(
+          generateQueryString<T>(where: where, type: type)))) {
         print("row: $row");
         print(
             "row.toColumnMap(): ${row.toColumnMap().entries.map((entry) => "${entry.key}: ${entry.value} ${entry.value.runtimeType}").join(", ")}");
 
         final modelMap = row.toColumnMap();
 
-        for (final foreignKey in _entityDecl.column.where(
+        for (final foreignKey in entityMirror.column.where(
           (e) => e.dataType is ForeignField,
         )) {
           modelMap[foreignKey.name] =
@@ -25,7 +25,8 @@ class DqlService extends DartStoreUtility {
         }
         try {
           print("modelMap: $modelMap");
-          queryResult.add(ConversionService.mapToObject<T>(modelMap));
+          queryResult
+              .add(ConversionService.mapToObject<T>(modelMap, type: type));
         } catch (e, s) {
           print("Error: $e StackTrace: $s");
         }
@@ -37,16 +38,16 @@ class DqlService extends DartStoreUtility {
     }
   }
 
-  String generateQueryString<T>({WhereCollection? where}) {
-    final _entityDecl = entityDecl<T>();
-    final columnNames = _entityDecl.column
+  String generateQueryString<T>({WhereCollection? where, Type? type}) {
+    final entityMirror = EntityMirror<T>.byType(type: type);
+    final columnNames = entityMirror.column
         .where(
           (element) => element.dataType is! ForeignField,
         )
         .map((e) => e.name)
         .join(", ");
     print("columnNames: $columnNames");
-    final tableName = _entityDecl.name;
+    final tableName = entityMirror.name;
     final queryString =
         "SELECT $columnNames FROM $tableName ${where?.chain() ?? ""}";
     print(queryString);

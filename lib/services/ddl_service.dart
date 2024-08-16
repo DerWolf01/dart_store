@@ -2,13 +2,8 @@ import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
-import 'package:dart_store/sql/declarations/entity_decl.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/updated_at.dart';
-import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
-import 'package:dart_store/sql/sql_anotations/data_types/pseudo_types.dart';
-import 'package:dart_store/sql/sql_anotations/entity.dart';
 import 'package:postgres/postgres.dart';
 
 class DDLService {
@@ -17,16 +12,16 @@ class DDLService {
     final classes = _getClasses();
 
     // Filter classes annotated with @Model
-    final List<EntityDecl> entityDecls = [];
+    final List<EntityMirror> entityMirrors = [];
 
     for (final c in classes) {
-      entityDecls.add(_makeEntityDecl(c));
+      entityMirrors.add(EntityMirror.byClassMirror(classMirror: c));
     }
 
     // Create tables for each model class
-    for (final entityDecl in entityDecls) {
-      final tableName = _getTableName(entityDecl);
-      final columns = _getColumns(entityDecl.classMirror);
+    for (final entityMirror in entityMirrors) {
+      final tableName = _getTableName(entityMirror);
+      final columns = _getColumns(entityMirror.classMirror);
 
       // Generate SQL statement to create table
       final sql =
@@ -35,16 +30,16 @@ class DDLService {
       await _executeSQL(sql);
       // Execute the SQL statement to create the table
     }
-    for (final entityDecl in entityDecls) {
-      await ConstraintService().setCoinstraints(entityDecl);
-      // enableUpdatedAtTrigger(_getTableName(entityDecl));
+    for (final entityMirror in entityMirrors) {
+      await ConstraintService().setCoinstraints(entityMirror);
+      // enableUpdatedAtTrigger(_getTableName(entityMirror));
     }
     return;
   }
 
-  Future<void> createTable(EntityDecl entityDecl) async {
-    final tableName = _getTableName(entityDecl);
-    final columns = _getColumns(entityDecl.classMirror);
+  Future<void> createTable(EntityMirror entityMirror) async {
+    final tableName = _getTableName(entityMirror);
+    final columns = _getColumns(entityMirror.classMirror);
     // Generate SQL statement to create table
     final sql =
         await _generateCreateTableStatement(tableName.toLowerCase(), columns);
@@ -52,8 +47,8 @@ class DDLService {
     // print("executing $sql");
     await _executeSQL(sql);
 
-    await ConstraintService().setCoinstraints(entityDecl);
-    // enableUpdatedAtTrigger(_getTableName(entityDecl));
+    await ConstraintService().setCoinstraints(entityMirror);
+    // enableUpdatedAtTrigger(_getTableName(entityMirror));
     return;
   }
 
@@ -61,23 +56,12 @@ class DDLService {
     return CollectorService().searchClassesWithAnnotation<Entity>();
   }
 
-  EntityDecl _makeEntityDecl(ClassMirror classMirror) {
-    final classAnnotations = classMirror.metadata;
-    final Entity entityAnnotation = classAnnotations.firstWhere((annotation) {
-      return annotation.reflectee is Entity;
-    }).reflectee as Entity;
-    return EntityDecl(
-        classMirror: classMirror,
-        entity: entityAnnotation,
-        column: _getColumns(classMirror));
-  }
+  String _getTableName(EntityMirror entityMirror) =>
+      entityMirror.entity.name ??
+      MirrorSystem.getName(entityMirror.classMirror.simpleName).toLowerCase();
 
-  String _getTableName(EntityDecl entityDecl) =>
-      entityDecl.entity.name ??
-      MirrorSystem.getName(entityDecl.classMirror.simpleName).toLowerCase();
-
-  List<ColumnDecl> _getColumns(ClassMirror classMirror) {
-    final List<ColumnDecl> columns = [];
+  List<ColumnMirror> _getColumns(ClassMirror classMirror) {
+    final List<ColumnMirror> columns = [];
 
     final fields = classMirror.declarations.values.whereType<VariableMirror>();
 
@@ -109,7 +93,7 @@ class DDLService {
       final columnName = MirrorSystem.getName(field.variableMirror.simpleName);
       final dataType = dataTypes.first;
 
-      columns.add(ColumnDecl(
+      columns.add(ColumnMirror(
           name: columnName,
           field: field.variableMirror,
           dataType: dataType,
@@ -120,7 +104,7 @@ class DDLService {
   }
 
   Future<String> _generateCreateTableStatement(
-      String tableName, List<ColumnDecl> columns) async {
+      String tableName, List<ColumnMirror> columns) async {
     final List<String> columnDefinitions = [];
     for (final column in columns.where(
       (element) => element.dataType is! ForeignField,
@@ -161,15 +145,15 @@ class DDLService {
     final classes = _getClasses();
 
     // Filter classes annotated with @Model
-    final List<EntityDecl> entityDecls = [];
+    final List<EntityMirror> entityMirrors = [];
 
     for (final c in classes) {
-      entityDecls.add(_makeEntityDecl(c));
+      entityMirrors.add(EntityMirror.byClassMirror(classMirror: c));
     }
 
     // Drop tables for each model class
-    for (final entityDecl in entityDecls) {
-      final tableName = _getTableName(entityDecl);
+    for (final entityMirror in entityMirrors) {
+      final tableName = _getTableName(entityMirror);
 
       // Generate SQL statement to drop table
       final sql = _generateDropTableStatement(tableName);
@@ -208,7 +192,7 @@ class DDLService {
 }
 
 // TODO
-// Add constraintts, columns <Datatype, FieldName> to EntityDecl
+// Add constraintts, columns <Datatype, FieldName> to EntityMirror
 
 class Field {
   const Field({required this.variableMirror});

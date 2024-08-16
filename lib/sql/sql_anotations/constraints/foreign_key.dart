@@ -1,7 +1,12 @@
+import 'dart:mirrors';
+
 import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
 
 abstract class ForeignKey<ReferencedEntity> extends SQLConstraint {
   const ForeignKey();
+
+  Type get referencedEntity =>
+      reflect(this).type.typeArguments.first.reflectedType;
 }
 
 class OneToMany<ReferencedTable> extends ForeignKey<ReferencedTable> {

@@ -5,10 +5,29 @@ import 'package:postgres/postgres.dart';
 
 @Entity()
 class CreatedAtTest {
-  CreatedAtTest.init(this.id, this.createdat);
+  CreatedAtTest.init(this.id, this.createdat, this.oto);
   CreatedAtTest();
 
-  @PrimaryKey()
+  @PrimaryKey(autoIncrement: true)
+  @Serial()
+  late final int id;
+
+  @CreatedAt()
+  late final DateTime createdat;
+
+  @OneToOne<OTOTest>()
+  late final OTOTest oto;
+}
+
+@Entity()
+class OTOTest {
+  OTOTest.init(
+    this.id,
+    this.createdat,
+  );
+  OTOTest();
+
+  @PrimaryKey(autoIncrement: true)
   @Serial()
   late final int id;
 
@@ -18,7 +37,10 @@ class CreatedAtTest {
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
-  print((await dartStore.query<CreatedAtTest>()).first.createdat);
+
+  await dartStore.save(
+      CreatedAtTest.init(-1, DateTime.now(), OTOTest.init(-1, DateTime.now())));
+  print((await dartStore.query<CreatedAtTest>()).firstOrNull?.createdat);
 }
 
 class PostgresConnection extends DatabaseConnection {

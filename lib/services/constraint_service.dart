@@ -1,22 +1,30 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/services/dml_service.dart';
+import 'package:dart_store/sql/connection/many_to_many.dart';
+import 'package:dart_store/sql/connection/one_to_many.dart';
+import 'package:dart_store/sql/connection/one_to_one/one_to_one.dart';
+import 'package:dart_store/sql/connection/one_to_one/one_to_one_instance.dart';
+import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
+import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
+import 'package:postgres/legacy.dart';
 import 'package:postgres/postgres.dart';
 
 class ConstraintService {
-  List<String> getConstraints(EntityDecl entityDecl) {
+  List<String> getConstraints(EntityMirror entityMirror) {
     final List<String> constraintStatements = [];
 
-    for (final column in entityDecl.column) {
+    for (final column in entityMirror.column) {
       final constraints = column.constraints;
       constraints.removeWhere(
         (element) => element is PrimaryKey,
       );
       for (final constraint in constraints) {
         final constraintStatement =
-            _generateConstraintStatement(entityDecl, column, constraint);
+            _generateConstraintStatement(entityMirror, column, constraint);
 
         if (constraintStatement == null) continue;
         constraintStatements.addAll(constraintStatement);
@@ -26,33 +34,46 @@ class ConstraintService {
     return constraintStatements;
   }
 
-  _generateConstraintStatement(
-      EntityDecl _entityDecl, ColumnDecl columnDecl, SQLConstraint constraint) {
+  _generateConstraintStatement(EntityMirror entityMirror,
+      ColumnMirror columnMirror, SQLConstraint constraint) {
     if (constraint is NotNull) {
-      return 'ALTER TABLE ${_entityDecl.name} ALTER COLUMN ${columnDecl.name} SET NOT NULL';
+      return 'ALTER TABLE ${entityMirror.name} ALTER COLUMN ${columnMirror.name} SET NOT NULL';
     } else if (constraint is OneToMany) {
+      final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
+      if (pointsTo == null) {
+        throw Exception(
+            "${constraint.runtimeType} of ${entityMirror.name}.${columnMirror.name} is not referring to any other entity and must have a type argument");
+      }
+
       return OneToManyConnection(
-        _entityDecl,
-        entityDecl(
-            type: reflect(constraint).type.typeArguments.first.reflectedType),
+        entityMirror,
+        EntityMirror.byType(type: pointsTo.reflectedType),
       ).connectionStatements;
     } else if (constraint is OneToOne) {
+      final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
+      if (pointsTo == null) {
+        throw Exception(
+            "${constraint.runtimeType} of ${entityMirror.name}.${columnMirror.name} is not referring to any other entity and must have a type argument");
+      }
       return OneToOneConnection(
-        entityDecl(
-            type: reflect(constraint).type.typeArguments.first.reflectedType),
-        _entityDecl,
+        EntityMirror.byType(type: pointsTo.reflectedType),
+        entityMirror,
       ).connectionStatements;
     } else if (constraint is ManyToOne) {
+      final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
+      if (pointsTo == null) {
+        throw Exception(
+            "${constraint.runtimeType} of ${entityMirror.name}.${columnMirror.name} is not referring to any other entity and must have a type argument");
+      }
       return ManyToOneConnection(
-        _entityDecl,
-        entityDecl(
-            type: reflect(constraint).type.typeArguments.first.reflectedType),
+        entityMirror,
+        EntityMirror.byType(type: pointsTo.reflectedType),
       ).connectionStatements;
     }
   }
 
-  Future<void> setCoinstraints(EntityDecl entityDecl) async {
-    final constraints = getConstraints(entityDecl);
+  Future<void> setCoinstraints(EntityMirror entityMirror) async {
+    final constraints = getConstraints(entityMirror);
     print("Constraints: $constraints");
     for (final constraint in constraints) {
       print("Executing $constraint");
@@ -65,52 +86,51 @@ class ConstraintService {
 
 class ForeignKeyService extends DMLService {
   Future<int?> insertForeignFields(dynamic entity) async {
-    final _entityDecl = entityDecl(type: entity.runtimeType);
+    final entityMirror = EntityInstanceMirror(
+      instanceMirror: reflect(entity),
+    );
 
     final foreignKeyColumns =
-        _entityDecl.column.where((element) => element.isForeignKey());
+        entityMirror.column.where((element) => element.isForeignKey());
     for (final foreignKeyColumn in foreignKeyColumns) {
       final foreignKey = foreignKeyColumn.getForeignKey();
 
       if (foreignKey is OneToOne) {
-        final connection = OneToOneConnection(
-            entityDecl(
-                type:
-                    reflect(foreignKey).type.typeArguments.first.reflectedType),
-            _entityDecl);
+        print("OneToOne");
+        await dartStore.save(
+            entityMirror.fieldInstanceMirror(foreignKeyColumn.name).reflectee);
+        final connection = OneToOneConnectionInstance(
+          entityMirror.entityMirrorWithId,
+          EntityMirror.byType(
+              type: reflect(foreignKey).type.typeArguments.first.reflectedType),
+        );
 
-        final String insertQuery =
-            "INSERT INTO ${connection.connectionTableName} (${_entityDecl.name}_id, ${connection.referencedEntity.name}_id) VALUES (${reflect(entity).getField(Symbol("id")).reflectee}, ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).getField(#id).reflectee}) ON CONFLICT (${_entityDecl.name}_id) DO UPDATE SET ${_entityDecl.name}_id = ${reflect(entity).getField(Symbol("id")).reflectee}, ${connection.referencedEntity.name}_id = ${reflect(entity).getField(Symbol(foreignKeyColumn.name)).getField(#id).reflectee}";
-
-        print("insertQuery: $insertQuery");
-        await executeSQL(insertQuery);
-        return await lastInsertedId(connection.connectionTableName);
+        return await connection.insert(
+            otherEntityWithid: EntityInstanceMirror(
+                    instanceMirror:
+                        entityMirror.fieldInstanceMirror(foreignKeyColumn.name))
+                .entityMirrorWithId);
       } else if (foreignKey is OneToMany) {
         final connection = OneToManyConnection(
-          _entityDecl,
-          entityDecl(
+          entityMirror,
+          EntityMirror.byType(
               type: reflect(foreignKey).type.typeArguments.first.reflectedType),
         );
 
         final modelMap = ConversionService.objectToMap(entity);
 
-        final EntityDecl _foreignFieldEntityDecl =
-            entityDecl(type: entity.runtimeType);
-        final List<ColumnDecl> _foreignFieldEntityColumns = _entityDecl.column;
+        final EntityMirror foreignFieldEntityDecl =
+            EntityMirror.byType(type: entity.runtimeType);
+        final List<ColumnMirror> foreignFieldEntityColumns =
+            entityMirror.column;
 
         final Map<String, dynamic> values = {};
-        for (final column in _foreignFieldEntityColumns) {
+        for (final column in foreignFieldEntityColumns) {
           if (column.isForeignKey()) {
             final foreignField = column.getForeignKey();
             if (foreignField is ManyToOne) {
-              final connection = OneToManyConnection(
-                  _entityDecl,
-                  entityDecl(
-                      type: reflect(foreignField)
-                          .type
-                          .typeArguments
-                          .first
-                          .reflectedType));
+              final connection = OneToManyConnection(entityMirror,
+                  EntityMirror.byType(type: foreignField.referencedEntity));
 
               values[connection.referencingColumn] = reflect(entity)
                   .getField(Symbol(column.name))
@@ -124,9 +144,9 @@ class ForeignKeyService extends DMLService {
         String fieldsStatement = "";
         String valuesStatement = "";
 
-        final _primaryKeyDecl = _foreignFieldEntityDecl.primaryKeyDecl;
-        if (_primaryKeyDecl.primaryKey.autoIncrement == true) {
-          values.remove(_primaryKeyDecl.name);
+        final _primaryKeyMirror = foreignFieldEntityDecl.primaryKeyMirror;
+        if (_primaryKeyMirror.primaryKey.autoIncrement == true) {
+          values.remove(_primaryKeyMirror.name);
         }
         for (final valueEntry in values.entries) {
           if (fieldsStatement.isEmpty) {
@@ -140,26 +160,25 @@ class ForeignKeyService extends DMLService {
         }
 
         final query =
-            '''INSERT INTO ${_entityDecl.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
+            '''INSERT INTO ${entityMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
 ON CONFLICT (id) DO UPDATE 
 SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
 
         await executeSQL(query);
         await insertForeignFields(entity);
-        if (_primaryKeyDecl.dataType is! Serial) {
+        if (_primaryKeyMirror.dataType is! Serial) {
           return entity.id;
         }
-        return await lastInsertedId(_entityDecl.name);
+        return await lastInsertedId(entityMirror.name);
       }
     }
     return null;
   }
 
-  @override
   Future<dynamic> query<T>(dynamic id) async {
-    final _entityDecl = entityDecl<T>();
+    final entityMirror = EntityMirror<T>.byType();
     late dynamic queryResult;
-    final foreignFields = _entityDecl.column.where(
+    final foreignFields = entityMirror.column.where(
       (element) => element.dataType is ForeignField,
     );
 
@@ -167,15 +186,15 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
       final foreignKey = foreignField.getForeignKey();
       if (foreignKey is ManyToOne) {
         final connection = ManyToOneConnection(
-            _entityDecl,
-            entityDecl(
+            entityMirror,
+            EntityMirror.byType(
                 type: reflect(foreignKey)
                     .type
                     .typeArguments
                     .first
                     .reflectedType));
         final query =
-            'SELECT (${connection.referencingColumn}) FROM ${_entityDecl.name} WHERE id = $id';
+            'SELECT (${connection.referencingColumn}) FROM ${entityMirror.name} WHERE id = $id';
 
         final result = await executeSQL(query);
 
@@ -188,35 +207,19 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
               type: reflect(foreignKey).type.typeArguments.first.reflectedType);
         }
       } else if (foreignKey is OneToOne) {
-        final connection = OneToOneConnection(
-            _entityDecl,
-            entityDecl(
-                type: reflect(foreignKey)
-                    .type
-                    .typeArguments
-                    .first
-                    .reflectedType));
-        final query =
-            'SELECT (${connection.referencedEntity.name}_id) FROM ${connection.connectionTableName} WHERE ${connection.referencingEntity}_id = $id';
-        final result = await executeSQL(query);
-        for (final row in result) {
-          final Result foreignFieldsResult = await executeSQL(
-              "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-          queryResult = ConversionService.mapToObject(
-              foreignFieldsResult.first.toColumnMap(),
-              type: reflect(foreignKey).type.typeArguments.first.reflectedType);
-          return queryResult;
-        }
+        print("OneToOne references ${foreignKey.referencedEntity}");
+        final connectionInstance = OneToOneConnectionInstance(
+            EntityMirrorWithId<T>.byType(
+              id: id,
+            ),
+            EntityMirror.byType(type: foreignKey.referencedEntity));
+        queryResult = await connectionInstance.query();
+        print("OneToOne res: $queryResult");
+        return queryResult;
       } else if (foreignKey is OneToMany) {
         queryResult = [];
-        final connection = OneToManyConnection(
-            _entityDecl,
-            entityDecl(
-                type: reflect(foreignKey)
-                    .type
-                    .typeArguments
-                    .first
-                    .reflectedType));
+        final connection = OneToManyConnection(entityMirror,
+            EntityMirror.byType(type: foreignKey.referencedEntity));
         final query =
             'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
         final result = await executeSQL(query);
@@ -229,55 +232,4 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
     }
     return queryResult;
   }
-}
-
-abstract class ForeignKeyConnection {
-  List<String> get connectionStatements;
-}
-
-class OneToManyConnection extends ForeignKeyConnection {
-  final EntityDecl referencingEntity;
-  final EntityDecl referencedEntity;
-
-  OneToManyConnection(this.referencingEntity, this.referencedEntity);
-
-  String get referencingColumn => '${referencingEntity.name}_id';
-
-  @override
-  get connectionStatements => [
-        "ALTER TABLE ${referencedEntity.name} ADD COLUMN IF NOT EXISTS $referencingColumn ${referencingEntity.primaryKeyType.runtimeType}",
-        "ALTER TABLE ${referencedEntity.name} DROP CONSTRAINT IF EXISTS $referencingColumn",
-        'ALTER TABLE ${referencedEntity.name} ADD FOREIGN KEY  ($referencingColumn) REFERENCES ${referencingEntity.name}(id)'
-      ];
-}
-
-class ManyToOneConnection extends ForeignKeyConnection {
-  final EntityDecl referencingEntity;
-  final EntityDecl referencedEntity;
-
-  ManyToOneConnection(this.referencingEntity, this.referencedEntity);
-
-  String get referencingColumn => '${referencedEntity.name}_id';
-
-  @override
-  get connectionStatements => [
-        "ALTER TABLE ${referencingEntity.name} ADD COLUMN IF NOT EXISTS $referencingColumn ${referencingEntity.primaryKeyType.runtimeType}",
-        "ALTER TABLE  ${referencingEntity.name} DROP CONSTRAINT IF EXISTS $referencingColumn",
-        'ALTER TABLE ${referencingEntity.name} ADD FOREIGN KEY  ($referencingColumn) REFERENCES ${referencedEntity.name}(id)'
-      ];
-}
-
-class OneToOneConnection extends ForeignKeyConnection {
-  final EntityDecl referencingEntity;
-  final EntityDecl referencedEntity;
-
-  OneToOneConnection(this.referencedEntity, this.referencingEntity);
-
-  String get connectionTableName =>
-      '${referencingEntity.name}_${referencedEntity.name}';
-
-  @override
-  List<String> get connectionStatements => [
-        'CREATE TABLE IF NOT EXISTS $connectionTableName (${referencingEntity.name}_id ${referencingEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencingEntity.name}(id), ${referencedEntity.name}_id ${referencedEntity.primaryKeyType.sqlTypeName()} REFERENCES ${referencedEntity.name}(id), PRIMARY KEY(${referencingEntity.name}_id, ${referencedEntity.name}_id))'
-      ];
 }
