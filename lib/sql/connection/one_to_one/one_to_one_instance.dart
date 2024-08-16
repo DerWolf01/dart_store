@@ -27,14 +27,14 @@ class OneToOneConnectionInstance with DartStoreUtility {
     final entities = orderWithIds([entity$1, otherEntityWithid]);
     final name1 = entities[0].name;
     final id1Name = "${name1}_id";
-    final id1 = entities[0].runtimeType == entity$1.runtimeType
+    final id1 = entities[0].runtimeType == EntityMirrorWithId
         ? entity$1.id
         : otherEntityWithid.id;
     final name2 = entities[1].name;
     final id2Name = "${name2}_id";
-    final id2 = entities[1].runtimeType == entity$1.runtimeType
-        ? entity$1.id
-        : otherEntityWithid.id;
+    final id2 = entities[0].runtimeType == EntityMirrorWithId
+        ? otherEntityWithid.id
+        : entity$1.id;
     try {
       // TODO evaluate if ON CONFLICT should be included
       final statement =
