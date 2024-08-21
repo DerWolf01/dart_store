@@ -1,46 +1,36 @@
 import 'dart:async';
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
+import 'package:dart_store/sql/sql_anotations/data_types/text_list.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()
-class CreatedAtTest {
-  CreatedAtTest.init(this.id, this.createdat, this.oto);
-  CreatedAtTest();
-
-  @PrimaryKey(autoIncrement: true)
-  @Serial()
-  late final int id;
-
-  @CreatedAt()
-  late final DateTime createdat;
-
-  @OneToOne<OTOTest>()
-  late final OTOTest oto;
-}
-
-@Entity()
-class OTOTest {
-  OTOTest.init(
+class TextListTest {
+  TextListTest();
+  TextListTest.init({
     this.id,
-    this.createdat,
-  );
-  OTOTest();
+    required this.textlist,
+  });
 
-  @PrimaryKey(autoIncrement: true)
+  @PrimaryKey()
   @Serial()
-  late final int id;
+  late final int? id;
 
-  @CreatedAt()
-  late final DateTime createdat;
+  @TextList()
+  late final List<String> textlist;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
 
-  await dartStore.save(
-      CreatedAtTest.init(-1, DateTime.now(), OTOTest.init(-1, DateTime.now())));
-  print((await dartStore.query<CreatedAtTest>()).firstOrNull?.createdat);
+  print(await dartStore.save(
+    TextListTest.init(
+      id: -1,
+      textlist: ['a', 'b', 'c'],
+    ),
+  ));
+  print(dartStore.query(type: TextListTest));
 }
 
 class PostgresConnection extends DatabaseConnection {

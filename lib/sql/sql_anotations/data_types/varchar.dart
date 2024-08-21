@@ -6,7 +6,7 @@ class Varchar extends SQLDataType<String> {
   @override
   convert(value) {
     if (value == null && isNullable == false) {
-      throw Exception('Value cannot be null');
+      throw Exception('Value cannot be null for $runtimeType');
     } else if (value == null && isNullable == true) {
       return null;
     }

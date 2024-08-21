@@ -10,11 +10,11 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 class DMLService with DartStoreUtility {
   Future<int> insert(dynamic entity) async {
     final modelMap = ConversionService.objectToMap(entity);
-
+    print("modelMap --> $modelMap");
     final EntityMirror entityMirror =
         EntityMirror.byType(type: entity.runtimeType);
     final List<ColumnMirror> columnMirrors = entityMirror.column;
-
+    print("columnMirrors --> ${columnMirrors.map((e) => e.name)}");
     final Map<String, dynamic> values = {};
     for (final column in columnMirrors) {
       if (column.isForeignKey()) {
