@@ -3,7 +3,7 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:postgres/legacy.dart';
+import 'package:postgres/postgres.dart';
 
 class OneToOneConnectionInstance with DartStoreUtility {
   // The entity used to orient query later.
@@ -41,7 +41,7 @@ class OneToOneConnectionInstance with DartStoreUtility {
           "INSERT INTO $connectionTableName ($id1Name, $id2Name) VALUES ($id1, $id2)";
       print("OneToOneConnectionInstance.insert() --> $statement");
       await executeSQL(statement);
-    } on PostgreSQLException catch (e, s) {
+    } on PgException catch (e, s) {
       print(e);
       print(s);
     } catch (e, s) {

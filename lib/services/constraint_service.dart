@@ -10,7 +10,7 @@ import 'package:dart_store/sql/connection/one_to_one/one_to_one.dart';
 import 'package:dart_store/sql/connection/one_to_one/one_to_one_instance.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
-import 'package:postgres/legacy.dart';
+
 import 'package:postgres/postgres.dart' as pg;
 
 class ConstraintService {
