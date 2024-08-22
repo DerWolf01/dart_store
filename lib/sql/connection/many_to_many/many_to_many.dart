@@ -14,7 +14,7 @@ class ManyToManyConnection extends ForeignKeyConnection {
       entity$1Name == entity$2.name ? "${entity$2.name}_1" : entity$2.name;
   @override
   List<String> get connectionStatements => [
-        'CREATE TABLE IF NOT EXISTS $connectionTableName (id SERIAL PRIMARY KEY, ${entity$1Name}_id ${entity$1.primaryKeyType.sqlTypeName()} REFERENCES ${entity$1Name}(id), ${entity$2Name}_id ${entity$2.primaryKeyType.sqlTypeName()} REFERENCES ${entity$2Name}(id), UNIQUE(${entity$1Name}_id, ${entity$2Name}_id))'
+        'CREATE TABLE IF NOT EXISTS $connectionTableName (id SERIAL PRIMARY KEY, ${entity$1Name}_id ${entity$1.primaryKeyType.sqlTypeName()} REFERENCES ${entity$1Name}(id), ${entity$2Name}_id ${entity$2.primaryKeyType.sqlTypeName()} REFERENCES ${entity$2.name}(id), UNIQUE(${entity$1Name}_id, ${entity$2Name}_id))'
       ];
 
   List<EntityMirror> get ordered =>
