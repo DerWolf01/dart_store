@@ -38,7 +38,7 @@ class DMLService with DartStoreUtility {
                     compareTo: foreignFieldId,
                     comporator: WhereOperator.equals)
               ])));
-        } else {
+        } else if (foreignField is! ManyToMany) {
           foreignFieldInstance = reflect(entity).getField(Symbol(column.name));
 
           foreignFieldId = foreignFieldInstance.getField(#id).reflectee;
