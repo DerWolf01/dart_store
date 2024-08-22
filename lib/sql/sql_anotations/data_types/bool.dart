@@ -1,7 +1,7 @@
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
 
 class Bool extends SQLDataType {
-  const Bool();
+  const Bool({super.isNullable = false});
 
   @override
   convert(value) {

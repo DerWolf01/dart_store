@@ -1,7 +1,7 @@
 import 'package:dart_store/dart_store.dart';
 
 class TextList extends SQLDataType<List<String>> {
-  const TextList({this.length});
+  const TextList({this.length, super.isNullable});
 
   final int? length;
 
