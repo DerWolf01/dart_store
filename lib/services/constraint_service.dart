@@ -97,8 +97,11 @@ class ForeignKeyService extends DMLService {
 
       if (foreignKey is OneToOne) {
         print("OneToOne");
-        await dartStore.save(
-            entityMirror.fieldInstanceMirror(foreignKeyColumn.name).reflectee);
+        if (!foreignKeyColumn.mapId) {
+          await dartStore.save(entityMirror
+              .fieldInstanceMirror(foreignKeyColumn.name)
+              .reflectee);
+        }
         final connection = OneToOneConnectionInstance(
           entityMirror.entityMirrorWithId,
           EntityMirror.byType(
@@ -118,8 +121,7 @@ class ForeignKeyService extends DMLService {
       } else if (foreignKey is OneToMany) {
         final connection = OneToManyConnection(
           entityMirror,
-          EntityMirror.byType(
-              type: reflect(foreignKey).type.typeArguments.first.reflectedType),
+          EntityMirror.byType(type: foreignKey.referencedEntity),
         );
 
         final modelMap = ConversionService.objectToMap(entity);
