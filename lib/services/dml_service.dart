@@ -38,8 +38,8 @@ class DMLService with DartStoreUtility {
               ])));
         } else {
           foreignFieldInstance = reflect(entity).getField(Symbol(column.name));
-          foreignFieldId =
-              reflect(foreignFieldInstance.getField(#id)).reflectee;
+
+          foreignFieldId = foreignFieldInstance.getField(#id).reflectee;
         }
         if (foreignField is ManyToOne) {
           final connection = ManyToOneConnection(entityMirror,
