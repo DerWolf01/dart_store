@@ -13,6 +13,8 @@ class DMLService with DartStoreUtility {
   Future<int> insert(dynamic entity) async {
     final modelMap = ConversionService.objectToMap(entity);
     print("modelMap --> $modelMap");
+    print("type: ${modelMap["textlist"]?.runtimeType}");
+
     final EntityMirror entityMirror =
         EntityMirror.byType(type: entity.runtimeType);
     final List<ColumnMirror> columnMirrors = entityMirror.column;
@@ -21,7 +23,7 @@ class DMLService with DartStoreUtility {
     for (final column in columnMirrors) {
       if (column.isForeignKey()) {
         late final InstanceMirror foreignFieldInstance;
-        late final int foreignFieldId;
+        late final dynamic foreignFieldId;
 
         final ForeignKey<dynamic>? foreignField = column.getForeignKey();
         if (column.mapId) {

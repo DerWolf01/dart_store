@@ -172,16 +172,14 @@ class ForeignKeyService extends DMLService {
         }
         return queryResult;
       } else if (foreignKey is ManyToMany) {
-        print("OneToOne references ${foreignKey.referencedEntity}");
+        print("ManyToMany references ${foreignKey.referencedEntity}");
         final connectionInstance = ManyToManyConnectionInstance(
-            EntityMirrorWithId<T>.byType(
-              id: id,
-            ),
+            EntityMirrorWithId<T>.byType(id: id, type: type ?? T),
             EntityMirror.byType(type: foreignKey.referencedEntity));
         queryResult = await connectionInstance.query();
-        print("OneToOne res: $queryResult");
+        print("ManyToMany res: $queryResult");
         if (foreignField.mapId) {
-          return reflect(queryResult).getField(#id).reflectee;
+          return queryResult.map((e) => e.id).toList();
         }
         return queryResult;
       } else if (foreignKey is OneToMany) {
@@ -240,11 +238,14 @@ class ForeignKeyService extends DMLService {
     );
 
     if (foreignKeyColumn.mapId) {
-      final queryByIds = foreignFieldIds.map((e) async => await dartStore.query(
-          type: foreignKey.referencedEntity,
-          where: WhereCollection(wheres: [
-            Where(field: "id", compareTo: e, comporator: WhereOperator.equals)
-          ])));
+      final queryByIds = foreignFieldIds
+          .map((e) async => await dartStore.query(
+              type: foreignKey.referencedEntity,
+              where: WhereCollection(wheres: [
+                Where(
+                    field: "id", compareTo: e, comporator: WhereOperator.equals)
+              ])))
+          .toList();
 
       if (queryByIds.isEmpty) {
         throw Exception(
