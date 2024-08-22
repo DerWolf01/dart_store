@@ -119,9 +119,10 @@ class ForeignKeyService extends DMLService {
                 ])))
             : entityMirror.fieldInstanceMirror(foreignKeyColumn.name);
         final foreignFieldInstance = foreignFieldInstanceMirror.reflectee;
-        foreignFieldInstanceMirror.setField(
-            #id, await dartStore.save(foreignFieldInstance));
-
+        if (!foreignKeyColumn.mapId) {
+          foreignFieldInstanceMirror.setField(
+              #id, await dartStore.save(foreignFieldInstance));
+        }
         return await connection.insert(
             otherEntityWithid:
                 EntityInstanceMirror(instanceMirror: foreignFieldInstanceMirror)
