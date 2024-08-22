@@ -127,7 +127,8 @@ class ForeignKeyService extends DMLService {
   }
 
   Future<dynamic> query<T>(dynamic id, {Type? type}) async {
-    final entityMirror = EntityMirror<T>.byType(type: type);
+    print("Querying foreign key using id: $id of type $type");
+    final entityMirror = EntityMirror<T>.byType(type: type ?? T);
     final EntityMirrorWithId entityMirrorWithId =
         EntityMirrorWithId<T>.byClassMirror(
             id: id, classMirror: entityMirror.classMirror);

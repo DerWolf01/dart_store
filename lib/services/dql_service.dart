@@ -6,7 +6,7 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 class DqlService extends DartStoreUtility {
   Future<List<T>> query<T>({WhereCollection? where, Type? type}) async {
     try {
-      final entityMirror = EntityMirror<T>.byType(type: type);
+      final entityMirror = EntityMirror<T>.byType(type: type ?? T);
       final List<T> queryResult = [];
 
       for (final row in (await executeSQL(
@@ -22,8 +22,8 @@ class DqlService extends DartStoreUtility {
         )) {
           print(
               "setting ${foreignKey.name} by querying through: ${modelMap["id"]}");
-          modelMap[foreignKey.name] =
-              await ForeignKeyService().query<T>(modelMap["id"], type: type);
+          modelMap[foreignKey.name] = await ForeignKeyService()
+              .query<T>(modelMap["id"], type: type ?? T);
 
           print("${foreignKey.name} --> ${modelMap[foreignKey.name]}");
         }
