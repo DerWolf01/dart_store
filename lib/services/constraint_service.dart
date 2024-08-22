@@ -190,14 +190,8 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
     for (final foreignField in foreignFields) {
       final foreignKey = foreignField.getForeignKey();
       if (foreignKey is ManyToOne) {
-        final connection = ManyToOneConnection(
-            entityMirror,
-            EntityMirror.byType(
-                type: reflect(foreignKey)
-                    .type
-                    .typeArguments
-                    .first
-                    .reflectedType));
+        final connection = ManyToOneConnection(entityMirror,
+            EntityMirror.byType(type: foreignKey.referencedEntity));
         final query =
             'SELECT (${connection.referencingColumn}) FROM ${entityMirror.name} WHERE id = $id';
 
@@ -206,10 +200,17 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         for (final row in result) {
           final pg.Result foreignFieldsResult = await executeSQL(
               "SELECT * FROM ${connection.referencedEntity.name} WHERE id = ${row.first}");
-
+          if (foreignField.mapId) {
+            queryResult = reflect(ConversionService.mapToObject(
+                    foreignFieldsResult.first.toColumnMap(),
+                    type: foreignKey.referencedEntity))
+                .getField(#id)
+                .reflectee;
+            return queryResult;
+          }
           queryResult = ConversionService.mapToObject(
               foreignFieldsResult.first.toColumnMap(),
-              type: reflect(foreignKey).type.typeArguments.first.reflectedType);
+              type: foreignKey.referencedEntity);
         }
       } else if (foreignKey is OneToOne) {
         print("OneToOne references ${foreignKey.referencedEntity}");
@@ -220,6 +221,9 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
             EntityMirror.byType(type: foreignKey.referencedEntity));
         queryResult = await connectionInstance.query();
         print("OneToOne res: $queryResult");
+        if (foreignField.mapId) {
+          return reflect(queryResult).getField(#id).reflectee;
+        }
         return queryResult;
       } else if (foreignKey is OneToMany) {
         queryResult = [];
@@ -228,13 +232,27 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
         final query =
             'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
         final result = await executeSQL(query);
-        for (final row in result) {
-          queryResult.add(ConversionService.mapToObject(row.toColumnMap(),
-              type:
-                  reflect(foreignKey).type.typeArguments.first.reflectedType));
+        if (foreignField.mapId) {
+          for (final row in result) {
+            queryResult.add(reflect(ConversionService.mapToObject(
+                    row.toColumnMap(),
+                    type: foreignKey.referencedEntity))
+                .getField(#id)
+                .reflectee);
+          }
+        } else {
+          for (final row in result) {
+            queryResult.add(ConversionService.mapToObject(row.toColumnMap(),
+                type: reflect(foreignKey)
+                    .type
+                    .typeArguments
+                    .first
+                    .reflectedType));
+          }
         }
       }
+
+      return queryResult;
     }
-    return queryResult;
   }
 }

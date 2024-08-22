@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/sql/connection/many_to_many.dart';
+import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/primary_key/primary_key_mirror.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
@@ -18,37 +20,61 @@ class DMLService with DartStoreUtility {
     final Map<String, dynamic> values = {};
     for (final column in columnMirrors) {
       if (column.isForeignKey()) {
-        final foreignFieldInstance =
-            reflect(entity).getField(Symbol(column.name));
-        final foreignField = column.getForeignKey();
+        late final InstanceMirror foreignFieldInstance;
+        late final int foreignFieldId;
+
+        final ForeignKey<dynamic>? foreignField = column.getForeignKey();
+        if (column.mapId) {
+          print("column.mapId --> ${column.mapId}");
+          foreignFieldId =
+              reflect(entity).getField(Symbol(column.name)).reflectee;
+          foreignFieldInstance = reflect(await dartStore.query(
+              type: foreignField!.referencedEntity,
+              where: WhereCollection(wheres: [
+                Where(
+                    field: "id",
+                    compareTo: foreignFieldId,
+                    comporator: WhereOperator.equals)
+              ])));
+        } else {
+          foreignFieldInstance = reflect(entity).getField(Symbol(column.name));
+          foreignFieldId =
+              reflect(foreignFieldInstance.getField(#id)).reflectee;
+        }
         if (foreignField is ManyToOne) {
-          final connection = ManyToOneConnection(
-              entityMirror,
-              EntityMirror.byType(
-                  type: reflect(foreignField)
-                      .type
-                      .typeArguments
-                      .first
-                      .reflectedType));
+          final connection = ManyToOneConnection(entityMirror,
+              EntityMirror.byType(type: foreignField.referencedEntity));
           print(
               "many to one connection instance--> ${reflect(entity).getField(Symbol(column.name)).reflectee}");
 
-          if (foreignFieldInstance.getField(#id).reflectee == -1) {
+          if (column.mapId) {
+            values[connection.referencedColumn] = foreignFieldId;
+            continue;
+          }
+
+          if (foreignFieldId == -1) {
             foreignFieldInstance.setField(
                 #id,
                 await dartStore.save(
                     reflect(entity).getField(Symbol(column.name)).reflectee));
 
-            values[connection.referencingColumn] = reflect(entity)
+            values[connection.referencedColumn] = reflect(entity)
                 .getField(Symbol(column.name))
-                .getField(Symbol("id"))
+                .getField(#id)
                 .reflectee;
+            continue;
           }
         }
         continue;
       }
+
+      if (column.mapId) {
+        values[column.name] = modelMap[column.name];
+        continue;
+      }
       values[column.name] = (column.dataType.convert(modelMap[column.name]));
     }
+    print("values --> $values");
     String fieldsStatement = "";
     String valuesStatement = "";
 

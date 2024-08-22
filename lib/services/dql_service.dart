@@ -24,6 +24,7 @@ class DqlService extends DartStoreUtility {
               await ForeignKeyService().query<T>(modelMap["id"], type: type);
         }
         try {
+
           print("modelMap: $modelMap");
           queryResult
               .add(ConversionService.mapToObject<T>(modelMap, type: type));

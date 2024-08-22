@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/text_list.dart';
 import 'package:postgres/postgres.dart';
@@ -17,15 +18,16 @@ class TextListTest {
   @Serial()
   late final int? id;
 
+  @MapId()
   @ManyToOne<ManyToOneTest>()
-  late final ManyToOneTest textlist;
+  late final int textlist;
 }
 
 @Entity()
 class ManyToOneTest {
   ManyToOneTest();
   ManyToOneTest.init({
-    this.id = -1,
+    required this.id,
     required this.textlist,
   });
 
@@ -40,10 +42,12 @@ class ManyToOneTest {
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
 
+  print(await dartStore
+      .save(ManyToOneTest.init(id: 0, textlist: ["a", "b", "c"])));
   print(await dartStore.save(
     TextListTest.init(
       id: -1,
-      textlist: ManyToOneTest.init(textlist: ['a', 'b', 'c']),
+      textlist: 0,
     ),
   ));
   print(dartStore.query(type: TextListTest));

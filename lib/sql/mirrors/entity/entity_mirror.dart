@@ -1,5 +1,6 @@
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/mapping/mapping.dart';
 
 class EntityMirror<T> {
   EntityMirror.byType({Type? type}) : classMirror = reflectClass(type ?? T) {
@@ -61,7 +62,11 @@ class EntityMirror<T> {
           name: columnName,
           field: field,
           dataType: dataType,
-          constraints: constraints));
+          constraints: constraints,
+          mappings: field.metadata
+              .where((element) => element.reflectee is Mapping)
+              .map((e) => e.reflectee as Mapping)
+              .toList()));
     }
 
     return columns;
@@ -96,7 +101,8 @@ class PrimaryKeyMirror extends ColumnMirror {
             name: column.name,
             constraints: column.constraints,
             dataType: column.dataType,
-            field: column.field);
+            field: column.field,
+            mappings: []);
 
   @override
   final PrimaryKey primaryKey;

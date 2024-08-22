@@ -8,11 +8,12 @@ class ManyToOneConnection extends ForeignKeyConnection {
   ManyToOneConnection(this.referencingEntity, this.referencedEntity);
 
   String get referencingColumn => '${referencedEntity.name}_id';
+  String get referencedColumn => '${referencedEntity.name}_id';
 
   @override
   get connectionStatements => [
-        "ALTER TABLE ${referencingEntity.name} ADD COLUMN IF NOT EXISTS $referencingColumn ${referencingEntity.primaryKeyType.runtimeType}",
-        "ALTER TABLE  ${referencingEntity.name} DROP CONSTRAINT IF EXISTS $referencingColumn",
-        'ALTER TABLE ${referencingEntity.name} ADD FOREIGN KEY  ($referencingColumn) REFERENCES ${referencedEntity.name}(id)'
+        "ALTER TABLE ${referencingEntity.name} ADD COLUMN IF NOT EXISTS $referencedColumn ${referencingEntity.primaryKeyType.runtimeType}",
+        "ALTER TABLE  ${referencingEntity.name} DROP CONSTRAINT IF EXISTS $referencedColumn",
+        'ALTER TABLE ${referencingEntity.name} ADD FOREIGN KEY  ($referencedColumn) REFERENCES ${referencedEntity.name}(id)'
       ];
 }

@@ -1,5 +1,6 @@
 import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/mapping/mapping.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_store/sql/connection/many_to_many.dart';
@@ -106,7 +107,11 @@ class DDLService {
           name: columnName,
           field: field.variableMirror,
           dataType: dataType,
-          constraints: constraints));
+          constraints: constraints,
+          mappings: fieldAnnotations
+              .where((element) => element.reflectee is Mapping)
+              .map((e) => e.reflectee as Mapping)
+              .toList()));
     }
 
     return columns;
