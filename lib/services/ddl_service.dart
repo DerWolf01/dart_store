@@ -2,6 +2,7 @@ import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
+import 'package:dart_store/sql/connection/many_to_many.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/updated_at.dart';
 import 'package:postgres/postgres.dart';
@@ -22,6 +23,14 @@ class DDLService {
     for (final entityMirror in entityMirrors) {
       final tableName = _getTableName(entityMirror);
       final columns = _getColumns(entityMirror.classMirror);
+      final manyToOneColumns = columns
+          .where((element) => element.getForeignKey() is ManyToOne)
+          .toList();
+      print("manyToOneColumns --> $manyToOneColumns");
+      for (final column in manyToOneColumns) {
+        await createTable(EntityMirror.byType(
+            type: column.getForeignKey()!.referencedEntity));
+      }
 
       // Generate SQL statement to create table
       final sql =

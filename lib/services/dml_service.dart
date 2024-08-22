@@ -28,6 +28,13 @@ class DMLService with DartStoreUtility {
                       .typeArguments
                       .first
                       .reflectedType));
+          print(
+              "many to one connection instance--> ${reflect(entity).getField(Symbol(column.name)).reflectee}");
+
+          reflect(entity).getField(Symbol(column.name)).setField(
+              #id,
+              await dartStore.save(
+                  reflect(entity).getField(Symbol(column.name)).reflectee));
 
           values[connection.referencingColumn] = reflect(entity)
               .getField(Symbol(column.name))

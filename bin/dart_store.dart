@@ -17,6 +17,22 @@ class TextListTest {
   @Serial()
   late final int? id;
 
+  @ManyToOne<ManyToOneTest>()
+  late final ManyToOneTest textlist;
+}
+
+@Entity()
+class ManyToOneTest {
+  ManyToOneTest();
+  ManyToOneTest.init({
+    this.id = -1,
+    required this.textlist,
+  });
+
+  @PrimaryKey()
+  @Serial()
+  late int id;
+
   @TextList()
   late final List<String> textlist;
 }
@@ -27,7 +43,7 @@ void main(List<String> arguments) async {
   print(await dartStore.save(
     TextListTest.init(
       id: -1,
-      textlist: ['a', 'b', 'c'],
+      textlist: ManyToOneTest.init(textlist: ['a', 'b', 'c']),
     ),
   ));
   print(dartStore.query(type: TextListTest));
