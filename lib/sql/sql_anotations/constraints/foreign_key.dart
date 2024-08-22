@@ -20,3 +20,7 @@ class OneToOne<ReferencedTable> extends ForeignKey<ReferencedTable> {
 class ManyToOne<ReferencedTable> extends ForeignKey<ReferencedTable> {
   const ManyToOne();
 }
+
+class ManyToMany<ReferencedTable> extends ForeignKey<ReferencedTable> {
+  const ManyToMany();
+}

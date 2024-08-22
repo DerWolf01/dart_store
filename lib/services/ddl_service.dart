@@ -3,7 +3,7 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/mapping/mapping.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
-import 'package:dart_store/sql/connection/many_to_many.dart';
+import 'package:dart_store/sql/connection/many_to_one.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/updated_at.dart';
 import 'package:postgres/postgres.dart';

@@ -4,7 +4,9 @@ import 'dart:mirrors';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/services/dml_service.dart';
-import 'package:dart_store/sql/connection/many_to_many.dart';
+import 'package:dart_store/sql/connection/many_to_many/many_to_many.dart';
+import 'package:dart_store/sql/connection/many_to_many/many_to_many_instance.dart';
+import 'package:dart_store/sql/connection/many_to_one.dart';
 import 'package:dart_store/sql/connection/one_to_many.dart';
 import 'package:dart_store/sql/connection/one_to_one/one_to_one.dart';
 import 'package:dart_store/sql/connection/one_to_one/one_to_one_instance.dart';
@@ -59,6 +61,16 @@ class ConstraintService {
         EntityMirror.byType(type: pointsTo.reflectedType),
         entityMirror,
       ).connectionStatements;
+    } else if (constraint is ManyToMany) {
+      final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
+      if (pointsTo == null) {
+        throw Exception(
+            "${constraint.runtimeType} of ${entityMirror.name}.${columnMirror.name} is not referring to any other entity and must have a type argument");
+      }
+      return ManyToManyConnection(
+        EntityMirror.byType(type: pointsTo.reflectedType),
+        entityMirror,
+      ).connectionStatements;
     } else if (constraint is ManyToOne) {
       final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
       if (pointsTo == null) {
@@ -85,117 +97,30 @@ class ConstraintService {
 }
 
 class ForeignKeyService extends DMLService {
-  Future<int?> insertForeignFields(dynamic entity) async {
-    final entityMirror = EntityInstanceMirror(
+  Future<dynamic> insertForeignFields(dynamic entity) async {
+    final entityInstanceMirror = EntityInstanceMirror(
       instanceMirror: reflect(entity),
     );
 
     final foreignKeyColumns =
-        entityMirror.column.where((element) => element.isForeignKey());
+        entityInstanceMirror.column.where((element) => element.isForeignKey());
     for (final foreignKeyColumn in foreignKeyColumns) {
       final foreignKey = foreignKeyColumn.getForeignKey();
-
       if (foreignKey is OneToOne) {
-        print("OneToOne");
-        if (!foreignKeyColumn.mapId) {
-          await dartStore.save(entityMirror
-              .fieldInstanceMirror(foreignKeyColumn.name)
-              .reflectee);
-        }
-        final connection = OneToOneConnectionInstance(
-          entityMirror.entityMirrorWithId,
-          EntityMirror.byType(
-              type: reflect(foreignKey).type.typeArguments.first.reflectedType),
-        );
-        late final foreignFieldInstanceMirror;
-
-        if (foreignKeyColumn.mapId) {
-          final queryById = await dartStore.query(
-              type: foreignKey.referencedEntity,
-              where: WhereCollection(wheres: [
-                Where(
-                    field: "id",
-                    compareTo: entityMirror.field(foreignKeyColumn.name),
-                    comporator: WhereOperator.equals)
-              ]));
-
-          if (queryById.isEmpty) {
-            throw Exception(
-                "No entity of ${foreignKey.referencedEntity} found with id ${entityMirror.id}");
-          }
-          foreignFieldInstanceMirror = reflect(queryById.first);
-        } else {
-          foreignFieldInstanceMirror =
-              entityMirror.fieldInstanceMirror(foreignKeyColumn.name);
-        }
-        final foreignFieldInstance = foreignFieldInstanceMirror.reflectee;
-        if (!foreignKeyColumn.mapId) {
-          foreignFieldInstanceMirror.setField(
-              #id, await dartStore.save(foreignFieldInstance));
-        }
-        return await connection.insert(
-            otherEntityWithid:
-                EntityInstanceMirror(instanceMirror: foreignFieldInstanceMirror)
-                    .entityMirrorWithId);
+        return await insertOneToOne(
+            entityInstanceMirror: entityInstanceMirror,
+            foreignKey: foreignKey,
+            foreignKeyColumn: foreignKeyColumn);
+      } else if (foreignKey is ManyToMany) {
+        return await insertManyToMany(
+            entityInstanceMirror: entityInstanceMirror,
+            foreignKey: foreignKey,
+            foreignKeyColumn: foreignKeyColumn);
       } else if (foreignKey is OneToMany) {
-        final connection = OneToManyConnection(
-          entityMirror,
-          EntityMirror.byType(type: foreignKey.referencedEntity),
-        );
-
-        final modelMap = ConversionService.objectToMap(entity);
-
-        final EntityMirror foreignFieldEntityDecl =
-            EntityMirror.byType(type: entity.runtimeType);
-        final List<ColumnMirror> foreignFieldEntityColumns =
-            entityMirror.column;
-
-        final Map<String, dynamic> values = {};
-        for (final column in foreignFieldEntityColumns) {
-          if (column.isForeignKey()) {
-            final foreignField = column.getForeignKey();
-            if (foreignField is ManyToOne) {
-              final connection = OneToManyConnection(entityMirror,
-                  EntityMirror.byType(type: foreignField.referencedEntity));
-
-              values[connection.referencingColumn] = reflect(entity)
-                  .getField(Symbol(column.name))
-                  .getField(Symbol("id"));
-            }
-            continue;
-          }
-          values[column.name] =
-              (column.dataType.convert(modelMap[column.name]));
-        }
-        String fieldsStatement = "";
-        String valuesStatement = "";
-
-        final _primaryKeyMirror = foreignFieldEntityDecl.primaryKeyMirror;
-        if (_primaryKeyMirror.primaryKey.autoIncrement == true) {
-          values.remove(_primaryKeyMirror.name);
-        }
-        for (final valueEntry in values.entries) {
-          if (fieldsStatement.isEmpty) {
-            fieldsStatement += valueEntry.key;
-            valuesStatement += valueEntry.value.toString();
-            continue;
-          }
-          fieldsStatement += ", ${valueEntry.key}";
-
-          valuesStatement += ", ${valueEntry.value}";
-        }
-
-        final query =
-            '''INSERT INTO ${entityMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
-ON CONFLICT (id) DO UPDATE 
-SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
-
-        await executeSQL(query);
-        await insertForeignFields(entity);
-        if (_primaryKeyMirror.dataType is! Serial) {
-          return entity.id;
-        }
-        return await lastInsertedId(entityMirror.name);
+        return await insertOneToMany(
+            entityInstanceMirror: entityInstanceMirror,
+            foreignKey: foreignKey,
+            foreignKeyColumn: foreignKeyColumn);
       }
     }
     return null;
@@ -246,6 +171,19 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
           return reflect(queryResult).getField(#id).reflectee;
         }
         return queryResult;
+      } else if (foreignKey is ManyToMany) {
+        print("OneToOne references ${foreignKey.referencedEntity}");
+        final connectionInstance = ManyToManyConnectionInstance(
+            EntityMirrorWithId<T>.byType(
+              id: id,
+            ),
+            EntityMirror.byType(type: foreignKey.referencedEntity));
+        queryResult = await connectionInstance.query();
+        print("OneToOne res: $queryResult");
+        if (foreignField.mapId) {
+          return reflect(queryResult).getField(#id).reflectee;
+        }
+        return queryResult;
       } else if (foreignKey is OneToMany) {
         queryResult = [];
         final connection = OneToManyConnection(entityMirror,
@@ -275,5 +213,177 @@ SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connecti
 
       return queryResult;
     }
+  }
+
+  Future<List<int>> insertManyToMany(
+      {required EntityInstanceMirror entityInstanceMirror,
+      required ForeignKey<dynamic> foreignKey,
+      required ColumnMirror foreignKeyColumn}) async {
+    late List<InstanceMirror>? foreignFieldInstanceMirrors;
+    late final List<int> foreignFieldIds;
+
+    print("ManyToMany");
+    if (!foreignKeyColumn.mapId) {
+      foreignFieldIds = entityInstanceMirror
+          .fieldInstanceMirror(foreignKeyColumn.name)
+          .getField(#id)
+          .reflectee;
+      await dartStore.save(entityInstanceMirror
+          .fieldInstanceMirror(foreignKeyColumn.name)
+          .reflectee);
+    } else {
+      foreignFieldIds = entityInstanceMirror.field(foreignKeyColumn.name);
+    }
+    final connection = OneToOneConnectionInstance(
+      entityInstanceMirror.entityMirrorWithId,
+      EntityMirror.byType(type: foreignKey.referencedEntity),
+    );
+
+    if (foreignKeyColumn.mapId) {
+      final queryByIds = foreignFieldIds.map((e) async => await dartStore.query(
+          type: foreignKey.referencedEntity,
+          where: WhereCollection(wheres: [
+            Where(field: "id", compareTo: e, comporator: WhereOperator.equals)
+          ])));
+
+      if (queryByIds.isEmpty) {
+        throw Exception(
+            "No entity of ${foreignKey.referencedEntity} found with id foreignFieldId");
+      }
+      foreignFieldInstanceMirrors = queryByIds.map((e) => reflect(e)).toList();
+    }
+
+    if (!foreignKeyColumn.mapId) {
+      for (var fieldInstanceMirror
+          in foreignFieldInstanceMirrors ?? <InstanceMirror>[]) {
+        fieldInstanceMirror.setField(
+            #id, await dartStore.save(fieldInstanceMirror.reflectee));
+      }
+    }
+
+    final List<int> res = [];
+    for (final foreignFieldId in foreignFieldIds) {
+      res.add(await connection.insert(otherEntityid: foreignFieldId));
+    }
+    return res;
+  }
+
+  Future<int?> insertOneToOne(
+      {required EntityInstanceMirror entityInstanceMirror,
+      required ForeignKey<dynamic> foreignKey,
+      required ColumnMirror foreignKeyColumn}) async {
+    late final InstanceMirror foreignFieldInstanceMirror;
+    late final dynamic foreignFieldId;
+
+    print("OneToOne");
+    if (!foreignKeyColumn.mapId) {
+      foreignFieldInstanceMirror =
+          entityInstanceMirror.fieldInstanceMirror(foreignKeyColumn.name);
+      foreignFieldId = entityInstanceMirror
+          .fieldInstanceMirror(foreignKeyColumn.name)
+          .getField(#id)
+          .reflectee;
+      await dartStore.save(entityInstanceMirror
+          .fieldInstanceMirror(foreignKeyColumn.name)
+          .reflectee);
+    } else {
+      foreignFieldId = entityInstanceMirror.field(foreignKeyColumn.name);
+    }
+    final connection = OneToOneConnectionInstance(
+      entityInstanceMirror.entityMirrorWithId,
+      EntityMirror.byType(type: foreignKey.referencedEntity),
+    );
+
+    if (foreignKeyColumn.mapId) {
+      final queryById = await dartStore.query(
+          type: foreignKey.referencedEntity,
+          where: WhereCollection(wheres: [
+            Where(
+                field: "id",
+                compareTo: foreignFieldId,
+                comporator: WhereOperator.equals)
+          ]));
+
+      if (queryById.isEmpty) {
+        throw Exception(
+            "No entity of ${foreignKey.referencedEntity} found with id foreignFieldId");
+      }
+      foreignFieldInstanceMirror = reflect(queryById.first);
+    } else {
+      foreignFieldInstanceMirror =
+          entityInstanceMirror.fieldInstanceMirror(foreignKeyColumn.name);
+    }
+
+    if (!foreignKeyColumn.mapId) {
+      foreignFieldInstanceMirror.setField(
+          #id, await dartStore.save(foreignFieldInstanceMirror.reflectee));
+    }
+    return await connection.insert(otherEntityid: foreignFieldId);
+  }
+
+  Future<int?> insertOneToMany(
+      {required EntityInstanceMirror entityInstanceMirror,
+      required ForeignKey<dynamic> foreignKey,
+      required ColumnMirror foreignKeyColumn}) async {
+    final entity = entityInstanceMirror.instanceMirror.reflectee;
+    final connection = OneToManyConnection(
+      entityInstanceMirror,
+      EntityMirror.byType(type: foreignKey.referencedEntity),
+    );
+
+    final modelMap = ConversionService.objectToMap(
+        entityInstanceMirror.instanceMirror.reflectee);
+
+    final EntityMirror foreignFieldEntityDecl = EntityMirror.byClassMirror(
+        classMirror: entityInstanceMirror.instanceMirror.type);
+    final List<ColumnMirror> foreignFieldEntityColumns =
+        entityInstanceMirror.column;
+
+    final Map<String, dynamic> values = {};
+    for (final column in foreignFieldEntityColumns) {
+      if (column.isForeignKey()) {
+        final foreignField = column.getForeignKey();
+        if (foreignField is ManyToOne) {
+          final connection = OneToManyConnection(entityInstanceMirror,
+              EntityMirror.byType(type: foreignField.referencedEntity));
+
+          values[connection.referencingColumn] = entityInstanceMirror
+              .fieldInstanceMirror(foreignKeyColumn.name)
+              .getField(Symbol("id"))
+              .reflectee;
+        }
+        continue;
+      }
+      values[column.name] = (column.dataType.convert(modelMap[column.name]));
+    }
+    String fieldsStatement = "";
+    String valuesStatement = "";
+
+    final _primaryKeyMirror = foreignFieldEntityDecl.primaryKeyMirror;
+    if (_primaryKeyMirror.primaryKey.autoIncrement == true) {
+      values.remove(_primaryKeyMirror.name);
+    }
+    for (final valueEntry in values.entries) {
+      if (fieldsStatement.isEmpty) {
+        fieldsStatement += valueEntry.key;
+        valuesStatement += valueEntry.value.toString();
+        continue;
+      }
+      fieldsStatement += ", ${valueEntry.key}";
+
+      valuesStatement += ", ${valueEntry.value}";
+    }
+
+    final query =
+        '''INSERT INTO ${entityInstanceMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
+ON CONFLICT (id) DO UPDATE 
+SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
+
+    await executeSQL(query);
+    await insertForeignFields(entity);
+    if (_primaryKeyMirror.dataType is! Serial) {
+      return entity.id;
+    }
+    return await lastInsertedId(entityInstanceMirror.name);
   }
 }

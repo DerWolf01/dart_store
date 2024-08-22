@@ -4,7 +4,7 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/sql/connection/many_to_many.dart';
+import 'package:dart_store/sql/connection/many_to_one.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/primary_key/primary_key_mirror.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
