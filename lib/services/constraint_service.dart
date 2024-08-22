@@ -115,7 +115,7 @@ class ForeignKeyService extends DMLService {
               where: WhereCollection(wheres: [
                 Where(
                     field: "id",
-                    compareTo: entityMirror.id,
+                    compareTo: entityMirror.field(foreignKeyColumn.name),
                     comporator: WhereOperator.equals)
               ]));
 
