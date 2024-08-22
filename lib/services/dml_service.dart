@@ -18,6 +18,8 @@ class DMLService with DartStoreUtility {
     final Map<String, dynamic> values = {};
     for (final column in columnMirrors) {
       if (column.isForeignKey()) {
+        final foreignFieldInstance =
+            reflect(entity).getField(Symbol(column.name));
         final foreignField = column.getForeignKey();
         if (foreignField is ManyToOne) {
           final connection = ManyToOneConnection(
@@ -31,15 +33,17 @@ class DMLService with DartStoreUtility {
           print(
               "many to one connection instance--> ${reflect(entity).getField(Symbol(column.name)).reflectee}");
 
-          reflect(entity).getField(Symbol(column.name)).setField(
-              #id,
-              await dartStore.save(
-                  reflect(entity).getField(Symbol(column.name)).reflectee));
+          if (foreignFieldInstance.getField(#id).reflectee == -1) {
+            foreignFieldInstance.setField(
+                #id,
+                await dartStore.save(
+                    reflect(entity).getField(Symbol(column.name)).reflectee));
 
-          values[connection.referencingColumn] = reflect(entity)
-              .getField(Symbol(column.name))
-              .getField(Symbol("id"))
-              .reflectee;
+            values[connection.referencingColumn] = reflect(entity)
+                .getField(Symbol(column.name))
+                .getField(Symbol("id"))
+                .reflectee;
+          }
         }
         continue;
       }
