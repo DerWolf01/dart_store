@@ -20,12 +20,16 @@ class DqlService extends DartStoreUtility {
         for (final foreignKey in entityMirror.column.where(
           (e) => e.dataType is ForeignField,
         )) {
+          print(
+              "setting ${foreignKey.name} by querying through: ${modelMap["id"]}");
           modelMap[foreignKey.name] =
               await ForeignKeyService().query<T>(modelMap["id"], type: type);
+
+          print("${foreignKey.name} --> ${modelMap[foreignKey.name]}");
         }
         try {
           print("modelMap: $modelMap");
-          print("type: ${modelMap["textlist"]?.runtimeType}");
+
           queryResult
               .add(ConversionService.mapToObject<T>(modelMap, type: type));
         } catch (e, s) {

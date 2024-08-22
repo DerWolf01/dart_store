@@ -13,7 +13,6 @@ class DMLService with DartStoreUtility {
   Future<int> insert(dynamic entity) async {
     final modelMap = ConversionService.objectToMap(entity);
     print("modelMap --> $modelMap");
-    print("type: ${modelMap["textlist"]?.runtimeType}");
 
     final EntityMirror entityMirror =
         EntityMirror.byType(type: entity.runtimeType);
