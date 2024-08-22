@@ -223,9 +223,12 @@ class ForeignKeyService extends DMLService {
     print("ManyToMany");
     if (!foreignKeyColumn.mapId) {
       foreignFieldIds = entityInstanceMirror
-          .fieldInstanceMirror(foreignKeyColumn.name)
-          .getField(#id)
-          .reflectee;
+              .field(foreignKeyColumn.name)
+              ?.map((e) => e.getField(#id).reflectee)
+              .whereType<int>()
+              .toList() ??
+          [];
+
       await dartStore.save(entityInstanceMirror
           .fieldInstanceMirror(foreignKeyColumn.name)
           .reflectee);
