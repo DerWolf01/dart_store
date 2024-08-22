@@ -11,7 +11,7 @@ class OneToOneConnection extends ForeignKeyConnection {
 
   @override
   List<String> get connectionStatements => [
-        'CREATE TABLE IF NOT EXISTS $connectionTableName (id SERIAL PRIMARY KEY, ${entity$1.name}_id ${entity$1.primaryKeyType.sqlTypeName()} REFERENCES ${entity$1.name}(id), ${entity$2.name}_id ${entity$2.primaryKeyType.sqlTypeName()} REFERENCES ${entity$2.name}(id), UNIQUE(${entity$1.name}_id), UNIQUE(${entity$2.name}_id)))'
+        'CREATE TABLE IF NOT EXISTS $connectionTableName (id SERIAL PRIMARY KEY, ${entity$1.name}_id ${entity$1.primaryKeyType.sqlTypeName()} REFERENCES ${entity$1.name}(id), ${entity$2.name}_id ${entity$2.primaryKeyType.sqlTypeName()} REFERENCES ${entity$2.name}(id), UNIQUE(${entity$1.name}_id), UNIQUE(${entity$2.name}_id))'
       ];
 
   List<EntityMirror> get ordered =>
