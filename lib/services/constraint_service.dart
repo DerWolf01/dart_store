@@ -128,6 +128,9 @@ class ForeignKeyService extends DMLService {
 
   Future<dynamic> query<T>(dynamic id, {Type? type}) async {
     final entityMirror = EntityMirror<T>.byType(type: type);
+    final EntityMirrorWithId entityMirrorWithId =
+        EntityMirrorWithId<T>.byClassMirror(
+            id: id, classMirror: entityMirror.classMirror);
     late dynamic queryResult;
     final foreignFields = entityMirror.column.where(
       (element) => element.dataType is ForeignField,
@@ -174,7 +177,7 @@ class ForeignKeyService extends DMLService {
       } else if (foreignKey is ManyToMany) {
         print("ManyToMany references ${foreignKey.referencedEntity}");
         final connectionInstance = ManyToManyConnectionInstance(
-            EntityMirrorWithId<T>.byType(id: id, type: type ?? T),
+            entityMirrorWithId,
             EntityMirror.byType(type: foreignKey.referencedEntity));
         queryResult = await connectionInstance.query();
         print("ManyToMany res: $queryResult");
@@ -285,7 +288,7 @@ class ForeignKeyService extends DMLService {
       {required EntityInstanceMirror entityInstanceMirror,
       required ForeignKey<dynamic> foreignKey,
       required ColumnMirror foreignKeyColumn}) async {
-    late final InstanceMirror foreignFieldInstanceMirror;
+    InstanceMirror? foreignFieldInstanceMirror;
     late final dynamic foreignFieldId;
 
     print("OneToOne");
