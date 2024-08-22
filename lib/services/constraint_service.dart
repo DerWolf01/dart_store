@@ -220,7 +220,7 @@ class ForeignKeyService extends DMLService {
       {required EntityInstanceMirror entityInstanceMirror,
       required ForeignKey<dynamic> foreignKey,
       required ColumnMirror foreignKeyColumn}) async {
-    late List<InstanceMirror>? foreignFieldInstanceMirrors;
+    List<InstanceMirror> foreignFieldInstanceMirrors = [];
     late final List<int> foreignFieldIds;
 
     print("ManyToMany");
