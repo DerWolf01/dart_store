@@ -140,6 +140,8 @@ class ForeignKeyService extends DMLService {
     for (final foreignField in foreignFields) {
       final foreignKey = foreignField.getForeignKey();
       if (foreignKey is ManyToOne) {
+        print(
+            "ManyToOne ${foreignField.name} references ${foreignKey.referencedEntity}");
         final connection = ManyToOneConnection(entityMirror,
             EntityMirror.byType(type: foreignKey.referencedEntity));
         final query =
@@ -163,7 +165,8 @@ class ForeignKeyService extends DMLService {
               type: foreignKey.referencedEntity);
         }
       } else if (foreignKey is OneToOne) {
-        print("OneToOne references ${foreignKey.referencedEntity}");
+        print(
+            "OneToOne ${foreignField.name} references ${foreignKey.referencedEntity}");
         final connectionInstance = OneToOneConnectionInstance(
             EntityMirrorWithId<T>.byType(
               id: id,
@@ -176,7 +179,9 @@ class ForeignKeyService extends DMLService {
         }
         return queryResult;
       } else if (foreignKey is ManyToMany) {
-        print("ManyToMany references ${foreignKey.referencedEntity}");
+        print(
+            "ManyToMany ${foreignField.name} references ${foreignKey.referencedEntity}");
+
         final connectionInstance = ManyToManyConnectionInstance(
             entityMirrorWithId,
             EntityMirror.byType(type: foreignKey.referencedEntity));
@@ -187,6 +192,9 @@ class ForeignKeyService extends DMLService {
         }
         return queryResult;
       } else if (foreignKey is OneToMany) {
+        print(
+            "OneToMany ${foreignField.name} references ${foreignKey.referencedEntity}");
+
         queryResult = [];
         final connection = OneToManyConnection(entityMirror,
             EntityMirror.byType(type: foreignKey.referencedEntity));
