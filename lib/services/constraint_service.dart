@@ -228,10 +228,19 @@ class ForeignKeyService extends DMLService {
               .whereType<int>()
               .toList() ??
           [];
+      final dynamic foreignFieldsList =
+          entityInstanceMirror.field(foreignKeyColumn.name);
+      if (foreignFieldsList == null) {
+        return [];
+      }
+      if (foreignFieldsList is! List) {
+        throw Exception(
+            "Field ${entityInstanceMirror.name}.${foreignKeyColumn.name} must be a list when anotated with ManyToMany");
+      }
 
-      await dartStore.save(entityInstanceMirror
-          .fieldInstanceMirror(foreignKeyColumn.name)
-          .reflectee);
+      for (final foreignField in foreignFieldsList) {
+        foreignFieldIds.add(await dartStore.save(foreignField));
+      }
     } else {
       foreignFieldIds = entityInstanceMirror.field(foreignKeyColumn.name);
     }
