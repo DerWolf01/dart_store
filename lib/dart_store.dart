@@ -4,7 +4,7 @@ export 'package:dart_store/sql/mirrors/mirrors.dart';
 export 'package:dart_store/sql/clauses/clauses.dart';
 export 'package:dart_store/sql/sql_anotations/sql_anotations.dart';
 export 'package:dart_store/database/database_connection.dart';
-
+import 'package:change_case/change_case.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
@@ -15,7 +15,6 @@ import 'package:dart_store/services/dql_service.dart';
 import 'package:dart_store/sql/clauses/where.dart';
 import 'package:dart_store/sql/mirrors/mirrors.dart';
 import 'package:postgres/postgres.dart' as pg;
-
 
 DartStore get dartStore => DartStore();
 
@@ -65,7 +64,7 @@ class DartStore implements DatabaseConnection {
             final column = _entityMirror.column
                 .firstWhere((element) => element.name == e.key);
             return Where(
-                field: e.key,
+                field: e.key.toSnakeCase(),
                 compareTo: e.value,
                 comporator: WhereOperator.equals);
           },

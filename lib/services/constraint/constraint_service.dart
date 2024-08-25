@@ -398,7 +398,7 @@ class ForeignKeyService extends DMLService {
     final query =
         '''INSERT INTO ${entityInstanceMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
 ON CONFLICT (id) DO UPDATE 
-SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
+SET ${values.entries.map((e) => "${e.key.toSnakeCase()} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
 
     await executeSQL(query);
     await insertForeignFields(entity);

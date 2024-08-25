@@ -12,7 +12,7 @@ import 'package:dart_store/sql/connection/one_to_one/one_to_one.dart';
 import 'package:dart_store/sql/connection/one_to_one/one_to_one_instance.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
-
+import 'package:change_case/change_case.dart';
 import 'package:postgres/postgres.dart' as pg;
 
 class ConstraintService {
@@ -402,7 +402,7 @@ class ForeignKeyService extends DMLService {
     final query =
         '''INSERT INTO ${entityInstanceMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
 ON CONFLICT (id) DO UPDATE 
-SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
+SET ${values.entries.map((e) => "${e.key.toSnakeCase()} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
 
     await executeSQL(query);
     await insertForeignFields(entity);

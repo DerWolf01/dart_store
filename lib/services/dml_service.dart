@@ -98,7 +98,7 @@ class DMLService with DartStoreUtility {
     final query =
         '''INSERT INTO ${entityMirror.name} ($fieldsStatement) VALUES ($valuesStatement) 
 ON CONFLICT (id) DO UPDATE 
-SET ${values.entries.map((e) => "${e.key} = ${e.value}").join(', ')}''';
+SET ${values.entries.map((e) => "${e.key.toSnakeCase()} = ${e.value}").join(', ')}''';
     print("inserting/updating --> $query");
     await executeSQL(query);
 
