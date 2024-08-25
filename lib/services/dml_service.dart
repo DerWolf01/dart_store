@@ -86,7 +86,7 @@ class DMLService with DartStoreUtility {
     }
     for (final valueEntry in values.entries) {
       if (fieldsStatement.isEmpty) {
-        fieldsStatement += valueEntry.key;
+        fieldsStatement += valueEntry.key.toSnakeCase();
         valuesStatement += valueEntry.value.toString();
         continue;
       }
