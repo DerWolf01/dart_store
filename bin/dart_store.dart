@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:mirrors';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/mapping/map_id.dart';
+import 'package:dart_store/sql/mirrors/column/column_mirror.dart';
+import 'package:dart_store/sql/mirrors/dart_store_mirror.dart';
+import 'package:dart_store/sql/mirrors/entity/entity_mirror.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/text_list.dart';
 import 'package:postgres/postgres.dart';
@@ -46,18 +50,25 @@ class ManyToOneTest {
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
 
-  print(await dartStore
-      .save(ManyToOneTest.init(id: 0, textlist: ["a", "b", "c"])));
-  print(await dartStore
-      .save(ManyToOneTest.init(id: 1, textlist: ["a", "b", "c"])));
-  print(await dartStore.save(
-    TextListTest.init(
-      id: -1,
-      title: "title",
-      textlist: [0, 1],
-    ),
-  ));
-  print(dartStore.query(type: TextListTest));
+  print(ColumnMirror(
+      name: "testName",
+      field: reflectClass(ManyToOneTest).declarations.values.first,
+      dataType: Integer(),
+      constraints: [],
+      mappings: []).snakeCase);
+
+  // print(await dartStore
+  //     .save(ManyToOneTest.init(id: 0, textlist: ["a", "b", "c"])));
+  // print(await dartStore
+  //     .save(ManyToOneTest.init(id: 1, textlist: ["a", "b", "c"])));
+  // print(await dartStore.save(
+  //   TextListTest.init(
+  //     id: -1,
+  //     title: "title",
+  //     textlist: [0, 1],
+  //   ),
+  // ));
+  // print(dartStore.query(type: TextListTest));
 }
 
 class PostgresConnection extends DatabaseConnection {

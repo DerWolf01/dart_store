@@ -1,7 +1,9 @@
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/services/constraint_service.dart';
 import 'package:dart_conversion/dart_conversion.dart';
+import 'package:dart_store/services/dml_service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
+import 'package:change_case/change_case.dart';
 
 class DqlService extends DartStoreUtility {
   Future<List<T>> query<T>({WhereCollection? where, Type? type}) async {
@@ -30,8 +32,11 @@ class DqlService extends DartStoreUtility {
         try {
           print("modelMap: $modelMap");
 
-          queryResult
-              .add(ConversionService.mapToObject<T>(modelMap, type: type));
+          queryResult.add(ConversionService.mapToObject<T>(
+              modelMap.map(
+                (key, value) => MapEntry(key.toCamelCase(), value),
+              ),
+              type: type));
         } catch (e, s) {
           print("Error: $e StackTrace: $s");
         }

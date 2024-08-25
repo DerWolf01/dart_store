@@ -3,10 +3,10 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/mapping/mapping.dart';
 import 'package:dart_store/services/collector_service.dart';
 import 'package:dart_store/services/constraint_service.dart';
-import 'package:dart_store/sql/connection/many_to_one.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
 import 'package:dart_store/sql/sql_anotations/data_types/updated_at.dart';
 import 'package:postgres/postgres.dart';
+import 'package:change_case/change_case.dart';
 
 class DDLService {
   Future<void> createTables() async {
@@ -125,23 +125,23 @@ class DDLService {
     )) {
       if (column.dataType is CreatedAt) {
         columnDefinitions.add(
-            "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
+            "${column.name.toSnakeCase()} timestamp with time zone NOT NULL DEFAULT now()");
         continue;
       } else if (column.dataType is UpdatedAt) {
         await enableUpdatedAtTrigger(tableName, column.name);
         columnDefinitions.add(
-            "${column.name} timestamp with time zone NOT NULL DEFAULT now()");
+            "${column.name.toSnakeCase()} timestamp with time zone NOT NULL DEFAULT now()");
         continue;
       }
-      final columnName = column.name;
+      final columnName = column.name.toSnakeCase();
       final dataType = column.dataType;
       final nullable = column.nullable ? 'NOT NULL' : "";
 
       final isPrimaryKey = column.isPrimaryKey ? 'PRIMARY KEY' : '';
       final isUnique = column.unique ? 'UNIQUE' : '';
 
-      columnDefinitions
-          .add('$columnName ${dataType.sqlTypeName()} $nullable $isPrimaryKey');
+      columnDefinitions.add(
+          '${columnName.toSnakeCase()} ${dataType.sqlTypeName()} $nullable $isPrimaryKey');
     }
 
     if (columnDefinitions.isEmpty) {

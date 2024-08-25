@@ -8,6 +8,7 @@ import 'package:dart_store/sql/connection/many_to_one.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/primary_key/primary_key_mirror.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
+import 'package:change_case/change_case.dart';
 
 class DMLService with DartStoreUtility {
   Future<int> insert(dynamic entity) async {
@@ -89,7 +90,7 @@ class DMLService with DartStoreUtility {
         valuesStatement += valueEntry.value.toString();
         continue;
       }
-      fieldsStatement += ", ${valueEntry.key}";
+      fieldsStatement += ", ${valueEntry.key.toSnakeCase()}";
 
       valuesStatement += ", ${valueEntry.value}";
     }

@@ -18,6 +18,7 @@ dependencies:
       url: https://github.com/DerWolf01/dart_conversion.git
       ref: main
   postgres: ^3.2.1
+  change_case: ^2.1.0
   # path: ^1.8.0
 
 dev_dependencies:

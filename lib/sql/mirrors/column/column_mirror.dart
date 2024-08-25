@@ -1,7 +1,10 @@
 import 'dart:mirrors';
+import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/mapping/mapping.dart';
-import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/sql/connection/many_to_many/many_to_many.dart';
+import 'package:dart_store/sql/mirrors/dart_store_mirror.dart';
+
 import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
 
 class ColumnMirror {
@@ -13,6 +16,7 @@ class ColumnMirror {
       required this.mappings});
 
   final String name;
+
   final DeclarationMirror field;
   final SQLDataType dataType;
   final List<SQLConstraint> constraints;
