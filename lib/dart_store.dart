@@ -5,11 +5,11 @@ export 'package:dart_store/sql/clauses/clauses.dart';
 export 'package:dart_store/sql/sql_anotations/sql_anotations.dart';
 export 'package:dart_store/database/database_connection.dart';
 import 'package:change_case/change_case.dart';
+import 'package:dart_store/data_definition/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/services/ddl_service.dart';
 import 'package:dart_store/services/dml_service.dart';
 import 'package:dart_store/services/dql_service.dart';
 import 'package:dart_store/sql/clauses/where.dart';
@@ -26,7 +26,7 @@ class DartStore implements DatabaseConnection {
 
   static Future<DartStore> init(DatabaseConnection connection) async {
     _instance ??= DartStore._internal(connection);
-    await DDLService().createTables();
+    await DataDefinitonService().defineData();
     return _instance!;
   }
 

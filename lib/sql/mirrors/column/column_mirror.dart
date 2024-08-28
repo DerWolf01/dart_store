@@ -5,7 +5,7 @@ import 'package:dart_store/mapping/mapping.dart';
 import 'package:dart_store/sql/connection/many_to_many/many_to_many.dart';
 import 'package:dart_store/sql/mirrors/dart_store_mirror.dart';
 
-import 'package:dart_store/sql/sql_anotations/data_types/data_type.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
 
 class ColumnMirror {
   ColumnMirror(

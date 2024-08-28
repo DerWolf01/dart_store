@@ -6,8 +6,8 @@ import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/sql/mirrors/column/column_mirror.dart';
 import 'package:dart_store/sql/mirrors/dart_store_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror.dart';
-import 'package:dart_store/sql/sql_anotations/data_types/created_at.dart';
-import 'package:dart_store/sql/sql_anotations/data_types/text_list.dart';
+import 'package:dart_store/data_definition/data_types/created_at.dart';
+import 'package:dart_store/data_definition/data_types/text_list.dart';
 import 'package:postgres/postgres.dart';
 
 @Entity()

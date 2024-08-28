@@ -1,5 +1,5 @@
-import 'package:dart_store/data_definition/constraint/many_to_one/member/referencing.dart';
-import 'package:dart_store/data_definition/constraint/many_to_one/member/referenced.dart';
+import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/member/referencing.dart';
+import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/member/referenced.dart';
 
 class ManyToOneDescription {
   ManyToOneDescription({

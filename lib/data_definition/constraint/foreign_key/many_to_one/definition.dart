@@ -1,6 +1,6 @@
 import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/data_definition/constraint/many_to_many/description.dart';
-import 'package:dart_store/data_definition/constraint/many_to_one/description.dart';
+import 'package:dart_store/data_definition/constraint/foreign_key/many_to_many/description.dart';
+import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/description.dart';
 import 'package:dart_store/data_definition/data_definition.dart';
 import 'package:dart_store/data_definition/table/column/internal_column.dart';
 
