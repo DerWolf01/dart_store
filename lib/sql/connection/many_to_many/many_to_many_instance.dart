@@ -4,6 +4,7 @@ import 'package:dart_store/sql/mirrors/entity/entity_instance_mirror.dart';
 import 'package:dart_store/sql/mirrors/entity/entity_mirror_with_id.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
+import 'package:change_case/change_case.dart';
 
 class ManyToManyConnectionInstance with DartStoreUtility {
   // The entity used to orient query later.
@@ -29,12 +30,12 @@ class ManyToManyConnectionInstance with DartStoreUtility {
     final entities = orderWithIds([
       entity$1,
     ]);
-    final name1 = entities[0].name;
+    final name1 = entities[0].name.toSnakeCase();
     final id1Name = "${name1}_id";
     final id1 = entities[0].runtimeType == EntityMirrorWithId
         ? entity$1.id
         : otherEntityWithid.id;
-    final name2 = entities[1].name;
+    final name2 = entities[1].name.toSnakeCase();
     final id2Name = "${name2}_id";
     final id2 = entities[0].runtimeType == EntityMirrorWithId
         ? otherEntityWithid.id

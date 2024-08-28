@@ -54,7 +54,7 @@ class DqlService extends DartStoreUtility {
         .where(
           (element) => element.dataType is! ForeignField,
         )
-        .map((e) => e.name)
+        .map((e) => e.name.toSnakeCase())
         .join(", ");
     print("columnNames: $columnNames");
     final tableName = entityMirror.name;

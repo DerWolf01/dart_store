@@ -39,7 +39,7 @@ class ConstraintService {
   _generateConstraintStatement(EntityMirror entityMirror,
       ColumnMirror columnMirror, SQLConstraint constraint) {
     if (constraint is NotNull) {
-      return 'ALTER TABLE ${entityMirror.name} ALTER COLUMN ${columnMirror.name} SET NOT NULL';
+      return 'ALTER TABLE ${entityMirror.name} ALTER COLUMN ${columnMirror.name.toSnakeCase()} SET NOT NULL';
     } else if (constraint is OneToMany) {
       final pointsTo = reflect(constraint).type.typeArguments.firstOrNull;
       if (pointsTo == null) {
@@ -145,7 +145,7 @@ class ForeignKeyService extends DMLService {
       final connection = ManyToOneConnection(
           entityMirror, EntityMirror.byType(type: foreignKey.referencedEntity));
       final query =
-          'SELECT (${connection.referencingColumn}) FROM ${entityMirror.name} WHERE id = $id';
+          'SELECT (${connection.referencingColumn.toSnakeCase()}) FROM ${entityMirror.name} WHERE id = $id';
 
       final result = await executeSQL(query);
 
@@ -199,7 +199,7 @@ class ForeignKeyService extends DMLService {
       final connection = OneToManyConnection(
           entityMirror, EntityMirror.byType(type: foreignKey.referencedEntity));
       final query =
-          'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn} = $id';
+          'SELECT * FROM ${connection.referencedEntity.name} WHERE ${connection.referencingColumn.toSnakeCase()} = $id';
       final result = await executeSQL(query);
       if (foreignField.mapId) {
         for (final row in result) {
@@ -396,9 +396,9 @@ class ForeignKeyService extends DMLService {
     }
 
     final query =
-        '''INSERT INTO ${entityInstanceMirror.name} ($fieldsStatement, ${connection.referencingColumn}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
+        '''INSERT INTO ${entityInstanceMirror.name} ($fieldsStatement, ${connection.referencingColumn.toSnakeCase()}) VALUES ($valuesStatement, ${reflect(entity).getField(Symbol("id"))}
 ON CONFLICT (id) DO UPDATE 
-SET ${values.entries.map((e) => "${e.key.toSnakeCase()} = ${e.value}").join(', ')}, ${connection.referencingColumn} = ${reflect(entity).getField(Symbol("id"))}''';
+SET ${values.entries.map((e) => "${e.key.toSnakeCase()} = ${e.value}").join(', ')}, ${connection.referencingColumn.toSnakeCase()} = ${reflect(entity).getField(Symbol("id"))}''';
 
     await executeSQL(query);
     await insertForeignFields(entity);

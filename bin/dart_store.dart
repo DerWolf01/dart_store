@@ -15,7 +15,7 @@ class TextListTest {
   TextListTest();
   TextListTest.init({
     this.id,
-    required this.textlist,
+    required this.textList,
     required this.title,
   });
 
@@ -27,8 +27,8 @@ class TextListTest {
   late final String title;
 
   @MapId()
-  @ManyToMany<ManyToOneTest>()
-  late final List<int> textlist;
+  @OneToMany<ManyToOneTest>()
+  late final List<int> textList;
 }
 
 @Entity()
@@ -36,7 +36,7 @@ class ManyToOneTest {
   ManyToOneTest();
   ManyToOneTest.init({
     required this.id,
-    required this.textlist,
+    required this.textList,
   });
 
   @PrimaryKey()
@@ -44,31 +44,24 @@ class ManyToOneTest {
   late int id;
 
   @TextList()
-  late final List<String> textlist;
+  late final List<String> textList;
 }
 
 void main(List<String> arguments) async {
   await DartStore.init(await PostgresConnection.init());
 
-  print(ColumnMirror(
-      name: "testName",
-      field: reflectClass(ManyToOneTest).declarations.values.first,
-      dataType: Integer(),
-      constraints: [],
-      mappings: []).snakeCase);
-
-  // print(await dartStore
-  //     .save(ManyToOneTest.init(id: 0, textlist: ["a", "b", "c"])));
-  // print(await dartStore
-  //     .save(ManyToOneTest.init(id: 1, textlist: ["a", "b", "c"])));
-  // print(await dartStore.save(
-  //   TextListTest.init(
-  //     id: -1,
-  //     title: "title",
-  //     textlist: [0, 1],
-  //   ),
-  // ));
-  // print(dartStore.query(type: TextListTest));
+  print(await dartStore
+      .save(ManyToOneTest.init(id: 0, textList: ["a", "b", "c"])));
+  print(await dartStore
+      .save(ManyToOneTest.init(id: 1, textList: ["a", "b", "c"])));
+  print(await dartStore.save(
+    TextListTest.init(
+      id: -1,
+      title: "title",
+      textList: [0, 1],
+    ),
+  ));
+  print(dartStore.query(type: TextListTest));
 }
 
 class PostgresConnection extends DatabaseConnection {

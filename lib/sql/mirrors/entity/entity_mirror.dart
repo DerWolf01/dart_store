@@ -20,7 +20,7 @@ class EntityMirror<T> {
 
   SQLDataType get primaryKeyType => primaryKeyMirror.dataType;
 
-  get name =>
+  String get name =>
       entity.name ?? MirrorSystem.getName(classMirror.simpleName).toLowerCase();
 
   bool get isEntity =>
