@@ -25,4 +25,9 @@ abstract class SQLDataType<PrimtiveType> {
     }
     return value;
   }
+
+  bool compareToType(Type type) => PrimtiveType == type;
+  bool comppareToValue(dynamic value) => value is PrimtiveType;
+
+  Type get primitiveType => PrimtiveType;
 }
