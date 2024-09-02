@@ -1,12 +1,20 @@
-import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
-import 'package:dart_store/data_definition/table/column/foreign_column.dart';
-import 'package:dart_store/data_definition/table/column/internal_column.dart';
+import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 
 class TableDescription {
   final String tableName;
   final List<Column> columns;
   TableDescription({required this.tableName, required this.columns});
+
+  List<ForeignColumn> foreignColumns() =>
+      columns.whereType<ForeignColumn>().toList();
+
+  List<ForeignColumn> foreignColumnsByForeignKeyType<T extends ForeignKey>() =>
+      foreignColumns()
+          .where((element) => element.getForeignKey<T>() != null)
+          .toList();
 
   Column? columnDescription(String columnName) =>
       columns.where((element) => element.name == columnName).firstOrNull;
@@ -20,6 +28,10 @@ class TableDescription {
 
   List<Column> get foreignKeyColumns =>
       columns.whereType<ForeignColumn>().toList();
+
+  List<Column> columnsByConstraint<T extends SQLConstraint>() => columns
+      .where((element) => element.constraints.any((element) => element is T))
+      .toList();
 
   List<Column> manyToManyColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<ManyToMany>() != null)

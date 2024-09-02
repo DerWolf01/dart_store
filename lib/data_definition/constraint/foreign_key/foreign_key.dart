@@ -1,5 +1,5 @@
 import 'dart:mirrors';
-import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/data_definition/constraint/constraint.dart';
 export './many_to_many/many_to_many.dart';
 export './one_to_one/one_to_one.dart';
 export './many_to_one/many_to_one.dart';

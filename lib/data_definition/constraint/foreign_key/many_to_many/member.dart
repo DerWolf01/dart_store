@@ -1,4 +1,5 @@
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 
 /// A class that defines a member in a many-to-many relationship.

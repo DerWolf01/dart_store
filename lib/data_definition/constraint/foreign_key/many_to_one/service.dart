@@ -1,8 +1,4 @@
-import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/definition.dart';
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/description.dart';
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/member/referenced.dart';
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_one/member/referencing.dart';
+import 'package:dart_store/data_definition/constraint/foreign_key/foreign_key.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';

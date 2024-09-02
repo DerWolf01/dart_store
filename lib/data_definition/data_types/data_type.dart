@@ -5,7 +5,6 @@ export './integer_list.dart';
 export './text_list.dart';
 export 'serial.dart';
 export 'varchar.dart';
-export 'pseudo_types.dart';
 export './bytea.dart';
 export './created_at.dart';
 export './updated_at.dart';
@@ -27,7 +26,7 @@ abstract class SQLDataType<PrimtiveType> {
   }
 
   bool compareToType(Type type) => PrimtiveType == type;
-  bool comppareToValue(dynamic value) => value is PrimtiveType;
+  bool compareToValue(dynamic value) => value is PrimtiveType;
 
   Type get primitiveType => PrimtiveType;
 }

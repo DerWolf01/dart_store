@@ -19,7 +19,13 @@ class InsertStatement {
     );
 
     final String sqlConformValuesString = sqlConformValues.join(', ');
-    return "INSERT INTO $sqlConformColumnNameString VALUES ($sqlConformValuesString) ON CONFLICt (id) SET ";
+
+    final String sqlConformOnConflictString = insertIntoColumns
+        .map(
+          (e) => "${e.name} = ${e.sqlConformValue}",
+        )
+        .join(", ");
+    return "INSERT INTO $sqlConformColumnNameString VALUES ($sqlConformValuesString) ON CONFLICt (id) SET $sqlConformOnConflictString ";
   }
 
   List<InternalColumnInstance> get insertIntoColumns => entityInstance.columns

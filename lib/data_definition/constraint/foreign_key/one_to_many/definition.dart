@@ -1,4 +1,3 @@
-import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/one_to_many/description.dart';
 import 'package:dart_store/data_definition/data_definition.dart';
 
@@ -13,7 +12,6 @@ class OneToManyDefinition extends DataDefinition {
         description.referencingMember.tableDescription;
     final referencedTableDescription =
         description.referencedMember.tableDescription;
-    final referencingTableName = referencingTableDescription.tableName;
     final referencedTableName = referencedTableDescription.tableName;
     final primaryKeyColumn = referencingTableDescription.primaryKeyColumn();
     return """

@@ -1,7 +1,9 @@
-import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_definition/constraint/constraint.dart';
+import 'package:change_case/change_case.dart';
 
 abstract class Column {
   List<SQLConstraint> constraints;
+  String originalName;
   String name;
 
   hasConstraint<T>() => constraints.any((element) => element.runtimeType is T);
@@ -18,6 +20,7 @@ abstract class Column {
 
   Column({
     required this.constraints,
-    required this.name,
-  });
+    required String name,
+  })  : name = name.toSnakeCase(),
+        originalName = name;
 }

@@ -1,4 +1,4 @@
-import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
 
 class TextList extends SQLDataType<List<String>> {
   const TextList({this.length, super.isNullable});

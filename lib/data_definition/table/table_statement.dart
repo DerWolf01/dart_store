@@ -1,5 +1,5 @@
-import 'package:dart_store/data_definition/table/column/column_statement.dart';
-import 'package:dart_store/data_definition/table/column/internal_column.dart';
+import 'package:dart_store/data_definition/table/column/statement.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 
 class TableStatement {
   String name;

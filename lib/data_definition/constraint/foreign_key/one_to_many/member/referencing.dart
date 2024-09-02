@@ -1,7 +1,6 @@
-import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/data_definition/table/column/column.dart';
-import 'package:dart_store/data_definition/table/column/internal_column.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
 
 class OneToManyReferencingMemberDefinition {
   OneToManyReferencingMemberDefinition({
@@ -11,14 +10,8 @@ class OneToManyReferencingMemberDefinition {
   final TableDescription tableDescription;
 
   String get tableName => tableDescription.tableName;
-  InternalColumn get column {
-    final column = tableDescription.primaryKeyColumn();
-    if (column == null) {
-      throw Exception(
-          "Unable to define OneToMany connection due to missing primary key definition for table $tableName");
-    }
-    return column;
-  }
+  
+  InternalColumn get column => tableDescription.primaryKeyColumn();
 
   SQLDataType primaryKeyType() {
     final dataType = tableDescription.primaryKeyColumn()?.dataType;

@@ -1,5 +1,4 @@
-import 'package:dart_store/sql/sql_anotations/sql_anotations.dart';
-import 'package:postgres/postgres.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
 
 class CreatedAt extends SQLDataType<DateTime> {
   const CreatedAt();

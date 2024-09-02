@@ -1,4 +1,4 @@
-import 'package:dart_store/sql/sql_anotations/constraints/constraint.dart';
+import 'package:dart_store/data_definition/constraint/constraint.dart';
 
 class PrimaryKey extends SQLConstraint {
   final bool? autoIncrement;

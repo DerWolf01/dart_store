@@ -1,15 +1,12 @@
-import 'dart:async';
-import 'dart:mirrors';
-import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_definition/constraint/constraint.dart';
+import 'package:dart_store/data_definition/data_types/data_type.dart';
+import 'package:dart_store/data_definition/table/entity.dart';
 import 'package:dart_store/mapping/map_id.dart';
-import 'package:dart_store/sql/mirrors/column/column_mirror.dart';
-import 'package:dart_store/sql/mirrors/dart_store_mirror.dart';
-import 'package:dart_store/sql/mirrors/entity/entity_mirror.dart';
-import 'package:dart_store/data_definition/data_types/created_at.dart';
-import 'package:dart_store/data_definition/data_types/text_list.dart';
+import 'package:dart_store/postgres_connection/connection.dart';
 import 'package:postgres/postgres.dart';
 
+// TODO: search for after-query-implementation and implement missing functionality
 @Entity()
 class TextListTest {
   TextListTest();
@@ -48,7 +45,16 @@ class ManyToOneTest {
 }
 
 void main(List<String> arguments) async {
-  await DartStore.init(await PostgresConnection.init());
+  await DartStore.init(await PostgresConnection.init(
+      endpoint: Endpoint(
+          host: 'localhost',
+          database: 'ebay_watcher',
+          username: 'ebay_watcher',
+          password: 'ebay_watcher'),
+      settings: ConnectionSettings(
+          onOpen: (connection) async =>
+              print('Connected to the database $connection'),
+          sslMode: SslMode.disable)));
 
   print(await dartStore
       .save(ManyToOneTest.init(id: 0, textList: ["a", "b", "c"])));
@@ -62,32 +68,4 @@ void main(List<String> arguments) async {
     ),
   ));
   print(dartStore.query(type: TextListTest));
-}
-
-class PostgresConnection extends DatabaseConnection {
-  PostgresConnection._internal(this.connection);
-
-  Connection connection;
-
-  static Future<PostgresConnection> init() async {
-    Connection? connection;
-
-    connection = await Connection.open(
-        Endpoint(
-            host: 'localhost',
-            database: 'ebay_watcher',
-            username: 'ebay_watcher',
-            password: 'ebay_watcher'),
-        settings: ConnectionSettings(
-            onOpen: (connection) async =>
-                print('Connected to the database $connection'),
-            sslMode: SslMode.disable));
-
-    return PostgresConnection._internal(connection);
-  }
-
-  @override
-  FutureOr<Result> execute(String statement) async {
-    return await connection.execute(statement);
-  }
 }

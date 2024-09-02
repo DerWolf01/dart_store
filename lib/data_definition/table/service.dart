@@ -1,9 +1,9 @@
 import 'package:dart_conversion/method_service.dart';
-import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/service.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
-import 'package:dart_store/data_definition/table/column/column_service.dart';
-import 'package:dart_store/data_definition/table/column/internal_column.dart';
+import 'package:dart_store/data_definition/table/column/service.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/data_definition/table/entity.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_definition/table/table_statement.dart';
 import 'package:dart_store/reflection/collector_service.dart';
@@ -43,7 +43,7 @@ class TableService with DartStoreUtility {
         tableDescription.columns.whereType<InternalColumn>().toList());
     final sql = tableStatement.define();
     await executeSQL(sql);
-    
+
     ConstraintService().postTableDefinitionAndExecution(tableDescription);
   }
 }

@@ -1,8 +1,5 @@
 library dart_store;
 
-export 'package:dart_store/sql/mirrors/mirrors.dart';
-export 'package:dart_store/sql/clauses/clauses.dart';
-export 'package:dart_store/sql/sql_anotations/sql_anotations.dart';
 export 'package:dart_store/database/database_connection.dart';
 import 'package:change_case/change_case.dart';
 import 'package:dart_store/data_definition/service.dart';
@@ -10,20 +7,18 @@ import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/services/dml_service.dart';
-import 'package:dart_store/services/dql_service.dart';
-import 'package:dart_store/sql/clauses/where.dart';
-import 'package:dart_store/sql/mirrors/mirrors.dart';
+import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart' as pg;
 
 DartStore get dartStore => DartStore();
 
-class DartStore implements DatabaseConnection {
+class DartStore<ConnectionType extends DatabaseConnection> {
   static DartStore? _instance;
-  DatabaseConnection connection;
+  ConnectionType connection;
 
   DartStore._internal(this.connection);
 
+  execute(String statement) async => await connection.execute(statement);
   static Future<DartStore> init(DatabaseConnection connection) async {
     _instance ??= DartStore._internal(connection);
     await DataDefinitonService().defineData();
@@ -39,11 +34,8 @@ class DartStore implements DatabaseConnection {
   }
 
   @override
-  FutureOr<pg.Result> execute(String statement) async =>
-      connection.execute(statement);
-
-  Future<List<T>> query<T>({WhereCollection? where, Type? type}) async {
-    return DqlService().query<T>(where: where, type: type);
+  Future<List<T>> query<T>({List<Where> wheres = const [], Type? type}) async {
+    return DqlService().query<T>(where: wheres, type: type);
   }
 
   Future<int> save(dynamic model) async {

@@ -1,5 +1,1 @@
-class DataManipulationService {
-  
-
-}
-
+class DataManipulationService {}
