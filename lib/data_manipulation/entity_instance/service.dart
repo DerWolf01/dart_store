@@ -8,6 +8,8 @@ class EntityInstanceService {
         ColumnInstanceService().extractColumnInstances(value);
     final table = TableService().findTable(value.runtimeType);
     return EntityInstance(
-        tableName: table.tableName, columns: columnsInstances);
+        objectType: value.runtimeType,
+        tableName: table.tableName,
+        columns: columnsInstances);
   }
 }

@@ -4,9 +4,13 @@ import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 
 class TableDescription {
+  final Type objectType;
   final String tableName;
   final List<Column> columns;
-  TableDescription({required this.tableName, required this.columns});
+  TableDescription(
+      {required this.objectType,
+      required this.tableName,
+      required this.columns});
 
   List<ForeignColumn> foreignColumns() =>
       columns.whereType<ForeignColumn>().toList();
@@ -17,7 +21,7 @@ class TableDescription {
           .toList();
 
   Column? columnDescription(String columnName) =>
-      columns.where((element) => element.name == columnName).firstOrNull;
+      columns.where((element) => element.sqlName == columnName).firstOrNull;
 
   InternalColumn primaryKeyColumn() => columns.firstWhere(
         (element) => element.isPrimaryKey && element is InternalColumn,

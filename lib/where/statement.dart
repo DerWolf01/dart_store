@@ -1,6 +1,7 @@
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/statement/statement.dart';
 import 'package:dart_store/where/comparison_operator.dart';
+// TODO implement or chaining
 
 class Where<ForeignField extends Type?> extends Statement {
   Where(
@@ -17,10 +18,10 @@ class Where<ForeignField extends Type?> extends Statement {
   String define() {
     if (!internalColumn.dataType.compareToValue(value)) {
       throw Exception(
-          "Value $value is not compoarible to column ${internalColumn.name} of type ${internalColumn.dataType}");
+          "Value $value is not compoarible to column ${internalColumn.sqlName} of type ${internalColumn.dataType}");
     }
     final convertedValue = internalColumn.dataType.convert(value);
 
-    return "${internalColumn.name} ${comparisonOperator.operator()} $convertedValue";
+    return "${internalColumn.sqlName} ${comparisonOperator.operator()} $convertedValue";
   }
 }

@@ -11,7 +11,7 @@ abstract class DatabaseConnection<ResultType> {
 
   // Future<int> update(String statement);
 
-  // Future<List<Map<String, dynamic>>> query(String statement);
+  Future<List<Map<String, dynamic>>> query(String statement);
 
   // Future<void> delete(String statement);
 }

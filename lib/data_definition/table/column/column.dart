@@ -3,8 +3,8 @@ import 'package:change_case/change_case.dart';
 
 abstract class Column {
   List<SQLConstraint> constraints;
-  String originalName;
   String name;
+  String get sqlName;
 
   hasConstraint<T>() => constraints.any((element) => element.runtimeType is T);
   Constraint? constraint<Constraint extends SQLConstraint>() =>
@@ -20,7 +20,6 @@ abstract class Column {
 
   Column({
     required this.constraints,
-    required String name,
-  })  : name = name.toSnakeCase(),
-        originalName = name;
+    required this.name,
+  });
 }

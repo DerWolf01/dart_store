@@ -10,7 +10,7 @@ class UpdateStatement extends Statement {
   String define() {
     final String sqlSetColumnsString = internalColumns
         .map(
-          (e) => "${e.name} = ${e.sqlConformValue}",
+          (e) => "${e.sqlName} = ${e.sqlConformValue}",
         )
         .join(", ");
     return "UPDATE ${entityInstance.tableName} SET $sqlSetColumnsString ";

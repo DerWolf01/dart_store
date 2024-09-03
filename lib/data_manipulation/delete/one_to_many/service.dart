@@ -10,7 +10,7 @@ class OneToManyDeleteService {
       for (final oneOfManyItems in values) {
         final EntityInstance oneOfManyItemsInstance = EntityInstanceService()
             .entityInstanceByValueInstance(oneOfManyItems);
-        await DeleteService().deleteUsingEntityInstance(oneOfManyItemsInstance);
+        await DeleteService().delete(oneOfManyItemsInstance);
       }
     }
   }

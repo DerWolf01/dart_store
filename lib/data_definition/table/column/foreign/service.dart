@@ -1,5 +1,4 @@
-import 'package:dart_store/data_definition/table/column/foreign/external.dart';
-import 'package:dart_store/data_definition/table/column/foreign/internal.dart';
+import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
@@ -9,21 +8,9 @@ class ForeignColumnService {
   generateForeignColumn(
       {required ForeignKey foreignKey,
       required List<SQLConstraint> constraints,
-      required String snakeCaseName}) {
-    final isExternalColumn = foreignKey is ManyToMany ||
-        foreignKey is OneToOne ||
-        foreignKey is ManyToOne;
-    if (isExternalColumn) {
-      return ExternalForeignColumn(
-          constraints: constraints,
-          foreignKey: foreignKey,
-          name: snakeCaseName);
-    }
-    return InternalForeignColumn(
-        dataType: retrievePrimaryKeyColumn(foreignKey).dataType,
-        constraints: constraints,
-        foreignKey: foreignKey,
-        name: snakeCaseName);
+      required String name}) {
+    return ForeignColumn(
+        constraints: constraints, foreignKey: foreignKey, name: name);
   }
 
   TableDescription retrieveReferencedEntity(ForeignKey foreignKey) {

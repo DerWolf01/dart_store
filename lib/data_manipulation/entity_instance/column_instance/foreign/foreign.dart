@@ -1,9 +1,10 @@
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
+import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 
-class ForeignColumnInstance<ValueType> extends ColumnInstance<ValueType>
-    implements ForeignColumn {
+abstract class ForeignColumnInstance<ValueType>
+    extends ColumnInstance<ValueType> implements ForeignColumn {
   ForeignColumnInstance(
       {required this.foreignKey,
       required super.constraints,

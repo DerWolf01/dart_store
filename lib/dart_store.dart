@@ -1,25 +1,35 @@
 library dart_store;
 
 export 'package:dart_store/database/database_connection.dart';
+import 'dart:math';
+
 import 'package:change_case/change_case.dart';
+import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/service.dart';
+import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/data_manipulation/entity_instance/service.dart';
+import 'package:dart_store/data_manipulation/service.dart';
+import 'package:dart_store/data_query/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/where/statement.dart';
-import 'package:postgres/postgres.dart' as pg;
+//TODO: Remove before deployment
+export 'package:change_case/change_case.dart';
 
 DartStore get dartStore => DartStore();
 
-class DartStore<ConnectionType extends DatabaseConnection> {
+class DartStore {
   static DartStore? _instance;
-  ConnectionType connection;
+  DatabaseConnection connection;
 
   DartStore._internal(this.connection);
 
   execute(String statement) async => await connection.execute(statement);
-  static Future<DartStore> init(DatabaseConnection connection) async {
+  static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
+      ConnectionType connection) async {
     _instance ??= DartStore._internal(connection);
     await DataDefinitonService().defineData();
     return _instance!;
@@ -33,45 +43,40 @@ class DartStore<ConnectionType extends DatabaseConnection> {
     return _instance!;
   }
 
-  @override
-  Future<List<T>> query<T>({List<Where> wheres = const [], Type? type}) async {
-    return DqlService().query<T>(where: wheres, type: type);
+  Future<List<T>> query<T>({List<Where> where = const [], Type? type}) async {
+    final dynamic t = type ?? T;
+    if (t == dynamic) {
+      throw Exception('Generic Type T or type parameter is required');
+    }
+    final List<EntityInstance> entityInstances = await DataQueryService().query(
+      description: TableService().findTable(t),
+      where: where,
+    );
+
+    return entityInstances
+        .map(
+          (e) => entityInstanceToModel<T>(e, type: type),
+        )
+        .toList();
   }
 
-  Future<int> save(dynamic model) async {
-    var id = await DMLService().insert(model);
-    return id;
+  Future<T> save<T>(T model) async => entityInstanceToModel<T>(
+      await DataManipulationService().insert(
+          entityInstance:
+              EntityInstanceService().entityInstanceByValueInstance(model)),
+      type: model.runtimeType);
+
+  Future<T> update<T>(T model, {List<Where> where = const []}) async {
+    return entityInstanceToModel<T>(
+        await DataManipulationService().update(
+          EntityInstanceService().entityInstanceByValueInstance(model),
+          where: where,
+        ),
+        type: model.runtimeType);
   }
 
-  Future<int> update(dynamic model) async {
-    return await DMLService().update(model);
-  }
-
-  Future<void> delete(dynamic model) async {
-    final _entityMirror = EntityMirror.byType(type: model.runtimeType);
-    await DMLService().delete(_entityMirror.name,
-        where: WhereCollection(
-            wheres: ConversionService.objectToMap(model).entries.map(
-          (e) {
-            final column = _entityMirror.column
-                .firstWhere((element) => element.name == e.key);
-            return Where(
-                field: e.key.toSnakeCase(),
-                compareTo: e.value,
-                comporator: WhereOperator.equals);
-          },
-        ).toList()));
-  }
-
-  Future<void> drop<T>() async {
-    final entityMirror = EntityMirror<T>.byType(type: T);
-    final query = 'DROP TABLE IF EXISTS ${entityMirror.name}';
-    await execute(query);
-  }
-
-  Future<void> create<T>() async {
-    return await DDLService().createTable(EntityMirror<T>.byType());
-  }
+  Future<void> delete(dynamic model) async => await DataManipulationService()
+      .delete(EntityInstanceService().entityInstanceByValueInstance(model));
 }
 
 extension StringFormatter on String {

@@ -7,14 +7,14 @@ class StatementComposition<T extends Statement>
     with DartStoreUtility
     implements Statement {
   final T statement;
-  final List<Where> wheres;
+  final List<Where> where;
 
   StatementComposition({
     required this.statement,
-    this.wheres = const [],
+    this.where = const [],
   });
 
   @override
   String define() =>
-      '${statement.define()} ${WhereService().defineAndChainWhereStatements(wheres: wheres)}';
+      '${statement.define()} ${WhereService().defineAndChainWhereStatements(where: where)}';
 }

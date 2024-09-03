@@ -12,7 +12,7 @@ class OneToManyUpdateService {
             .entityInstanceByValueInstance(oneOfManyItems);
         newValues.add(await UpdateService().update(oneOfManyItemsInstance));
       }
-      entityInstance.setField(foreignColumnInstance.name, newValues);
+      entityInstance.setField(foreignColumnInstance.sqlName, newValues);
     }
 
     return entityInstance;

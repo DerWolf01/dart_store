@@ -10,7 +10,7 @@ import 'package:postgres/postgres.dart';
 // TODO: Implement logic to instanciate EntityInstance using a value
 class ManyToManyDeleteService with DartStoreUtility {
   Future<void> _deleteForeignColumnItem(EntityInstance item) async {
-    await DeleteService().deleteUsingEntityInstance(item);
+    await DeleteService().delete(item);
   }
 
   Future _deleteConnection(
@@ -42,9 +42,7 @@ class ManyToManyDeleteService with DartStoreUtility {
     }
     for (final foreignColumnInstance in entityInstance.manyToManyColumns()) {
       final List<dynamic> values = foreignColumnInstance.value;
-      for (final item in values) {
-        final itemEntityInstance =
-            EntityInstanceService().entityInstanceByValueInstance(item);
+      for (final itemEntityInstance in values) {
         await _deleteConnection(entityInstance, itemEntityInstance);
         if (recursive) {
           await _deleteForeignColumnItem(itemEntityInstance);

@@ -1,14 +1,26 @@
 import 'package:dart_store/data_definition/constraint/constraint.dart';
+import 'package:dart_store/data_definition/table/column/column.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_many.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_one.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_many.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 
 class EntityInstance extends TableDescription {
   EntityInstance(
-      {required super.tableName, required List<ColumnInstance> columns})
+      {required super.objectType,
+      required super.tableName,
+      required List<ColumnInstance> columns})
       : super(columns: columns);
 
+  Column columnByName(String name) =>
+      columns.firstWhere((element) => element.name == name);
+
+  T columnByNameAndType<T extends Column>(String name) =>
+      columns.whereType<T>().firstWhere((element) => element.name == name);
   @override
   List<ColumnInstance> get columns => super.columns as List<ColumnInstance>;
 
@@ -24,23 +36,23 @@ class EntityInstance extends TableDescription {
           super.foreignColumnsByForeignKeyType() as List<ForeignColumnInstance>;
 
   @override
-  List<ForeignColumnInstance> manyToManyColumns() =>
-      super.manyToManyColumns() as List<ForeignColumnInstance>;
+  List<ManyToManyColumnInstance> manyToManyColumns() =>
+      super.manyToManyColumns() as List<ManyToManyColumnInstance>;
 
   @override
-  List<ForeignColumnInstance> manyToOneColumns() =>
-      super.manyToManyColumns() as List<ForeignColumnInstance>;
+  List<ManyToOneColumnInstance> manyToOneColumns() =>
+      super.manyToManyColumns() as List<ManyToOneColumnInstance>;
   @override
-  List<ForeignColumnInstance> oneToManyColumns() =>
-      super.manyToManyColumns() as List<ForeignColumnInstance>;
+  List<OneToManyColumnInstance> oneToManyColumns() =>
+      super.manyToManyColumns() as List<OneToManyColumnInstance>;
   @override
-  List<ForeignColumnInstance> oneToOneColumns() =>
-      super.manyToManyColumns() as List<ForeignColumnInstance>;
+  List<OneToOneColumnInstance> oneToOneColumns() =>
+      super.manyToManyColumns() as List<OneToOneColumnInstance>;
 
   setField(String name, dynamic value) {
     final columnInstance = columns
         .where(
-          (element) => element.name == name,
+          (element) => element.sqlName == name,
         )
         .firstOrNull;
 

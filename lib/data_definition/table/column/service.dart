@@ -44,7 +44,7 @@ class ColumnService {
         columns.add(ForeignColumnService().generateForeignColumn(
             foreignKey: foreignKeyInstance,
             constraints: constraints,
-            snakeCaseName: name));
+            name: name));
         continue;
       }
     }

@@ -1,18 +1,18 @@
 import 'package:dart_store/where/statement.dart';
 
 List<Where> filterWheres(
-    {required List<Where> wheres,
+    {required List<Where> where,
     Type? externalColumnType,
     String? columnName}) {
   if (externalColumnType == null || columnName == null) {
-    return wheres.where((element) => element.foreignField == null).toList();
+    return where.where((element) => element.foreignField == null).toList();
   }
 
-  return wheres
+  return where
       .where(
         (element) =>
             element.foreignField == externalColumnType &&
-            element.internalColumn.originalName == columnName,
+            element.internalColumn.name == columnName,
       )
       .toList();
 }

@@ -10,7 +10,7 @@ class DeleteStatement extends Statement {
   String define() {
     internalColumns
         .map(
-          (e) => "${e.name} = ${e.sqlConformValue}",
+          (e) => "${e.sqlName} = ${e.sqlConformValue}",
         )
         .join(", ");
     return "DELETE FROM ${entityInstance.tableName}";

@@ -11,6 +11,6 @@ class OneToOneMemberDefinition {
   InternalColumn get column => tableDescription.primaryKeyColumn();
 
   String get tableName => tableDescription.tableName;
-  String get columnName => column.name;
+  String get columnName => column.sqlName;
   SQLDataType primaryKeyType() => column.dataType;
 }

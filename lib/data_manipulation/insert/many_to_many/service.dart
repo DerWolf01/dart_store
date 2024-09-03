@@ -50,7 +50,7 @@ class ManyToManyInsertService with DartStoreUtility {
         newValues.add(insertedItemEntityInstance);
         await _createConnection(entityInstance, insertedItemEntityInstance);
       }
-      entityInstance.setField(foreignColumnInstance.name, newValues);
+      entityInstance.setField(foreignColumnInstance.sqlName, newValues);
     }
 
     return entityInstance;

@@ -17,7 +17,9 @@ class TableService with DartStoreUtility {
               ColumnService().extractColumns(classMirror);
 
           return TableDescription(
-              tableName: classMirror.name.toSnakeCase(), columns: columns);
+              objectType: classMirror.reflectedType,
+              tableName: classMirror.name.toSnakeCase(),
+              columns: columns);
         },
       );
 
@@ -34,7 +36,9 @@ class TableService with DartStoreUtility {
     final List<Column> columns = ColumnService().extractColumns(classMirror);
 
     return TableDescription(
-        tableName: classMirror.name.toSnakeCase(), columns: columns);
+        objectType: tableType,
+        tableName: classMirror.name.toSnakeCase(),
+        columns: columns);
   }
 
   Future<void> createTable(TableDescription tableDescription) async {

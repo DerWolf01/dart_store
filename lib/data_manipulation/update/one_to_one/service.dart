@@ -49,7 +49,7 @@ class OneToOneUpdateService with DartStoreUtility {
       newValue = updatedItemEntityInstance;
       await _createConnection(entityInstance, updatedItemEntityInstance);
 
-      entityInstance.setField(foreignColumnInstance.name, newValue);
+      entityInstance.setField(foreignColumnInstance.sqlName, newValue);
     }
 
     return entityInstance;

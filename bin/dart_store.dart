@@ -7,6 +7,8 @@ import 'package:dart_store/postgres_connection/connection.dart';
 import 'package:postgres/postgres.dart';
 
 // TODO: search for after-query-implementation and implement missing functionality
+// TODO implement or chaining for wheres.
+// TODO: IMplement delete logic for connections
 @Entity()
 class TextListTest {
   TextListTest();

@@ -12,7 +12,7 @@ class OneToOneDeleteService with DartStoreUtility {
   Future<void> _deleteForeignColumnItem(dynamic item) async {
     final EntityInstance itemEntityInstance =
         EntityInstanceService().entityInstanceByValueInstance(item);
-    await DeleteService().deleteUsingEntityInstance(itemEntityInstance);
+    await DeleteService().delete(itemEntityInstance);
   }
 
   Future _deleteConnection(

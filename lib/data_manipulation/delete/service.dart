@@ -11,8 +11,9 @@ import 'package:dart_store/where/statement.dart';
 
 class DeleteService with DartStoreUtility {
   ///
-  Future<void> deleteUsingEntityInstance(EntityInstance entityInstance,
-      {List<Where> wheres = const []}) async {
+  Future<void> delete(
+    EntityInstance entityInstance,
+  ) async {
     try {
       /// Delete all related data
       await ManyToManyDeleteService().preDelete(entityInstance);
@@ -25,14 +26,13 @@ class DeleteService with DartStoreUtility {
 
       final primaryKeyColumn = entityInstance.primaryKeyColumn();
 
-      WhereService().defineAndChainWhereStatements(wheres: wheres);
       final Where whereStatement = Where(
           comparisonOperator: ComparisonOperator.equals,
           internalColumn: primaryKeyColumn,
           value: primaryKeyColumn.value);
 
       final StatementComposition statementComposition = StatementComposition(
-          statement: deleteStatement, wheres: [whereStatement]);
+          statement: deleteStatement, where: [whereStatement]);
 
       await executeSQL(statementComposition.define());
     } catch (e, s) {
@@ -42,7 +42,7 @@ class DeleteService with DartStoreUtility {
   }
 
   // Future<void> deleteUsingType(Type modelType,
-  //     {List<Where> wheres = const []}) {
+  //     {List<Where> where = const []}) {
 
   //     }
 }

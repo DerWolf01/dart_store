@@ -34,11 +34,9 @@ class PostgresConnection extends DatabaseConnection<Result> {
   //   throw UnimplementedError();
   // }
 
-  // @override
-  // Future<List<Map<String, dynamic>>> query(String statement) {
-  //   // TODO: implement query
-  //   throw UnimplementedError();
-  // }
+  @override
+  Future<List<Map<String, dynamic>>> query(String statement) async =>
+      (await execute(statement)).map((e) => e.toColumnMap()).toList();
 
   // @override
   // Future<int> update(String statement) {

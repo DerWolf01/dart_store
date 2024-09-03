@@ -1,18 +1,18 @@
 import 'package:dart_store/where/statement.dart';
 
 class WhereService {
-  defineAndChainWhereStatements({required List<Where> wheres}) =>
-      wheres.map((e) => e.define()).join(' AND ');
+  defineAndChainWhereStatements({required List<Where> where}) =>
+      where.map((e) => e.define()).join(' AND ');
 
   List<Where> extractStatementsFor(
-          {required List<Where> wheres, required Type type}) =>
-      wheres
+          {required List<Where> where, required Type type}) =>
+      where
           .where(
             (e) => e.foreignField == Type,
           )
           .toList();
 
-  List<Where> extractInternalWheres(List<Where> wheres) => wheres
+  List<Where> extractInternalWheres(List<Where> where) => where
       .where(
         (e) => e.foreignField == null,
       )

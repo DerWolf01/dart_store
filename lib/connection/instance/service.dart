@@ -28,12 +28,12 @@ class TableConnectionInstanceService {
             value: description.primaryKeyColumn().value,
             dataType: description.primaryKeyColumn().dataType,
             constraints: [],
-            name: "${description.tableName}_id"),
+            name: description.tableName),
         InternalColumnInstance(
             value: description2.primaryKeyColumn().value,
             dataType: description2.primaryKeyColumn().dataType,
             constraints: [],
-            name: "${description2.tableName}_id"),
+            name: description2.tableName),
       ];
 
   String connectionName(

@@ -18,12 +18,12 @@ class OneToOneDefinition extends DataDefinition {
     final column1 = table1.column;
     final primaryKeyType1 = table1.primaryKeyType();
 
-    final columnName1 = "${tableName1}_${column1.name}";
+    final columnName1 = "${tableName1}_${column1.sqlName}";
 
     final column2 = table1.column;
     final primaryKeyType2 = table1.primaryKeyType();
 
-    final columnName2 = "${tableName2}_${column2.name}";
+    final columnName2 = "${tableName2}_${column2.sqlName}";
     return '''
 CREATE TABLE IF NOT EXISTS $connectionName (
   $columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE,

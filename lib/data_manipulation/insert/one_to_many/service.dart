@@ -12,7 +12,7 @@ class OneToManyInsertService {
             .entityInstanceByValueInstance(oneOfManyItems);
         newValues.add(await InsertService().insert(oneOfManyItemsInstance));
       }
-      entityInstance.setField(foreignColumnInstance.name, newValues);
+      entityInstance.setField(foreignColumnInstance.sqlName, newValues);
     }
 
     return entityInstance;

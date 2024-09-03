@@ -20,7 +20,6 @@ class ForeignColumnInstanceService extends ForeignColumnService {
     }
     if (foreignKey is ManyToOne) {
       return ManyToOneColumnInstance(
-          dataType: retrievePrimaryKeyColumn(foreignKey).dataType,
           foreignKey: foreignKey,
           constraints: constraints,
           name: name,

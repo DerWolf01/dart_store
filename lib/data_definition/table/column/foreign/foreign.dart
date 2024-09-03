@@ -1,12 +1,16 @@
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
+import 'package:dart_store/data_definition/table/service.dart';
 
-abstract class ForeignColumn<T extends ForeignKey> extends Column {
+class ForeignColumn<T extends ForeignKey> extends Column {
   final T foreignKey;
+  @override
+  String get sqlName =>
+      TableService().findTable(foreignKey.referencedEntity).tableName;
 
   ForeignColumn({
-    required super.name,
     required super.constraints,
     required this.foreignKey,
+    required super.name,
   });
 }

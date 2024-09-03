@@ -10,7 +10,7 @@ class InsertStatement {
     final sqlConformColumnNameString = {
       insertIntoColumns
           .map(
-            (e) => e.name,
+            (e) => e.sqlName,
           )
           .join(", ")
     };
@@ -22,7 +22,7 @@ class InsertStatement {
 
     final String sqlConformOnConflictString = insertIntoColumns
         .map(
-          (e) => "${e.name} = ${e.sqlConformValue}",
+          (e) => "${e.sqlName} = ${e.sqlConformValue}",
         )
         .join(", ");
     return "INSERT INTO $sqlConformColumnNameString VALUES ($sqlConformValuesString) ON CONFLICt (id) SET $sqlConformOnConflictString ";
