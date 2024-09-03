@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:postgres/postgres.dart';
 export './database_connection.dart';
 
 abstract class DatabaseConnection<ResultType> {

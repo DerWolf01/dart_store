@@ -6,7 +6,6 @@ import 'package:dart_store/data_manipulation/update/service.dart';
 import 'package:dart_store/data_manipulation/update/statement.dart';
 import 'package:dart_store/data_manipulation/where_utils.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 

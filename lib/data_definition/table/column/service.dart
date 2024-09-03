@@ -1,5 +1,4 @@
 import 'dart:mirrors';
-import 'package:change_case/change_case.dart';
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';

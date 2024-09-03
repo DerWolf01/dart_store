@@ -1,9 +1,6 @@
 library dart_store;
 
 export 'package:dart_store/database/database_connection.dart';
-import 'dart:math';
-
-import 'package:change_case/change_case.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/service.dart';
 import 'package:dart_store/data_definition/table/service.dart';
@@ -14,7 +11,6 @@ import 'package:dart_store/data_query/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
-import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/where/statement.dart';
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';

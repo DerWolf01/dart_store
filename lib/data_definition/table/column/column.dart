@@ -1,5 +1,4 @@
 import 'package:dart_store/data_definition/constraint/constraint.dart';
-import 'package:change_case/change_case.dart';
 
 abstract class Column {
   List<SQLConstraint> constraints;

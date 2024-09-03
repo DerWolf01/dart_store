@@ -1,4 +1,3 @@
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_many/member.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/one_to_one/member.dart';
 
 class OneToOneDescription {

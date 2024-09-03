@@ -14,6 +14,7 @@ dependencies:
   reflectable: ^4.0.5
   sqflite_common_ffi: ^2.3.1
   dart_conversion:
+    publish_to: none
     git:
       url: https://github.com/DerWolf01/dart_conversion.git
       ref: main

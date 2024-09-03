@@ -1,4 +1,3 @@
-import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/connection/instance/instance.dart';

@@ -1,7 +1,6 @@
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
-import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/delete/service.dart';
 import 'package:dart_store/data_manipulation/delete/statement.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';

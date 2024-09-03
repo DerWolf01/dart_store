@@ -1,4 +1,3 @@
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_many/description.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/one_to_one/description.dart';
 import 'package:dart_store/data_definition/data_definition.dart';
 

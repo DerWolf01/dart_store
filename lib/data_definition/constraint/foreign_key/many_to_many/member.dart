@@ -1,4 +1,3 @@
-import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 
@@ -30,12 +29,5 @@ class ManyToManyMemberDefinition {
   /// column is missing.
   ///
   /// Returns an [SQLDataType] representing the primary key type.
-  SQLDataType primaryKeyType() {
-    final dataType = tableDescription.primaryKeyColumn()?.dataType;
-    if (dataType == null) {
-      throw Exception(
-          "Unable to define ManyToMany connection due to missing primary key for table $tableName");
-    }
-    return dataType;
-  }
+  SQLDataType primaryKeyType() => tableDescription.primaryKeyColumn().dataType;
 }

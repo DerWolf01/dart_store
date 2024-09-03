@@ -1,4 +1,3 @@
-import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/connection/instance/instance.dart';
@@ -12,7 +11,6 @@ import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dar
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/data_query/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
-import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';

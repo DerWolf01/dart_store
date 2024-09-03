@@ -6,7 +6,6 @@ import 'package:dart_store/data_manipulation/delete/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/comparison_operator.dart';
-import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
 
 class DeleteService with DartStoreUtility {
