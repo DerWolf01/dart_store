@@ -10,6 +10,10 @@ class TableStatement extends Statement {
       : columnsStatements =
             columns.map((column) => ColumnStatement(column: column)).toList();
   @override
-  String define() =>
-      "CREATE TABLE IF NOT EXISTS $name (${columnsStatements.map((column) => column.define()).join(", ")})";
+  String define() {
+    final res =
+        "CREATE TABLE IF NOT EXISTS $name (${columnsStatements.map((column) => column.define()).join(", ")})";
+
+    return res;
+  }
 }

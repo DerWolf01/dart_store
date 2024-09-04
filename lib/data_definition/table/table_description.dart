@@ -30,26 +30,31 @@ class TableDescription {
         },
       ) as InternalColumn;
 
-  List<Column> get foreignKeyColumns =>
+  List<ForeignColumn> get foreignKeyColumns =>
       columns.whereType<ForeignColumn>().toList();
 
   List<Column> columnsByConstraint<T extends SQLConstraint>() => columns
       .where((element) => element.constraints.any((element) => element is T))
       .toList();
 
-  List<Column> manyToManyColumns() => foreignKeyColumns
+  List<ForeignColumn> manyToManyColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<ManyToMany>() != null)
       .toList();
 
-  List<Column> oneToOneColumns() => foreignKeyColumns
+  List<ForeignColumn> oneToOneColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<OneToOne>() != null)
       .toList();
 
-  List<Column> oneToManyColumns() => foreignKeyColumns
+  List<ForeignColumn> oneToManyColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<OneToMany>() != null)
       .toList();
 
-  List<Column> manyToOneColumns() => foreignKeyColumns
+  List<ForeignColumn> manyToOneColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<ManyToOne>() != null)
       .toList();
+
+  @override
+  String toString() {
+    return 'TableDescription{objectType: $objectType, tableName: $tableName, columns: ${columns.map((e) => e.toString()).toList()}';
+  }
 }

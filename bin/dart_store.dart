@@ -1,33 +1,38 @@
+import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/entity.dart';
-import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/postgres_connection/connection.dart';
+import 'package:dart_store/where/comparison_operator.dart';
+import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 
 // TODO: search for after-query-implementation and implement missing functionality
 // TODO implement or chaining for wheres.
 // TODO: IMplement delete logic for connections
+// Implement MapId logic
 @Entity()
 class TextListTest {
   TextListTest();
   TextListTest.init({
     this.id,
-    required this.textList,
+    @ListOf(type: ManyToOneTest) required this.textList,
     required this.title,
   });
 
-  @PrimaryKey()
+  @PrimaryKey(autoIncrement: true)
   @Serial()
   late final int? id;
 
   @Varchar()
   late final String title;
 
-  @MapId()
+  // @MapId()
+  @ListOf(type: ManyToOneTest)
   @OneToMany<ManyToOneTest>()
-  late final List<int> textList;
+  late final List<dynamic> textList;
 }
 
 @Entity()
@@ -35,13 +40,14 @@ class ManyToOneTest {
   ManyToOneTest();
   ManyToOneTest.init({
     required this.id,
-    required this.textList,
+    @ListOf(type: String) required this.textList,
   });
 
-  @PrimaryKey()
+  @PrimaryKey(autoIncrement: true)
   @Serial()
   late int id;
 
+  @ListOf(type: String)
   @TextList()
   late final List<String> textList;
 }
@@ -66,8 +72,21 @@ void main(List<String> arguments) async {
     TextListTest.init(
       id: -1,
       title: "title",
-      textList: [0, 1],
+      textList: [
+        ManyToOneTest.init(id: 0, textList: ["a", "b", "c"]),
+        ManyToOneTest.init(id: 0, textList: ["a", "b", "c"])
+      ],
     ),
   ));
-  print(dartStore.query(type: TextListTest));
+  print((await dartStore.query(type: TextListTest, where: [
+    Where(
+        comparisonOperator: ComparisonOperator.equals,
+        internalColumn: InternalColumn(
+            dataType: Serial(),
+            constraints: [PrimaryKey(autoIncrement: true)],
+            name: "id"),
+        value: 1)
+  ]))
+      .first
+      .id);
 }

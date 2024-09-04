@@ -23,14 +23,9 @@ class OneToOneDefinition extends DataDefinition {
     final primaryKeyType2 = table1.primaryKeyType();
 
     final columnName2 = "${tableName2}_${column2.sqlName}";
-    return '''
-CREATE TABLE IF NOT EXISTS $connectionName (
-  $columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE,
-  $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE,
-  PRIMARY KEY($columnName1, $columnName2),
-  FOREIGN KEY ($columnName1) REFERENCES $tableName1($columnName1),
-  FOREIGN KEY ($columnName2) REFERENCES $tableName2($columnName2)
-)
-''';
+    final res =
+        "CREATE TABLE IF NOT EXISTS $connectionName ($columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE, $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE, PRIMARY KEY($columnName1, $columnName2), FOREIGN KEY ($columnName1) REFERENCES $tableName1($columnName1), FOREIGN KEY ($columnName2) REFERENCES $tableName2($columnName2))";
+
+    return res;
   }
 }

@@ -7,6 +7,8 @@ class ColumnStatement {
 
   String define() =>
       "${column.sqlName} ${column.dataType.sqlTypeName()} ${unique()} ${notNull()} ${primaryKey()} ";
+
+      
   String unique() => column.isUniqe ? "UNIQUE" : "";
   String primaryKey() => column.isPrimaryKey ? "PRIMARY KEY" : "";
   String notNull() => column.isNullable ? "" : "NOT NULL";

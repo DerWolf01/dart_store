@@ -37,7 +37,8 @@ class OneToOneDeleteService with DartStoreUtility {
 
   Future<void> preDelete(EntityInstance entityInstance,
       {bool recursive = true}) async {
-    for (final foreignColumnInstance in entityInstance.oneToOneColumns()) {
+    for (final foreignColumnInstance
+        in entityInstance.oneToOneColumnsInstances()) {
       final dynamic value = foreignColumnInstance.value;
 
       final itemEntityInstance =

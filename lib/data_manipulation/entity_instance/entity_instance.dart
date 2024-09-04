@@ -23,47 +23,71 @@ class EntityInstance extends TableDescription {
       columns.whereType<T>().firstWhere((element) => element.name == name);
   @override
   List<ColumnInstance> get columns => super.columns as List<ColumnInstance>;
+  @override
+  List<ForeignColumnInstance> get foreignKeyColumns =>
+      columns.whereType<ForeignColumnInstance>().toList();
 
   @override
-  List<ColumnInstance> columnsByConstraint<T extends SQLConstraint>() =>
-      super.columnsByConstraint() as List<ColumnInstance>;
+  List<ColumnInstance> columnsByConstraint<T extends SQLConstraint>() => columns
+      .where(
+        (element) => element.constraints.any(
+          (element) => element is T,
+        ),
+      )
+      .toList();
   @override
   List<ForeignColumnInstance> foreignColumns() =>
-      super.foreignColumns() as List<ForeignColumnInstance>;
+      columns.whereType<ForeignColumnInstance>().toList();
   @override
   List<ForeignColumnInstance>
-      foreignColumnsByForeignKeyType<T extends ForeignKey>() =>
-          super.foreignColumnsByForeignKeyType() as List<ForeignColumnInstance>;
+      foreignColumnsByForeignKeyType<T extends ForeignKey>() => foreignColumns()
+          .where((element) => element.getForeignKey<T>() != null)
+          .toList();
 
-  @override
-  List<ManyToManyColumnInstance> manyToManyColumns() =>
-      super.manyToManyColumns() as List<ManyToManyColumnInstance>;
+  List<ManyToManyColumnInstance> manyToManyColumnsInstances() =>
+      columns.whereType<ManyToManyColumnInstance>().toList();
 
-  @override
-  List<ManyToOneColumnInstance> manyToOneColumns() =>
-      super.manyToManyColumns() as List<ManyToOneColumnInstance>;
-  @override
-  List<OneToManyColumnInstance> oneToManyColumns() =>
-      super.manyToManyColumns() as List<OneToManyColumnInstance>;
-  @override
-  List<OneToOneColumnInstance> oneToOneColumns() =>
-      super.manyToManyColumns() as List<OneToOneColumnInstance>;
+  List<ManyToOneColumnInstance> manyToOneColumnsInstances() =>
+      columns.whereType<ManyToOneColumnInstance>().toList();
+
+  List<OneToManyColumnInstance> oneToManyColumnsInstances() =>
+      columns.whereType<OneToManyColumnInstance>().toList();
+
+  List<OneToOneColumnInstance> oneToOneColumnsInstances() =>
+      columns.whereType<OneToOneColumnInstance>().toList();
 
   setField(String name, dynamic value) {
     final columnInstance = columns
         .where(
-          (element) => element.sqlName == name,
+          (element) => element.name == name,
         )
         .firstOrNull;
 
     if (columnInstance == null) {
-      throw Exception("Now column with name:$name exists in table $tableName");
+      throw Exception("No column with name:$name exists in table $tableName");
     }
+
     columnInstance.value = value;
   }
 
   @override
   InternalColumnInstance primaryKeyColumn() {
-    return super.primaryKeyColumn() as InternalColumnInstance;
+    final column = columns
+        .whereType<InternalColumnInstance>()
+        .where(
+          (element) => element.isPrimaryKey,
+        )
+        .firstOrNull;
+    if (column == null) {
+      throw Exception("No primary key found for table $tableName");
+    }
+    return column;
   }
+
+  @override
+  ColumnInstance? columnDescription(String columnName) => columns
+      .where(
+        (element) => element.name == columnName,
+      )
+      .firstOrNull;
 }

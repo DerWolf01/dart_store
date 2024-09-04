@@ -6,6 +6,7 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/service.dart';
@@ -82,7 +83,9 @@ class OneToOneQueryService {
           "Entity of table ${entityInstance.tableName} has to be queryed before querying foreign columns");
     }
 
-    for (final foreignColumnInstance in entityInstance.oneToOneColumns()) {
+    for (final foreignColumnInstance in TableService()
+        .findTable(entityInstance.objectType)
+        .oneToOneColumns()) {
       final List<TableConnectionInstance> connectionInstances =
           await _queryConnection(
               entityInstance,
@@ -93,7 +96,11 @@ class OneToOneQueryService {
           connectionInstance: connectionInstances.first,
           where: where);
 
-      entityInstance.setField(foreignColumnInstance.name, items);
+      entityInstance.columns.add(OneToOneColumnInstance(
+          foreignKey: foreignColumnInstance.foreignKey,
+          constraints: foreignColumnInstance.constraints,
+          name: foreignColumnInstance.name,
+          value: items.first));
     }
 
     return entityInstance;

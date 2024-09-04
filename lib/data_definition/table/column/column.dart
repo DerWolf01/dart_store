@@ -5,7 +5,7 @@ abstract class Column {
   String name;
   String get sqlName;
 
-  hasConstraint<T>() => constraints.any((element) => element.runtimeType is T);
+  hasConstraint<T>() => constraints.any((element) => element is T);
   Constraint? constraint<Constraint extends SQLConstraint>() =>
       constraints.whereType<Constraint>().firstOrNull;
   bool get isPrimaryKey => hasConstraint<PrimaryKey>();
@@ -21,4 +21,8 @@ abstract class Column {
     required this.constraints,
     required this.name,
   });
+
+  @override
+  String toString() =>
+      "Column(name: $name, constraints: $constraints, sqlName: $sqlName, isPrimaryKey: $isPrimaryKey, isUniqe: $isUniqe, isNullable: $isNullable, isAutoIncrement: $isAutoIncrement, isForeignKey: $isForeignKey)";
 }

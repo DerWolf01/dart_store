@@ -11,6 +11,7 @@ class ForeignColumnInstanceService extends ForeignColumnService {
       required String name,
       required ForeignKey foreignKey,
       required List<SQLConstraint> constraints}) {
+    print("Foreign Column Instance Service: $foreignKey --> $value");
     if (foreignKey is ManyToMany) {
       return ManyToManyColumnInstance(
           foreignKey: foreignKey,

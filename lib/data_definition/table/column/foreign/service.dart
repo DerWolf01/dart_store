@@ -5,7 +5,7 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 
 class ForeignColumnService {
-  generateForeignColumn(
+  ForeignColumn generateForeignColumn(
       {required ForeignKey foreignKey,
       required List<SQLConstraint> constraints,
       required String name}) {

@@ -42,7 +42,8 @@ class ManyToManyInsertService with DartStoreUtility {
           "Entity of table ${entityInstance.tableName} has to be inserted before inserting foreign columns");
     }
 
-    for (final foreignColumnInstance in entityInstance.manyToManyColumns()) {
+    for (final foreignColumnInstance
+        in entityInstance.manyToManyColumnsInstances()) {
       final List<dynamic> values = foreignColumnInstance.value;
       final List newValues = [];
       for (final item in values) {

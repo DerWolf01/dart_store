@@ -6,7 +6,7 @@ class TextList extends SQLDataType<List<String>> {
   final int? length;
 
   @override
-  convert(value) {
+  convert(List<String>? value) {
     if (value == null && isNullable == false) {
       throw Exception('Value cannot be null for $runtimeType');
     } else if (value == null && isNullable == true) {

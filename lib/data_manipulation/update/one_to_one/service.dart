@@ -41,7 +41,8 @@ class OneToOneUpdateService with DartStoreUtility {
           "Entity of table ${entityInstance.tableName} has to be updateed before updateing foreign columns");
     }
 
-    for (final foreignColumnInstance in entityInstance.oneToOneColumns()) {
+    for (final foreignColumnInstance
+        in entityInstance.oneToOneColumnsInstances()) {
       final dynamic value = foreignColumnInstance.value;
       late final EntityInstance newValue;
 

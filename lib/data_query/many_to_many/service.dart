@@ -5,6 +5,7 @@ import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_many.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/service.dart';
@@ -86,18 +87,24 @@ class ManyToManyQueryService with DartStoreUtility {
           "Entity of table ${entityInstance.tableName} has to be queryed before querying foreign columns");
     }
 
-    for (final foreignColumnInstance in entityInstance.manyToManyColumns()) {
+    for (final foreignColumn in TableService()
+        .findTable(entityInstance.objectType)
+        .manyToManyColumns()) {
       final List<TableConnectionInstance> connectionInstances =
           await _queryConnection(
               entityInstance,
-              TableService().findTable(
-                  foreignColumnInstance.foreignKey.referencedEntity));
+              TableService()
+                  .findTable(foreignColumn.foreignKey.referencedEntity));
       final List<EntityInstance> items = await _queryForeignColumnItems(
-          itemColumn: foreignColumnInstance,
+          itemColumn: foreignColumn,
           connectionInstances: connectionInstances,
           where: where);
 
-      entityInstance.setField(foreignColumnInstance.name, items);
+      entityInstance.columns.add(ManyToManyColumnInstance(
+          value: items,
+          foreignKey: foreignColumn.foreignKey,
+          constraints: foreignColumn.constraints,
+          name: foreignColumn.name));
     }
 
     return entityInstance;

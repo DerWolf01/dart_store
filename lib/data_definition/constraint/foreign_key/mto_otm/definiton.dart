@@ -9,11 +9,10 @@ class OneToManyAndManyToOneDefinition extends DataDefinition {
 
   @override
   String define() {
-    return """
-CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $manyToOneTableName ${manyToOneIdDataType.sqlTypeName()} NOT NULL, $oneToManyTableName ${oneToManyIdDataType.sqlTypeName()} NOT NULL, 
-FOREIGN KEY ($oneToManyTableName) REFERENCES $oneToManyTableName(id), 
-FOREIGN KEY ($manyToOneTableName) REFERENCES $manyToOneTableName(id));
-    """;
+    final res =
+        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $manyToOneTableName ${manyToOneIdDataType.sqlTypeName()} NOT NULL UNIQUE, $oneToManyTableName ${oneToManyIdDataType.sqlTypeName()} NOT NULL, FOREIGN KEY ($oneToManyTableName) REFERENCES $oneToManyTableName(id), FOREIGN KEY ($manyToOneTableName) REFERENCES $manyToOneTableName(id))";
+
+    return res;
   }
 
   String get oneToManyTableName =>

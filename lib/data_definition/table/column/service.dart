@@ -7,16 +7,26 @@ import 'package:dart_store/data_definition/table/column/foreign/service.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 
 class ColumnService {
+  isConstraint(InstanceMirror instanceMirror) {
+    final constraintClassMirror = reflectClass(SQLConstraint);
+    return instanceMirror.type.isAssignableTo(constraintClassMirror) ||
+        instanceMirror.type.isSubclassOf(constraintClassMirror) ||
+        instanceMirror.type.isSubtypeOf(constraintClassMirror);
+  }
+
   List<Column> extractColumns(final ClassMirror classMirror) {
     final List<Column> columns = [];
     for (final declaration
         in ConversionService.declarations(classMirror).values) {
       final name = MirrorSystem.getName(declaration.simpleName);
+
       final constraints = declaration.metadata
-          .map(
-            (e) => e.reflectee,
+          .where(
+            (element) => isConstraint(element),
           )
-          .whereType<SQLConstraint>()
+          .map(
+            (e) => e.reflectee as SQLConstraint,
+          )
           .toList();
 
       final dataType = declaration.metadata

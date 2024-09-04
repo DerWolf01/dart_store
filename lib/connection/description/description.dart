@@ -5,7 +5,11 @@ class TableConnectionDescription extends TableDescription {
   TableConnectionDescription({required super.tableName, required super.columns})
       : super(objectType: dynamic);
 
-  InternalColumn columnByName(String originalName) => columns
-      .whereType<InternalColumn>()
-      .firstWhere((element) => element.name == originalName);
+  InternalColumn columnByName(String originalName) {
+    final column = columns.whereType<InternalColumn>().firstOrNull;
+    if (column == null) {
+      throw Exception("No column found with name $originalName");
+    }
+    return column;
+  }
 }

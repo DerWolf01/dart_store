@@ -38,6 +38,23 @@ class PostgresConnection extends DatabaseConnection<Result> {
   Future<List<Map<String, dynamic>>> query(String statement) async =>
       (await execute(statement)).map((e) => e.toColumnMap()).toList();
 
+  @override
+  Future<int> insert(String statement, String tableName) async {
+    await execute(statement);
+    return await lastInsertedId(statement.split(" ")[2]);
+  }
+
+  Future<int> lastInsertedId(String tableName) async {
+    try {
+      final query = "SELECT currval('${tableName}_id_seq');";
+      final result = await execute(query);
+      return result.first.first as int;
+    } catch (e) {
+      final query = "SELECT NEXTVAL('${tableName}_id_seq');";
+      final result = await execute(query);
+      return result.first.first as int;
+    }
+  }
   // @override
   // Future<int> update(String statement) {
   //   // TODO: implement update

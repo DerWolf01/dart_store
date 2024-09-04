@@ -4,7 +4,7 @@ import 'package:dart_store/data_manipulation/delete/service.dart';
 
 class OneToManyDeleteService {
   Future<void> preDelete(EntityInstance entityInstance) async {
-    for (final foreignColumnInstance in entityInstance.oneToManyColumns()) {
+    for (final foreignColumnInstance in entityInstance.oneToManyColumnsInstances()) {
       final List<dynamic> values = foreignColumnInstance.value;
 
       for (final oneOfManyItems in values) {

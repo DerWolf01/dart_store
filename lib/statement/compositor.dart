@@ -15,6 +15,10 @@ class StatementComposition<T extends Statement>
   });
 
   @override
-  String define() =>
-      '${statement.define()} ${WhereService().defineAndChainWhereStatements(where: where)}';
+  String define() {
+    final res =
+        '${statement.define()} ${WhereService().defineAndChainWhereStatements(where: where)}';
+
+    return res;
+  }
 }

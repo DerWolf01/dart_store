@@ -7,31 +7,30 @@ class InsertStatement {
 
   String define() {
     final insertIntoColumns = this.insertIntoColumns;
-    final sqlConformColumnNameString = {
-      insertIntoColumns
-          .map(
-            (e) => e.sqlName,
-          )
-          .join(", ")
-    };
+    final sqlConformColumnNameString = insertIntoColumns
+        .map(
+          (e) => e.sqlName,
+        )
+        .join(", ");
     final sqlConformValues = insertIntoColumns.map(
       (e) => e.sqlConformValue,
     );
 
     final String sqlConformValuesString = sqlConformValues.join(', ');
 
-    final String sqlConformOnConflictString = insertIntoColumns
+    insertIntoColumns
         .map(
           (e) => "${e.sqlName} = ${e.sqlConformValue}",
         )
         .join(", ");
-    return "INSERT INTO $sqlConformColumnNameString VALUES ($sqlConformValuesString) ON CONFLICt (id) SET $sqlConformOnConflictString ";
+    final res =
+        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString)";
+    print("InsertStatement.define: $res");
+    return res;
   }
 
   List<InternalColumnInstance> get insertIntoColumns => entityInstance.columns
-      .where(
-        (element) =>
-            !element.isAutoIncrement && element is InternalColumnInstance,
-      )
-      .toList() as List<InternalColumnInstance>;
+      .whereType<InternalColumnInstance>()
+      .where((element) => !element.isAutoIncrement)
+      .toList();
 }

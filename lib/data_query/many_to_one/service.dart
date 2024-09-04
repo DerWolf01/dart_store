@@ -1,8 +1,9 @@
 import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
+import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
-import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/service.dart';
@@ -13,10 +14,10 @@ import 'package:dart_store/where/statement.dart';
 class ManyToOneQueryService with DartStoreUtility {
   Future<EntityInstance> queryManyToOneColumnData(
       {required EntityInstance connectionInstance,
-      required ForeignColumnInstance oneToManyColumnInstance,
+      required ForeignColumn oneToManyColumn,
       List<Where> where = const []}) async {
-    final oneToManyTableDescription = TableService()
-        .findTable(oneToManyColumnInstance.foreignKey.referencedEntity);
+    final oneToManyTableDescription =
+        TableService().findTable(oneToManyColumn.foreignKey.referencedEntity);
     final oneToManyItem = (await DataQueryService()
             .query(description: oneToManyTableDescription, where: [
       Where(
@@ -33,10 +34,10 @@ class ManyToOneQueryService with DartStoreUtility {
 
   Future<List<EntityInstance>> queryConnections({
     required EntityInstance manyToOneHolder,
-    required ForeignColumnInstance oneToManyColumnInstance,
+    required ForeignColumn oneToManyColumn,
   }) async {
-    final TableDescription oneToManyTableDescription = TableService()
-        .findTable(oneToManyColumnInstance.foreignKey.referencedEntity);
+    final TableDescription oneToManyTableDescription =
+        TableService().findTable(oneToManyColumn.foreignKey.referencedEntity);
     final TableConnectionDescription tableConnectionDescription =
         TableConnectionDescriptionService().generateTableDescription(
             manyToOneHolder, oneToManyTableDescription);
@@ -55,17 +56,22 @@ class ManyToOneQueryService with DartStoreUtility {
   Future<EntityInstance> postQuery(
       {required EntityInstance entityInstance,
       List<Where> where = const []}) async {
-    for (final foreignColumnInstance in entityInstance.manyToOneColumns()) {
+    for (final foreignColumn in TableService()
+        .findTable(entityInstance.objectType)
+        .manyToOneColumns()) {
       final connectionInstances = await queryConnections(
-          manyToOneHolder: entityInstance,
-          oneToManyColumnInstance: foreignColumnInstance);
+          manyToOneHolder: entityInstance, oneToManyColumn: foreignColumn);
 
       final EntityInstance oneToManyInstance = await queryManyToOneColumnData(
           connectionInstance: connectionInstances.first,
-          oneToManyColumnInstance: foreignColumnInstance,
+          oneToManyColumn: foreignColumn,
           where: where);
 
-      entityInstance.setField(foreignColumnInstance.sqlName, oneToManyInstance);
+      entityInstance.columns.add(ManyToOneColumnInstance(
+          foreignKey: foreignColumn.foreignKey,
+          constraints: foreignColumn.constraints,
+          name: foreignColumn.name,
+          value: oneToManyInstance));
     }
 
     return entityInstance;

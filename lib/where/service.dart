@@ -2,7 +2,9 @@ import 'package:dart_store/where/statement.dart';
 
 class WhereService {
   defineAndChainWhereStatements({required List<Where> where}) =>
-      where.map((e) => e.define()).join(' AND ');
+      where.isNotEmpty
+          ? "WHERE ${where.map((e) => e.define()).join(' AND ')}"
+          : "";
 
   List<Where> extractStatementsFor(
           {required List<Where> where, required Type type}) =>

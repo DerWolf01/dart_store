@@ -80,18 +80,26 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
   final internalColumnsInstancesMapEntries = internalColumnsInstances
       .map((e) => MapEntry<String, dynamic>(e.name, e.value));
 
-  final foreignColumnsInstances =
-      entityInstance.columns.whereType<ForeignColumnInstance>();
-  final foreignColumnsInstancesMapEntries = foreignColumnsInstances.map(
-      (e) => MapEntry<String, dynamic>(e.name, entityInstanceToMap(e.value)));
+  final foreignColumnsInstances = entityInstance.foreignKeyColumns;
+
+  final foreignColumnsInstancesMapEntries = foreignColumnsInstances.map((e) {
+    if (e.value is List) {
+      return MapEntry<String, dynamic>(
+          e.name, e.value.map((e) => entityInstanceToMap(e)).toList());
+    }
+    return MapEntry<String, dynamic>(e.name, entityInstanceToMap(e.value));
+  });
 
   final Map<String, dynamic> instanceMap = {
     ...Map.fromEntries(internalColumnsInstancesMapEntries),
     ...Map.fromEntries(foreignColumnsInstancesMapEntries)
   };
 
+  print("instanceMap $instanceMap");
+
   return instanceMap;
 }
+
 
 T entityInstanceToModel<T>(EntityInstance entityInstance, {Type? type}) =>
     ConversionService.mapToObject<T>(entityInstanceToMap(entityInstance),

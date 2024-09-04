@@ -11,7 +11,8 @@ import 'package:change_case/change_case.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class TableService with DartStoreUtility {
-  findTables() => CollectorService().searchClassesWithAnnotation<Entity>().map(
+  List<TableDescription> findTables() =>
+      CollectorService().searchClassesWithAnnotation<Entity>().map(
         (classMirror) {
           final List<Column> columns =
               ColumnService().extractColumns(classMirror);
@@ -21,7 +22,7 @@ class TableService with DartStoreUtility {
               tableName: classMirror.name.toSnakeCase(),
               columns: columns);
         },
-      );
+      ).toList();
 
   TableDescription findTable(Type tableType) {
     final classMirror = CollectorService()

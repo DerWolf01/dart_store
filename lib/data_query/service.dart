@@ -1,6 +1,7 @@
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
@@ -20,31 +21,31 @@ class DataQueryService {
 
     final StatementComposition statementComposition =
         StatementComposition(statement: queryStatement, where: where);
-    final queryResults =
-        await dartStore.connection.query(statementComposition.define());
+
+    final statementString = statementComposition.define();
+    print("statementString: $statementString");
+    final queryResults = await dartStore.connection.query(statementString);
 
     final List<EntityInstance> entityInstances = [];
     for (final queryResult in queryResults) {
-      final entityInstance =
-          await ManyToManyQueryService().postQuery(EntityInstance(
+      final entityInstance = EntityInstance(
         objectType: description.objectType,
         tableName: description.tableName,
         columns: description.columns
             .whereType<InternalColumn>()
-            .map<InternalColumnInstance>((InternalColumn e) =>
-                InternalColumnInstance(
-                    dataType: e.dataType,
-                    constraints: e.constraints,
-                    name: e.name,
-                    value: queryResult[e.name]))
+            .map<ColumnInstance>((InternalColumn e) => InternalColumnInstance(
+                dataType: e.dataType,
+                constraints: e.constraints,
+                name: e.name,
+                value: queryResult[e.name]))
             .toList(),
-      ));
+      );
 
-      entityInstances.add(await ManyToManyQueryService().postQuery(
-          await OneToManyQueryService().postQuery(
-              entityInstance: await ManyToOneQueryService().postQuery(
-                  entityInstance: await OneToOneQueryService()
-                      .postQuery(entityInstance)))));
+      await ManyToManyQueryService().postQuery(entityInstance);
+      await OneToManyQueryService().postQuery(entityInstance: entityInstance);
+      await ManyToOneQueryService().postQuery(entityInstance: entityInstance);
+      await OneToOneQueryService().postQuery(entityInstance);
+      entityInstances.add(entityInstance);
     }
     return entityInstances;
   }

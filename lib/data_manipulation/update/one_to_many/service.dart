@@ -4,7 +4,8 @@ import 'package:dart_store/data_manipulation/update/service.dart';
 
 class OneToManyUpdateService {
   Future<EntityInstance> postUpdate(EntityInstance entityInstance) async {
-    for (final foreignColumnInstance in entityInstance.oneToManyColumns()) {
+    for (final foreignColumnInstance
+        in entityInstance.oneToManyColumnsInstances()) {
       final List<dynamic> values = foreignColumnInstance.value;
       final List newValues = [];
       for (final oneOfManyItems in values) {
