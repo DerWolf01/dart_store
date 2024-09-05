@@ -1,3 +1,4 @@
+import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
@@ -5,12 +6,12 @@ import 'package:dart_store/data_definition/table/column/internal.dart';
 
 class TableDescription {
   final Type objectType;
-  final String tableName;
   final List<Column> columns;
   TableDescription(
-      {required this.objectType,
-      required this.tableName,
-      required this.columns});
+      {required this.objectType, required this.columns, required this.entity});
+
+  Entity entity;
+  String get tableName => entity.name ?? objectType.toString().toSnakeCase();
 
   List<ForeignColumn> foreignColumns() =>
       columns.whereType<ForeignColumn>().toList();

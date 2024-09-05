@@ -12,15 +12,20 @@ import 'package:dart_store/data_manipulation/entity_instance/column_instance/int
 class EntityInstance extends TableDescription {
   EntityInstance(
       {required super.objectType,
-      required super.tableName,
+      required super.entity,
       required List<ColumnInstance> columns})
       : super(columns: columns);
 
   Column columnByName(String name) =>
       columns.firstWhere((element) => element.name == name);
 
-  T columnByNameAndType<T extends Column>(String name) =>
-      columns.whereType<T>().firstWhere((element) => element.name == name,orElse: () => throw Exception("Column with name: $name and Type $T not found."),);
+  T columnByNameAndType<T extends Column>(String name) => columns
+      .whereType<T>()
+      .firstWhere(
+        (element) => element.name == name,
+        orElse: () =>
+            throw Exception("Column with name: $name and Type $T not found."),
+      );
   @override
   List<ColumnInstance> get columns => super.columns as List<ColumnInstance>;
   @override

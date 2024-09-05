@@ -13,7 +13,7 @@ extension EntityMapConverter on ConversionService {
           required TableConnectionDescription tableConnectionDescription}) =>
       maps
           .map((map) => TableConnectionInstance(
-              tableName: tableConnectionDescription.tableName,
+              entity: tableConnectionDescription.entity,
               columns: tableConnectionDescription.columns
                   .whereType<InternalColumn>()
                   .map(
@@ -30,7 +30,7 @@ extension EntityMapConverter on ConversionService {
           {required Map<String, dynamic> map,
           required TableConnectionDescription tableConnectionDescription}) =>
       TableConnectionInstance(
-          tableName: tableConnectionDescription.tableName,
+          entity: tableConnectionDescription.entity,
           columns: tableConnectionDescription.columns
               .whereType<InternalColumnInstance>()
               .map(

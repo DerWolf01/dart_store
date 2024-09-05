@@ -27,7 +27,7 @@ class EntityInstanceService {
         ColumnInstanceService().extractColumnInstances(instanceMirror);
     final table = TableService().findTable(value.runtimeType);
     return EntityInstance(
-        tableName: table.tableName,
+        entity: table.entity,
         objectType: value.runtimeType,
         columns: columnsInstances);
   }
@@ -69,7 +69,7 @@ class EntityInstanceService {
           .map(
             (e) => EntityInstance(
                 objectType: referencedEntity,
-                tableName: tableDescription.tableName,
+                entity: tableDescription.entity,
                 columns: [
                   InternalColumnInstance.fromColumn(
                       column: primaryKeyColumn,
@@ -81,7 +81,7 @@ class EntityInstanceService {
     }
     return EntityInstance(
         objectType: referencedEntity,
-        tableName: tableDescription.tableName,
+        entity: tableDescription.entity,
         columns: [
           InternalColumnInstance.fromColumn(
               column: primaryKeyColumn,

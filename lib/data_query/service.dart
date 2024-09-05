@@ -30,7 +30,7 @@ class DataQueryService {
     for (final queryResult in queryResults) {
       final entityInstance = EntityInstance(
         objectType: description.objectType,
-        tableName: description.tableName,
+        entity: description.entity,
         columns: description.columns
             .whereType<InternalColumn>()
             .map<ColumnInstance>((InternalColumn e) => InternalColumnInstance(

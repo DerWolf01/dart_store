@@ -19,7 +19,11 @@ class TableService with DartStoreUtility {
 
           return TableDescription(
               objectType: classMirror.reflectedType,
-              tableName: classMirror.name.toSnakeCase(),
+              entity: classMirror.metadata
+                  .firstWhere(
+                    (element) => element.reflectee is Entity,
+                  )
+                  .reflectee as Entity,
               columns: columns);
         },
       ).toList();
@@ -38,7 +42,11 @@ class TableService with DartStoreUtility {
 
     return TableDescription(
         objectType: tableType,
-        tableName: classMirror.name.toSnakeCase(),
+        entity: classMirror.metadata
+            .firstWhere(
+              (element) => element.reflectee is Entity,
+            )
+            .reflectee as Entity,
         columns: columns);
   }
 

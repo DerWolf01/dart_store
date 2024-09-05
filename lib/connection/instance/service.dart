@@ -1,5 +1,6 @@
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/connection/instance/instance.dart';
+import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
@@ -12,7 +13,7 @@ class TableConnectionInstanceService {
           EntityInstance instance, EntityInstance instance2,
           {int conenctionId = -1}) =>
       TableConnectionInstance(
-          tableName: connectionName(instance, instance2),
+          entity: Entity(name: connectionName(instance, instance2)),
           columns: columns(conenctionId, instance, instance2));
 
   TableConnectionInstance generateManyToOneAndOneToManyConnectionInstance(
@@ -24,7 +25,7 @@ class TableConnectionInstanceService {
             oneToManyTableDescription: oneToMany,
             manyToOneTableDescription: manyToOne);
     ;
-    return TableConnectionInstance(tableName: description.tableName, columns: [
+    return TableConnectionInstance(entity: description.entity, columns: [
       InternalColumnInstance(
           value: conenctionId,
           dataType: Serial(),

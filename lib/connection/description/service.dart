@@ -1,4 +1,5 @@
 import 'package:dart_store/connection/description/description.dart';
+import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
@@ -11,15 +12,16 @@ class TableConnectionDescriptionService {
       {required TableDescription oneToManyTableDescription,
       required TableDescription manyToOneTableDescription}) {
     return TableConnectionDescription(
-        tableName:
-            "${oneToManyTableDescription.tableName}_${manyToOneTableDescription.tableName}",
+        entity: Entity(
+            name:
+                "${oneToManyTableDescription.tableName}_${manyToOneTableDescription.tableName}"),
         columns: columns(oneToManyTableDescription, manyToOneTableDescription));
   }
 
   TableConnectionDescription generateTableDescription(
           TableDescription description, TableDescription description2) =>
       TableConnectionDescription(
-          tableName: connectionName(description, description2),
+          entity: Entity(name: connectionName(description, description2)),
           columns: columns(description, description2));
 
   List<InternalColumn> columns(
