@@ -12,10 +12,8 @@ import 'package:postgres/postgres.dart';
 // TODO: Implement logic to instanciate EntityInstance using a value
 class ManyToManyUpdateService with DartStoreUtility {
   Future<EntityInstance> _updateForeignColumnItem(
-      dynamic item, String columnName,
+      EntityInstance itemEntityInstance, String columnName,
       {List<Where> where = const []}) async {
-    final EntityInstance itemEntityInstance =
-        EntityInstanceService().entityInstanceByValueInstance(item);
     final itemPrimaryKeyColumnInstance = itemEntityInstance.primaryKeyColumn();
     return await UpdateService().update(itemEntityInstance,
         where: automaticallyFilterWhere(
@@ -23,7 +21,7 @@ class ManyToManyUpdateService with DartStoreUtility {
             id: itemPrimaryKeyColumnInstance.value,
             primaryKeyColumn: itemPrimaryKeyColumnInstance,
             columnName: columnName,
-            externalColumnType: item.runtimeType));
+            externalColumnType: itemEntityInstance.objectType));
   }
 
   Future _updateConnection(

@@ -12,9 +12,7 @@ class OneToManyUpdateService {
       final List<EntityInstance> values = foreignColumnInstance.value;
       final List newValues = [];
       for (final oneOfManyItems in values) {
-        final EntityInstance oneOfManyItemsInstance = EntityInstanceService()
-            .entityInstanceByValueInstance(oneOfManyItems);
-        newValues.add(await UpdateService().update(oneOfManyItemsInstance));
+        newValues.add(await UpdateService().update(oneOfManyItems));
         continue;
       }
 

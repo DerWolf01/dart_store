@@ -8,9 +8,13 @@ class ForeignColumnService {
   ForeignColumn generateForeignColumn(
       {required ForeignKey foreignKey,
       required List<SQLConstraint> constraints,
-      required String name}) {
+      required String name,
+      required bool mapId}) {
     return ForeignColumn(
-        constraints: constraints, foreignKey: foreignKey, name: name);
+        constraints: constraints,
+        foreignKey: foreignKey,
+        name: name,
+        mapId: mapId);
   }
 
   TableDescription retrieveReferencedEntity(ForeignKey foreignKey) {

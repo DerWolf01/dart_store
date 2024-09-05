@@ -8,11 +8,8 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
 class OneToOneUpdateService with DartStoreUtility {
-  Future<EntityInstance> _updateForeignColumnItem(dynamic item) async {
-    final EntityInstance itemEntityInstance =
-        EntityInstanceService().entityInstanceByValueInstance(item);
-    return await UpdateService().update(itemEntityInstance);
-  }
+  Future<EntityInstance> _updateForeignColumnItem(EntityInstance item) async =>
+      await UpdateService().update(item);
 
   Future _createConnection(
       EntityInstance instance, EntityInstance instance2) async {

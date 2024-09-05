@@ -56,10 +56,15 @@ class OneToOneQueryService {
     QueryStatement queryStatement =
         QueryStatement(tableDescription: connectionDescription);
     final primaryKeyColumn = instance.primaryKeyColumn();
-
+    final queryColumn = InternalColumn(
+        dataType: primaryKeyColumn.dataType,
+        constraints: primaryKeyColumn.constraints,
+        name: instance.tableName);
+    print(
+        "querying connection with primaryKeyColumn: $primaryKeyColumn and value: ${primaryKeyColumn.value}");
     Where where = Where(
         comparisonOperator: ComparisonOperator.equals,
-        internalColumn: primaryKeyColumn,
+        internalColumn: queryColumn,
         value: primaryKeyColumn.value);
 
     final StatementComposition statementComposition =
@@ -98,12 +103,17 @@ class OneToOneQueryService {
               TableService()
                   .findTable(foreignColumn.foreignKey.referencedEntity));
       print("OneToOneQueryService: connectionInstances: $connectionInstances");
+      if (connectionInstances.isEmpty) {
+        throw Exception(
+            "No connection found for ${entityInstance.tableName} and ${foreignColumn.foreignKey.referencedEntity}");
+      }
       final List<EntityInstance> items = await _queryForeignColumnItems(
           oneToOneColumn: foreignColumn,
           connectionInstance: connectionInstances.first,
           where: where);
 
       entityInstance.columns.add(OneToOneColumnInstance(
+          mapId: foreignColumn.mapId,
           foreignKey: foreignColumn.foreignKey,
           constraints: foreignColumn.constraints,
           name: foreignColumn.name,

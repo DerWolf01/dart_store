@@ -87,6 +87,7 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
 
   final foreignColumnsInstancesMapEntries =
       foreignColumnsInstances.map((ForeignColumnInstance e) {
+    print("MapId: ${e.mapId}");
     if (e.mapId) {
       if (e.value is List<EntityInstance>) {
         return MapEntry<String, dynamic>(

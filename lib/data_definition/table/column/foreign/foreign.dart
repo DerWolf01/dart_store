@@ -14,7 +14,8 @@ class ForeignColumn<T extends ForeignKey> extends Column {
     required super.constraints,
     required this.foreignKey,
     required super.name,
+    required this.mapId,
   });
 
-  bool get mapId => hasConstraint<MapId>();
+  final bool mapId;
 }

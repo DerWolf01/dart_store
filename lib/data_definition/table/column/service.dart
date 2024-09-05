@@ -5,6 +5,7 @@ import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
 import 'package:dart_store/data_definition/table/column/foreign/service.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/mapping/map_id.dart';
 
 class ColumnService {
   isConstraint(InstanceMirror instanceMirror) {
@@ -55,7 +56,10 @@ class ColumnService {
         columns.add(ForeignColumnService().generateForeignColumn(
             foreignKey: foreignKeyInstance,
             constraints: constraints,
-            name: name));
+            name: name,
+            mapId: declaration.metadata
+                .where((element) => element.reflectee is MapId)
+                .isNotEmpty));
         continue;
       } else {
         throw Exception(

@@ -90,6 +90,7 @@ class ManyToOneQueryService with DartStoreUtility {
           where: where);
 
       entityInstance.columns.add(ManyToOneColumnInstance(
+          mapId: foreignColumn.mapId,
           foreignKey: foreignColumn.foreignKey,
           constraints: foreignColumn.constraints,
           name: foreignColumn.name,

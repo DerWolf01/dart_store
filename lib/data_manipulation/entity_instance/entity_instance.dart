@@ -19,13 +19,8 @@ class EntityInstance extends TableDescription {
   Column columnByName(String name) =>
       columns.firstWhere((element) => element.name == name);
 
-  T columnByNameAndType<T extends Column>(String name) => columns
-      .whereType<T>()
-      .firstWhere(
-        (element) => element.name == name,
-        orElse: () =>
-            throw Exception("Column with name: $name and Type $T not found."),
-      );
+  T columnByNameAndType<T extends Column>(String name) =>
+      columns.whereType<T>().firstWhere((element) => element.name == name,orElse: () => throw Exception("Column with name: $name and Type $T not found."),);
   @override
   List<ColumnInstance> get columns => super.columns as List<ColumnInstance>;
   @override

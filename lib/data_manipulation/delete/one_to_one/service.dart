@@ -39,11 +39,9 @@ class OneToOneDeleteService with DartStoreUtility {
       {bool recursive = true}) async {
     for (final foreignColumnInstance
         in entityInstance.oneToOneColumnsInstances()) {
-      final dynamic value = foreignColumnInstance.value;
+      final EntityInstance value = foreignColumnInstance.value;
 
-      final itemEntityInstance =
-          EntityInstanceService().entityInstanceByValueInstance(value);
-      await _deleteConnection(entityInstance, itemEntityInstance);
+      await _deleteConnection(entityInstance, value);
       if (recursive && !foreignColumnInstance.mapId) {
         await _deleteForeignColumnItem(value);
       }

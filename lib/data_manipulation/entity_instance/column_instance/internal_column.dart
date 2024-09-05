@@ -10,7 +10,9 @@ class InternalColumnInstance<ValueType> extends ColumnInstance
     required super.constraints,
     required super.name,
   });
-
+  InternalColumnInstance.fromColumn(
+      {required super.column, required super.value, required this.dataType})
+      : super.fromColumn();
   dynamic get sqlConformValue => dataType.convert(value);
 
   @override

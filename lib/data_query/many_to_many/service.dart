@@ -106,6 +106,7 @@ class ManyToManyQueryService with DartStoreUtility {
           where: where);
 
       entityInstance.columns.add(ManyToManyColumnInstance(
+          mapId: foreignColumn.mapId,
           value: items,
           foreignKey: foreignColumn.foreignKey,
           constraints: foreignColumn.constraints,

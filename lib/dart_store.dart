@@ -58,21 +58,22 @@ class DartStore {
 
   Future<T> save<T>(T model) async => entityInstanceToModel<T>(
       await DataManipulationService().insert(
-          entityInstance:
-              EntityInstanceService().entityInstanceByValueInstance(model)),
+          entityInstance: EntityInstanceService()
+              .entityInstanceByValueInstance(reflect(model))),
       type: model.runtimeType);
 
   Future<T> update<T>(T model, {List<Where> where = const []}) async {
     return entityInstanceToModel<T>(
         await DataManipulationService().update(
-          EntityInstanceService().entityInstanceByValueInstance(model),
+          EntityInstanceService().entityInstanceByValueInstance(reflect(model)),
           where: where,
         ),
         type: model.runtimeType);
   }
 
-  Future<void> delete(dynamic model) async => await DataManipulationService()
-      .delete(EntityInstanceService().entityInstanceByValueInstance(model));
+  Future<void> delete(dynamic model) async =>
+      await DataManipulationService().delete(EntityInstanceService()
+          .entityInstanceByValueInstance(reflect(model)));
 }
 
 extension StringFormatter on String {

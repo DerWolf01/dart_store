@@ -8,8 +8,6 @@ class ManyToManyColumnInstance
       {required super.foreignKey,
       required super.constraints,
       required super.name,
-      required super.value});
-
-  @override
-  bool get mapId => hasConstraint<MapId>();
+      required super.value,
+      required super.mapId});
 }
