@@ -24,7 +24,7 @@ class Where<ForeignField extends Type?> extends Statement {
     }
     final convertedValue = internalColumn.dataType.convert(value);
     if (!caseSensitive && (internalColumn.dataType is Varchar)) {
-      return "LOWER(${internalColumn.sqlName}) ${comparisonOperator.operator()} LOWER('$convertedValue')";
+      return "LOWER(${internalColumn.sqlName}) ${comparisonOperator.operator()} LOWER($convertedValue)";
     }
     return "${internalColumn.sqlName} ${comparisonOperator.operator()} $convertedValue";
   }

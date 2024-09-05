@@ -20,16 +20,10 @@ class InsertStatement {
 
     final String sqlConformValuesString = sqlConformValues.join(', ');
 
-    insertIntoColumns
-        .map(
-          (e) => "${e.sqlName} = ${e.sqlConformValue}",
-        )
-        .join(", ");
-
-    final conflictUpdateStatement =
-        UpdateStatement(entityInstance: entityInstance).define();
     final res =
-        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) ON CONFLICT DO NOTHING";
+        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) ON CONFLICT(id) DO UPDATE SET ${insertIntoColumns.map(
+              (e) => "${e.sqlName} = ${e.sqlConformValue}",
+            ).join(", ")} NOTHING RETURNING";
     print(res);
     return res;
   }
