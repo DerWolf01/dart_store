@@ -43,8 +43,12 @@ class OneToOneUpdateService with DartStoreUtility {
 
     for (final foreignColumnInstance
         in entityInstance.oneToOneColumnsInstances()) {
-      final dynamic value = foreignColumnInstance.value;
+      final EntityInstance value = foreignColumnInstance.value;
       late final EntityInstance newValue;
+      if (foreignColumnInstance.mapId) {
+        await _createConnection(entityInstance, value);
+        continue;
+      }
 
       final updatedItemEntityInstance = await _updateForeignColumnItem(value);
       newValue = updatedItemEntityInstance;

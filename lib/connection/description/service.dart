@@ -4,6 +4,7 @@ import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/string_utils/sort_names.dart';
+import 'package:change_case/change_case.dart';
 
 class TableConnectionDescriptionService {
   TableConnectionDescription generateManyToOneAndOneToManyDescription(
@@ -31,17 +32,17 @@ class TableConnectionDescriptionService {
         InternalColumn(
             dataType: description.primaryKeyColumn().dataType,
             constraints: [],
-            name: description.tableName),
+            name: description.tableName.toCamelCase()),
         InternalColumn(
             dataType: description2.primaryKeyColumn().dataType,
             constraints: [],
-            name: description2.tableName),
+            name: description2.tableName.toCamelCase()),
       ];
 
   String connectionName(
       TableDescription description, TableDescription description2) {
     final sorted = sortNames(description.tableName, description2.tableName);
 
-    return "${sorted[0]}_${sorted[0]}";
+    return "${sorted[0]}_${sorted[1]}";
   }
 }

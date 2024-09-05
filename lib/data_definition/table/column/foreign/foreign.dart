@@ -2,6 +2,8 @@ import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/table/column/column.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 
+import 'package:dart_store/mapping/map_id.dart';
+
 class ForeignColumn<T extends ForeignKey> extends Column {
   final T foreignKey;
   @override
@@ -13,4 +15,6 @@ class ForeignColumn<T extends ForeignKey> extends Column {
     required this.foreignKey,
     required super.name,
   });
+
+  bool get mapId => hasConstraint<MapId>();
 }

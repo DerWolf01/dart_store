@@ -7,19 +7,21 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 
 class OneToManyAndManyToOneDefintionService with DartStoreUtility {
   Future<void> defineAndExecute(TableDescription tableDescription) async {
-    await defineAndExecuteManyToOne(tableDescription);
     await defineAndExecuteOneToMany(tableDescription);
+    await defineAndExecuteManyToOne(tableDescription);
   }
 
   Future<void> defineAndExecuteManyToOne(
       TableDescription tableDescription) async {
     for (final column in tableDescription.manyToOneColumns()) {
+      await TableService().createTable(TableService()
+          .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity));
       final referenced = TableService()
           .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity);
 
       final OneToManyAndManyToOneDescription manyToOneDescription =
           OneToManyAndManyToOneDescription(
-              foreignKey: column.getForeignKey<OneToMany>()!,
+              foreignKey: column.getForeignKey<ManyToOne>()!,
               oneToManyTableDescription: referenced,
               manyToOneTableDescription: tableDescription);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
@@ -41,6 +43,8 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
               manyToOneTableDescription: referenced);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: oneToManyDescription);
+      final String sql = oneToManyDefinition.define();
+      print("Creating one-to-many table for ${column.name}");
       await executeSQL(oneToManyDefinition.define());
     }
   }

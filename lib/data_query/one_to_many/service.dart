@@ -10,6 +10,7 @@ import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/statement.dart';
+import 'package:change_case/change_case.dart';
 
 class OneToManyQueryService with DartStoreUtility {
   Future<List<EntityInstance>> queryOneToManyColumnData(
@@ -27,7 +28,7 @@ class OneToManyQueryService with DartStoreUtility {
             internalColumn: manyToOneTableDescription.primaryKeyColumn(),
             value: connectionInstance
                 .columnByNameAndType<InternalColumnInstance>(
-                    manyToOneTableDescription.tableName)
+                    manyToOneTableDescription.tableName.toCamelCase())
                 .value)
       ]))
           .first;

@@ -39,11 +39,12 @@ class ManyToManyDeleteService with DartStoreUtility {
       throw Exception(
           "Entity of table ${entityInstance.tableName} has to be deleteed before deleteing foreign columns");
     }
-    for (final foreignColumnInstance in entityInstance.manyToManyColumnsInstances()) {
-      final List<dynamic> values = foreignColumnInstance.value;
+    for (final foreignColumnInstance
+        in entityInstance.manyToManyColumnsInstances()) {
+      final List<EntityInstance> values = foreignColumnInstance.value;
       for (final itemEntityInstance in values) {
         await _deleteConnection(entityInstance, itemEntityInstance);
-        if (recursive) {
+        if (recursive && !foreignColumnInstance.mapId) {
           await _deleteForeignColumnItem(itemEntityInstance);
         }
       }

@@ -44,7 +44,7 @@ class OneToOneDeleteService with DartStoreUtility {
       final itemEntityInstance =
           EntityInstanceService().entityInstanceByValueInstance(value);
       await _deleteConnection(entityInstance, itemEntityInstance);
-      if (recursive) {
+      if (recursive && !foreignColumnInstance.mapId) {
         await _deleteForeignColumnItem(value);
       }
     }

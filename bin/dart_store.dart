@@ -4,35 +4,35 @@ import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/entity.dart';
+import 'package:dart_store/mapping/map_id.dart';
 import 'package:dart_store/postgres_connection/connection.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 
 // TODO: search for after-query-implementation and implement missing functionality
-// TODO implement or chaining for wheres.
+// TODO implement "OR" chaining for wheres.
 // TODO: IMplement delete logic for connections
-// Implement MapId logic
+// * Implement MapId logic
+// TODO implement sqlTableName logixc to avoid toCamelCase call when instanciating models
+// TODO: Finish ManyToMany logic implementation
 @Entity()
 class TextListTest {
   TextListTest();
-  TextListTest.init({
-    this.id,
-    @ListOf(type: ManyToOneTest) required this.textList,
-    required this.title,
-  });
+  TextListTest.init(
+      {required this.id, required this.title, required this.manyToOneTest});
 
   @PrimaryKey(autoIncrement: true)
   @Serial()
-  late final int? id;
+  late final int id;
 
   @Varchar()
   late final String title;
 
-  // @MapId()
-  @ListOf(type: ManyToOneTest)
-  @OneToMany<ManyToOneTest>()
-  late final List<dynamic> textList;
+  @MapId()
+  @ListOf(type: int)
+  @ManyToMany<ManyToOneTest>()
+  late final List<int> manyToOneTest;
 }
 
 @Entity()
@@ -40,6 +40,7 @@ class ManyToOneTest {
   ManyToOneTest();
   ManyToOneTest.init({
     required this.id,
+    required this.textListTest,
     @ListOf(type: String) required this.textList,
   });
 
@@ -50,6 +51,10 @@ class ManyToOneTest {
   @ListOf(type: String)
   @TextList()
   late final List<String> textList;
+
+  @ListOf(type: TextListTest)
+  @ManyToMany<TextListTest>()
+  late final List<dynamic> textListTest;
 }
 
 void main(List<String> arguments) async {
@@ -64,29 +69,27 @@ void main(List<String> arguments) async {
               print('Connected to the database $connection'),
           sslMode: SslMode.disable)));
 
-  print(await dartStore
-      .save(ManyToOneTest.init(id: 0, textList: ["a", "b", "c"])));
-  print(await dartStore
-      .save(ManyToOneTest.init(id: 1, textList: ["a", "b", "c"])));
-  print(await dartStore.save(
+  print(await dartStore.save(ManyToOneTest.init(id: 0, textListTest: [
     TextListTest.init(
+      manyToOneTest: [],
       id: -1,
       title: "title",
-      textList: [
-        ManyToOneTest.init(id: 0, textList: ["a", "b", "c"]),
-        ManyToOneTest.init(id: 0, textList: ["a", "b", "c"])
-      ],
-    ),
-  ));
-  print((await dartStore.query(type: TextListTest, where: [
-    Where(
-        comparisonOperator: ComparisonOperator.equals,
-        internalColumn: InternalColumn(
-            dataType: Serial(),
-            constraints: [PrimaryKey(autoIncrement: true)],
-            name: "id"),
-        value: 1)
+    )
+  ], textList: [
+    "a",
+    "b",
+    "c"
+  ])));
+
+  print((await dartStore.query<ManyToOneTest>(type: ManyToOneTest, where: [
+    // Where(
+    //     comparisonOperator: ComparisonOperator.equals,
+    //     internalColumn: InternalColumn(
+    //         dataType: Serial(),
+    //         constraints: [PrimaryKey(autoIncrement: true)],
+    //         name: "id"),
+    //     value: 1)
   ]))
-      .first
-      .id);
+      .firstOrNull
+      ?.textListTest);
 }

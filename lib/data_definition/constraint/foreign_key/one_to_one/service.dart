@@ -5,7 +5,7 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 
 class OneToOneDefinitionService with DartStoreUtility {
   Future<void> defineAndExecute(TableDescription tableDescription) async {
-    for (final column in tableDescription.manyToManyColumns()) {
+    for (final column in tableDescription.oneToOneColumns()) {
       final referencer = column.getForeignKey<OneToOne>()!;
       final referenced = referencer.referencedEntity;
       final OneToOneDescription manyToManyDescription =
@@ -15,9 +15,12 @@ class OneToOneDefinitionService with DartStoreUtility {
         ),
         OneToOneMemberDefinition(tableDescription: tableDescription)
       ]);
-      final OneToOneDefinition manyToManyDefinition =
+      final OneToOneDefinition oneToOneDefinition =
           OneToOneDefinition(description: manyToManyDescription);
-      executeSQL(manyToManyDefinition.define());
+
+      final String sql = oneToOneDefinition.define();
+      print("Creating one-to-one table for ${column.name} $sql");
+      executeSQL(oneToOneDefinition.define());
     }
   }
 }

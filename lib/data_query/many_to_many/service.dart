@@ -3,6 +3,7 @@ import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_many.dart';
@@ -16,6 +17,7 @@ import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
+import 'package:change_case/change_case.dart';
 
 // TODO: Implement logic to instanciate EntityInstance using a value
 class ManyToManyQueryService with DartStoreUtility {
@@ -24,23 +26,22 @@ class ManyToManyQueryService with DartStoreUtility {
       required List<TableConnectionInstance> connectionInstances,
       List<Where> where = const []}) async {
     final TableDescription tableDescription =
-        TableService().findTable(itemColumn.runtimeType);
+        TableService().findTable(itemColumn.foreignKey.referencedEntity);
 
     final List<EntityInstance> entityInstances = [];
     for (final connectionInstance in connectionInstances) {
-      entityInstances.addAll(await DataQueryService().query(
-          description: tableDescription,
-          where: filterWheres(
-              where: [
-                ...where,
-                Where(
-                    comparisonOperator: ComparisonOperator.equals,
-                    internalColumn: connectionInstance.primaryKeyColumn(),
-                    value: connectionInstance.columnByNameAndType<
-                        InternalColumnInstance>(itemColumn.name))
-              ],
-              columnName: itemColumn.name,
-              externalColumnType: itemColumn.foreignKey.referencedEntity)));
+      entityInstances.addAll(
+          await DataQueryService().query(description: tableDescription, where: [
+        ...filterWheres(
+            where: where,
+            columnName: itemColumn.name,
+            externalColumnType: itemColumn.foreignKey.referencedEntity),
+        Where(
+            comparisonOperator: ComparisonOperator.equals,
+            internalColumn: connectionInstance.primaryKeyColumn(),
+            value: connectionInstance
+                .columnByNameAndType<InternalColumnInstance>(itemColumn.name))
+      ]));
     }
     return entityInstances;
   }
@@ -59,11 +60,15 @@ class ManyToManyQueryService with DartStoreUtility {
 
     Where where = Where(
         comparisonOperator: ComparisonOperator.equals,
-        internalColumn: primaryKeyColumn,
+        internalColumn: InternalColumn(
+            dataType: primaryKeyColumn.dataType,
+            constraints: primaryKeyColumn.constraints,
+            name: instance.tableName.toCamelCase()),
         value: primaryKeyColumn.value);
 
     final StatementComposition statementComposition =
         StatementComposition(statement: queryStatement, where: [where]);
+    print("Many-To-Many connection-query: ${statementComposition.define()}");
     try {
       return mapListToTableConnectionInstance(
           maps: await query(statementComposition.define()),

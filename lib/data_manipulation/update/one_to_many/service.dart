@@ -6,13 +6,18 @@ class OneToManyUpdateService {
   Future<EntityInstance> postUpdate(EntityInstance entityInstance) async {
     for (final foreignColumnInstance
         in entityInstance.oneToManyColumnsInstances()) {
-      final List<dynamic> values = foreignColumnInstance.value;
+      if (foreignColumnInstance.mapId) {
+        continue;
+      }
+      final List<EntityInstance> values = foreignColumnInstance.value;
       final List newValues = [];
       for (final oneOfManyItems in values) {
         final EntityInstance oneOfManyItemsInstance = EntityInstanceService()
             .entityInstanceByValueInstance(oneOfManyItems);
         newValues.add(await UpdateService().update(oneOfManyItemsInstance));
+        continue;
       }
+
       entityInstance.setField(foreignColumnInstance.sqlName, newValues);
     }
 

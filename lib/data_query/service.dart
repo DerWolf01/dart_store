@@ -37,7 +37,7 @@ class DataQueryService {
                 dataType: e.dataType,
                 constraints: e.constraints,
                 name: e.name,
-                value: queryResult[e.name]))
+                value: queryResult[e.sqlName]))
             .toList(),
       );
 

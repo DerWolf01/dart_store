@@ -17,14 +17,14 @@ class OneToOneDefinition extends DataDefinition {
     final column1 = table1.column;
     final primaryKeyType1 = table1.primaryKeyType();
 
-    final columnName1 = "${tableName1}_${column1.sqlName}";
+    final columnName1 = tableName1;
 
     final column2 = table1.column;
     final primaryKeyType2 = table1.primaryKeyType();
 
-    final columnName2 = "${tableName2}_${column2.sqlName}";
+    final columnName2 = tableName2;
     final res =
-        "CREATE TABLE IF NOT EXISTS $connectionName ($columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE, $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE, PRIMARY KEY($columnName1, $columnName2), FOREIGN KEY ($columnName1) REFERENCES $tableName1($columnName1), FOREIGN KEY ($columnName2) REFERENCES $tableName2($columnName2))";
+        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE, $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE, FOREIGN KEY ($columnName1) REFERENCES $tableName1(id), FOREIGN KEY ($columnName2) REFERENCES $tableName2(id))";
 
     return res;
   }

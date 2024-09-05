@@ -11,7 +11,8 @@ class ColumnService {
     final constraintClassMirror = reflectClass(SQLConstraint);
     return instanceMirror.type.isAssignableTo(constraintClassMirror) ||
         instanceMirror.type.isSubclassOf(constraintClassMirror) ||
-        instanceMirror.type.isSubtypeOf(constraintClassMirror);
+        instanceMirror.type.isSubtypeOf(constraintClassMirror) ||
+        instanceMirror.reflectee is SQLConstraint;
   }
 
   List<Column> extractColumns(final ClassMirror classMirror) {
@@ -29,12 +30,13 @@ class ColumnService {
           )
           .toList();
 
+      print("constraints --> $name --> $constraints");
       final dataType = declaration.metadata
           .where((element) => element.reflectee is SQLDataType);
 
       if (dataType.length > 1) {
         throw Exception(
-            "Column $name in table ${classMirror.name} has more than one data type --> $dataType");
+            "Column $name in table ${classMirror.name} is anotated with more than one data type anotation --> $dataType");
       }
       if (dataType.isNotEmpty) {
         final internalColumn = InternalColumn(
@@ -55,6 +57,9 @@ class ColumnService {
             constraints: constraints,
             name: name));
         continue;
+      } else {
+        throw Exception(
+            "Column $name in table ${classMirror.name} is not annotated with a data type or ForeignKey anotation");
       }
     }
     return columns;

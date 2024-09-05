@@ -1,7 +1,6 @@
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
-import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/insert/service.dart';
 import 'package:dart_store/data_manipulation/insert/statement.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
@@ -9,11 +8,9 @@ import 'package:postgres/postgres.dart';
 
 // TODO: Implement logic to instanciate EntityInstance using a value
 class ManyToManyInsertService with DartStoreUtility {
-  Future<EntityInstance> _insertForeignColumnItem(dynamic item) async {
-    final EntityInstance itemEntityInstance =
-        EntityInstanceService().entityInstanceByValueInstance(item);
-    return await InsertService().insert(itemEntityInstance);
-  }
+  Future<EntityInstance> _insertForeignColumnItem(
+          EntityInstance itemEntityInstance) async =>
+      await InsertService().insert(itemEntityInstance);
 
   Future _createConnection(
       EntityInstance instance, EntityInstance instance2) async {
@@ -44,14 +41,23 @@ class ManyToManyInsertService with DartStoreUtility {
 
     for (final foreignColumnInstance
         in entityInstance.manyToManyColumnsInstances()) {
-      final List<dynamic> values = foreignColumnInstance.value;
-      final List newValues = [];
+      final mapId = foreignColumnInstance.mapId;
+      final List<EntityInstance> values = foreignColumnInstance.value;
+      print("manyToManyColumnsInstances $values");
+      final List<EntityInstance> newValues = mapId ? values : [];
       for (final item in values) {
-        final insertedItemEntityInstance = await _insertForeignColumnItem(item);
-        newValues.add(insertedItemEntityInstance);
-        await _createConnection(entityInstance, insertedItemEntityInstance);
+        print("manyToManyColumnsInstance $item");
+        if (!mapId) {
+          final insertedItemEntityInstance =
+              await _insertForeignColumnItem(item);
+          newValues.add(insertedItemEntityInstance);
+          await _createConnection(entityInstance, insertedItemEntityInstance);
+
+          continue;
+        }
+        await _createConnection(entityInstance, item);
       }
-      entityInstance.setField(foreignColumnInstance.sqlName, newValues);
+      entityInstance.setField(foreignColumnInstance.name, newValues);
     }
 
     return entityInstance;

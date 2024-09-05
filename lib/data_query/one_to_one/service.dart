@@ -4,6 +4,7 @@ import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
@@ -20,11 +21,11 @@ import 'package:postgres/postgres.dart';
 // TODO: Implement logic to instanciate EntityInstance using a value
 class OneToOneQueryService {
   Future<List<EntityInstance>> _queryForeignColumnItems(
-      {required ForeignColumn itemColumn,
+      {required ForeignColumn oneToOneColumn,
       required TableConnectionInstance connectionInstance,
       List<Where> where = const []}) async {
     final TableDescription tableDescription =
-        TableService().findTable(itemColumn.runtimeType);
+        TableService().findTable(oneToOneColumn.foreignKey.referencedEntity);
 
     return await DataQueryService().query(
         description: tableDescription,
@@ -34,18 +35,21 @@ class OneToOneQueryService {
               Where(
                   comparisonOperator: ComparisonOperator.equals,
                   internalColumn: connectionInstance.primaryKeyColumn(),
-                  value: connectionInstance.columnByNameAndType<
-                      InternalColumnInstance>(itemColumn.name))
+                  value: connectionInstance.columnByNameAndType<InternalColumn>(
+                      tableDescription.tableName.toCamelCase()))
             ],
-            columnName: itemColumn.name,
-            externalColumnType: itemColumn.foreignKey.referencedEntity));
+            columnName: oneToOneColumn.name,
+            externalColumnType: oneToOneColumn.foreignKey.referencedEntity));
   }
 
   Future<List<TableConnectionInstance>> _queryConnection(
     EntityInstance instance,
     TableDescription referencedTableDescription,
   ) async {
-    TableConnectionDescription connectionDescription =
+    print("instance: ${instance.tableName}");
+    print(
+        "referencedTableDescription: ${referencedTableDescription.tableName}");
+    final TableConnectionDescription connectionDescription =
         TableConnectionDescriptionService()
             .generateTableDescription(instance, referencedTableDescription);
 
@@ -61,8 +65,10 @@ class OneToOneQueryService {
     final StatementComposition statementComposition =
         StatementComposition(statement: queryStatement, where: [where]);
     try {
+      final statementCompositionString = statementComposition.define();
+      print("statementCompositionString: $statementCompositionString");
       return mapListToTableConnectionInstance(
-          maps: await dartStore.connection.query(statementComposition.define()),
+          maps: await dartStore.connection.query(statementCompositionString),
           tableConnectionDescription: connectionDescription);
     } on PgException catch (e, s) {
       print(e.message);
@@ -83,23 +89,24 @@ class OneToOneQueryService {
           "Entity of table ${entityInstance.tableName} has to be queryed before querying foreign columns");
     }
 
-    for (final foreignColumnInstance in TableService()
+    for (final foreignColumn in TableService()
         .findTable(entityInstance.objectType)
         .oneToOneColumns()) {
       final List<TableConnectionInstance> connectionInstances =
           await _queryConnection(
               entityInstance,
-              TableService().findTable(
-                  foreignColumnInstance.foreignKey.referencedEntity));
+              TableService()
+                  .findTable(foreignColumn.foreignKey.referencedEntity));
+      print("OneToOneQueryService: connectionInstances: $connectionInstances");
       final List<EntityInstance> items = await _queryForeignColumnItems(
-          itemColumn: foreignColumnInstance,
+          oneToOneColumn: foreignColumn,
           connectionInstance: connectionInstances.first,
           where: where);
 
       entityInstance.columns.add(OneToOneColumnInstance(
-          foreignKey: foreignColumnInstance.foreignKey,
-          constraints: foreignColumnInstance.constraints,
-          name: foreignColumnInstance.name,
+          foreignKey: foreignColumn.foreignKey,
+          constraints: foreignColumn.constraints,
+          name: foreignColumn.name,
           value: items.first));
     }
 

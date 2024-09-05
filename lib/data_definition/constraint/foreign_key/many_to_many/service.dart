@@ -29,6 +29,9 @@ class ManyToManyDefinitionService with DartStoreUtility {
       ]);
       final ManyToManyDefinition manyToManyDefinition =
           ManyToManyDefinition(description: manyToManyDescription);
+
+      final String sql = manyToManyDefinition.define();
+      print("Creating many-to-many table for ${column.name} $sql");
       executeSQL(manyToManyDefinition.define());
     }
   }

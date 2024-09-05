@@ -7,9 +7,9 @@ class EntityInstanceService {
   dynamic entityInstanceByValueInstance(dynamic value) {
     if (value is List) {
       return value
-          .map(
-            (e) => entityInstanceByValueInstance(e),
-          )
+          .map((e) {
+            entityInstanceByValueInstance(e);
+          })
           .whereType<EntityInstance>()
           .toList();
     }

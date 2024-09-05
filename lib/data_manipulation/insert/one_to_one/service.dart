@@ -9,11 +9,9 @@ import 'package:postgres/postgres.dart';
 
 // TODO: Implement logic to instanciate EntityInstance using a value
 class OneToOneInsertService with DartStoreUtility {
-  Future<EntityInstance> _insertForeignColumnItem(dynamic item) async {
-    final EntityInstance itemEntityInstance =
-        EntityInstanceService().entityInstanceByValueInstance(item);
-    return await InsertService().insert(itemEntityInstance);
-  }
+  Future<EntityInstance> _insertForeignColumnItem(
+          EntityInstance itemEntityInstance) async =>
+      await InsertService().insert(itemEntityInstance);
 
   Future _createConnection(
       EntityInstance instance, EntityInstance instance2) async {
@@ -44,14 +42,21 @@ class OneToOneInsertService with DartStoreUtility {
 
     for (final foreignColumnInstance
         in entityInstance.oneToOneColumnsInstances()) {
-      final dynamic value = foreignColumnInstance.value;
-      late final EntityInstance newValue;
+      final mapId = foreignColumnInstance.mapId;
+      final EntityInstance value = foreignColumnInstance.value;
+      if (!mapId) {
+        late final EntityInstance newValue;
+        print("OneToOneInsertService.postInsert: value: ${value.runtimeType}");
+        final insertedItemEntityInstance =
+            await _insertForeignColumnItem(value);
+        newValue = insertedItemEntityInstance;
+        await _createConnection(entityInstance, insertedItemEntityInstance);
 
-      final insertedItemEntityInstance = await _insertForeignColumnItem(value);
-      newValue = insertedItemEntityInstance;
-      await _createConnection(entityInstance, insertedItemEntityInstance);
+        entityInstance.setField(foreignColumnInstance.name, newValue);
 
-      entityInstance.setField(foreignColumnInstance.sqlName, newValue);
+        continue;
+      }
+      entityInstance.setField(foreignColumnInstance.name, value);
     }
 
     return entityInstance;

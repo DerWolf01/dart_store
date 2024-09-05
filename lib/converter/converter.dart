@@ -1,6 +1,7 @@
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/instance/instance.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
@@ -14,7 +15,7 @@ extension EntityMapConverter on ConversionService {
           .map((map) => TableConnectionInstance(
               tableName: tableConnectionDescription.tableName,
               columns: tableConnectionDescription.columns
-                  .whereType<InternalColumnInstance>()
+                  .whereType<InternalColumn>()
                   .map(
                     (e) => InternalColumnInstance(
                         value: map[e.sqlName],
@@ -69,10 +70,12 @@ TableConnectionInstance mapToTableConnectionInstance(
         map: map, tableConnectionDescription: tableConnectionDescription);
 
 List<TableConnectionInstance> mapListToTableConnectionInstance(
-        {required List<Map<String, dynamic>> maps,
-        required TableConnectionDescription tableConnectionDescription}) =>
-    ConversionService().mapListToTableConnectionInstance(
-        maps: maps, tableConnectionDescription: tableConnectionDescription);
+    {required List<Map<String, dynamic>> maps,
+    required TableConnectionDescription tableConnectionDescription}) {
+  print("[Map<String, dynamic>] $maps");
+  return ConversionService().mapListToTableConnectionInstance(
+      maps: maps, tableConnectionDescription: tableConnectionDescription);
+}
 
 Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
   final internalColumnsInstances =
@@ -82,7 +85,19 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
 
   final foreignColumnsInstances = entityInstance.foreignKeyColumns;
 
-  final foreignColumnsInstancesMapEntries = foreignColumnsInstances.map((e) {
+  final foreignColumnsInstancesMapEntries =
+      foreignColumnsInstances.map((ForeignColumnInstance e) {
+    if (e.mapId) {
+      if (e.value is List<EntityInstance>) {
+        return MapEntry<String, dynamic>(
+            e.name,
+            e.value
+                .map((EntityInstance e) => e.primaryKeyColumn().value)
+                .toList());
+      }
+      return MapEntry<String, dynamic>(
+          e.name, e.value.primaryKeyColumn().value);
+    }
     if (e.value is List) {
       return MapEntry<String, dynamic>(
           e.name, e.value.map((e) => entityInstanceToMap(e)).toList());
@@ -99,7 +114,6 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
 
   return instanceMap;
 }
-
 
 T entityInstanceToModel<T>(EntityInstance entityInstance, {Type? type}) =>
     ConversionService.mapToObject<T>(entityInstanceToMap(entityInstance),

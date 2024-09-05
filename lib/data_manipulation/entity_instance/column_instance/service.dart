@@ -32,7 +32,7 @@ class ColumnInstanceService {
       final foreignColumnEntityInstance = EntityInstanceService()
           .entityInstanceByValueInstance(
               instanceMirror.getField(Symbol(e.name)).reflectee);
-      print("foreignColumnEntityInstance: $foreignColumnEntityInstance");
+      print("foreignColumnEntityInstance-extraction: $foreignColumnEntityInstance");
       return ForeignColumnInstanceService().generateForeignColumnInstances(
           value: foreignColumnEntityInstance,
           foreignKey: e.foreignKey,

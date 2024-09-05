@@ -6,7 +6,7 @@ import 'package:dart_store/data_manipulation/insert/statement.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
-class OneToManyInsertService with DartStoreUtility {
+class ManyToOneInsertService with DartStoreUtility {
   Future _createConnection(
       {required EntityInstance oneToManyEntityInstance,
       required EntityInstance manyToOneEntityInstance}) async {
@@ -30,25 +30,28 @@ class OneToManyInsertService with DartStoreUtility {
     }
   }
 
-  Future<EntityInstance> postInsert(EntityInstance entityInstance) async {
+  Future<EntityInstance> postInsert(
+      EntityInstance manyToOneEntityInstance) async {
     for (final foreignColumnInstance
-        in entityInstance.oneToManyColumnsInstances()) {
-      print("OneToManyInsertService.postInsert: ${foreignColumnInstance.name}");
-      final List<EntityInstance> values = foreignColumnInstance.value;
-      final List<EntityInstance> newValues =
-          foreignColumnInstance.mapId ? values : [];
-      for (final oneOfManyItems in values) {
-        if (!foreignColumnInstance.mapId) {
-          newValues.add(await InsertService().insert(oneOfManyItems));
-        }
-        await _createConnection(
-            oneToManyEntityInstance: entityInstance,
-            manyToOneEntityInstance: oneOfManyItems);
-      }
+        in manyToOneEntityInstance.manyToOneColumnsInstances()) {
+      final mapId = foreignColumnInstance.mapId;
+      if (!mapId) {
+        final EntityInstance insertedOneToManyEntityInstance =
+            await InsertService().insert(foreignColumnInstance.value);
 
-      entityInstance.setField(foreignColumnInstance.name, newValues);
+        manyToOneEntityInstance.setField(
+            foreignColumnInstance.name, insertedOneToManyEntityInstance);
+
+        await _createConnection(
+            oneToManyEntityInstance: insertedOneToManyEntityInstance,
+            manyToOneEntityInstance: manyToOneEntityInstance);
+        continue;
+      }
+      await _createConnection(
+          oneToManyEntityInstance: foreignColumnInstance.value,
+          manyToOneEntityInstance: manyToOneEntityInstance);
     }
 
-    return entityInstance;
+    return manyToOneEntityInstance;
   }
 }

@@ -31,7 +31,7 @@ class TableService with DartStoreUtility {
         .firstOrNull;
     if (classMirror == null) {
       throw Exception(
-          "Table of type not found for type $tableType. Anotated with @Entity to ensure table definition");
+          "Table not found for type $tableType. Anotated with @Entity to ensure table definition");
     }
 
     final List<Column> columns = ColumnService().extractColumns(classMirror);
@@ -47,8 +47,9 @@ class TableService with DartStoreUtility {
         tableDescription.tableName,
         tableDescription.columns.whereType<InternalColumn>().toList());
     final sql = tableStatement.define();
+    print("Creating table ${tableDescription.tableName}");
     await executeSQL(sql);
 
-    ConstraintService().postTableDefinitionAndExecution(tableDescription);
+    await ConstraintService().postTableDefinitionAndExecution(tableDescription);
   }
 }

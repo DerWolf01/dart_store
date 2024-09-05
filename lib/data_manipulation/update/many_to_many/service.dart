@@ -56,16 +56,20 @@ class ManyToManyUpdateService with DartStoreUtility {
 
     for (final foreignColumnInstance
         in entityInstance.manyToManyColumnsInstances()) {
-      final List<dynamic> values = foreignColumnInstance.value;
-      final List newValues = [];
+      final List<EntityInstance> values = foreignColumnInstance.value;
+      final List newValues = foreignColumnInstance.mapId ? values : [];
       for (final item in values) {
-        // TODO: after-query-implementation
-        // TODO query connection and update connection ids without updating id of connection entity itsself
-        final updatedItemEntityInstance = await _updateForeignColumnItem(
-            item, foreignColumnInstance.name,
-            where: where);
-        newValues.add(updatedItemEntityInstance);
-        await _updateConnection(entityInstance, updatedItemEntityInstance);
+        if (!foreignColumnInstance.mapId) {
+          // TODO: after-query-implementation
+          // TODO query connection and update connection ids without updating id of connection entity itsself
+          final updatedItemEntityInstance = await _updateForeignColumnItem(
+              item, foreignColumnInstance.name,
+              where: where);
+          newValues.add(updatedItemEntityInstance);
+          await _updateConnection(entityInstance, updatedItemEntityInstance);
+          continue;
+        }
+        await _updateConnection(entityInstance, item);
       }
       entityInstance.setField(foreignColumnInstance.sqlName, newValues);
     }
