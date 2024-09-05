@@ -43,10 +43,8 @@ class ManyToManyInsertService with DartStoreUtility {
         in entityInstance.manyToManyColumnsInstances()) {
       final mapId = foreignColumnInstance.mapId;
       final List<EntityInstance> values = foreignColumnInstance.value;
-      print("manyToManyColumnsInstances $values");
       final List<EntityInstance> newValues = mapId ? values : [];
       for (final item in values) {
-        print("manyToManyColumnsInstance $item");
         if (!mapId) {
           final insertedItemEntityInstance =
               await _insertForeignColumnItem(item);

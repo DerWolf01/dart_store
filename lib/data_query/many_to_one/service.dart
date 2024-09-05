@@ -83,7 +83,6 @@ class ManyToOneQueryService with DartStoreUtility {
       final connectionInstance = await queryConnections(
           manyToOneHolder: entityInstance, oneToManyColumn: foreignColumn);
 
-      print("connectionInstance: $connectionInstance");
       final EntityInstance oneToManyInstance = await queryManyToOneColumnData(
           connectionInstance: connectionInstance,
           oneToManyColumn: foreignColumn,

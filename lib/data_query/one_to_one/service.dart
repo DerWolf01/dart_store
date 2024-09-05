@@ -46,9 +46,6 @@ class OneToOneQueryService {
     EntityInstance instance,
     TableDescription referencedTableDescription,
   ) async {
-    print("instance: ${instance.tableName}");
-    print(
-        "referencedTableDescription: ${referencedTableDescription.tableName}");
     final TableConnectionDescription connectionDescription =
         TableConnectionDescriptionService()
             .generateTableDescription(instance, referencedTableDescription);

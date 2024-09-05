@@ -4,7 +4,6 @@ import 'package:dart_store/data_manipulation/entity_instance/column_instance/for
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_many.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
-import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 
 class ForeignColumnInstanceService extends ForeignColumnService {
   generateForeignColumnInstances(
@@ -13,7 +12,6 @@ class ForeignColumnInstanceService extends ForeignColumnService {
       required ForeignKey foreignKey,
       required List<SQLConstraint> constraints,
       required bool mapId}) {
-    print("Foreign Column Instance Service: $foreignKey --> $value");
     if (foreignKey is ManyToMany) {
       return ManyToManyColumnInstance(
           foreignKey: foreignKey,

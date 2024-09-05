@@ -68,7 +68,6 @@ class ManyToManyQueryService with DartStoreUtility {
 
     final StatementComposition statementComposition =
         StatementComposition(statement: queryStatement, where: [where]);
-    print("Many-To-Many connection-query: ${statementComposition.define()}");
     try {
       return mapListToTableConnectionInstance(
           maps: await query(statementComposition.define()),

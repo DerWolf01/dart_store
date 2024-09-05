@@ -72,7 +72,6 @@ TableConnectionInstance mapToTableConnectionInstance(
 List<TableConnectionInstance> mapListToTableConnectionInstance(
     {required List<Map<String, dynamic>> maps,
     required TableConnectionDescription tableConnectionDescription}) {
-  print("[Map<String, dynamic>] $maps");
   return ConversionService().mapListToTableConnectionInstance(
       maps: maps, tableConnectionDescription: tableConnectionDescription);
 }
@@ -87,7 +86,6 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
 
   final foreignColumnsInstancesMapEntries =
       foreignColumnsInstances.map((ForeignColumnInstance e) {
-    print("MapId: ${e.mapId}");
     if (e.mapId) {
       if (e.value is List<EntityInstance>) {
         return MapEntry<String, dynamic>(
@@ -110,8 +108,6 @@ Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
     ...Map.fromEntries(internalColumnsInstancesMapEntries),
     ...Map.fromEntries(foreignColumnsInstancesMapEntries)
   };
-
-  print("instanceMap $instanceMap");
 
   return instanceMap;
 }

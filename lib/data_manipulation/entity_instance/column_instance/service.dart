@@ -21,18 +21,14 @@ class ColumnInstanceService {
             constraints: e.constraints,
             name: e.name));
 
-    print("foreignColumns --> ${columns.whereType<ForeignColumn>()}");
     final Iterable<ForeignColumnInstance> foreignColumnsInstances =
         columns.whereType<ForeignColumn>().map((final ForeignColumn e) {
-      print(
-          "Next foreign field to extract --> $e.name --> ${instanceMirror.getField(Symbol(e.name)).type.metadata}");
       final foreignColumnEntityInstance = e.mapId
           ? EntityInstanceService().byMappedIdField(
               fieldName: e.name, holderInstanceMirror: instanceMirror)
           : EntityInstanceService().entityInstanceByValueInstance(
               instanceMirror.getField(Symbol(e.name)));
-      print(
-          "foreignColumnEntityInstance-extraction: $foreignColumnEntityInstance");
+
       return ForeignColumnInstanceService().generateForeignColumnInstances(
           mapId: e.mapId,
           value: foreignColumnEntityInstance,
@@ -40,9 +36,7 @@ class ColumnInstanceService {
           constraints: e.constraints,
           name: e.name);
     });
-    // print("foreign-column-instances for $value: $foreignColumnsInstances");
-    print(
-        "Foreign Columns Instances for ${instanceMirror.type.simpleName}: $foreignColumnsInstances");
+
     return [...internalColumnsInstances, ...foreignColumnsInstances];
   }
 }

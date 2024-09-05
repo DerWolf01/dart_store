@@ -31,7 +31,7 @@ class ColumnService {
           )
           .toList();
 
-      print("constraints --> $name --> $constraints");
+
       final dataType = declaration.metadata
           .where((element) => element.reflectee is SQLDataType);
 

@@ -13,7 +13,6 @@ class TableStatement extends Statement {
   String define() {
     final res =
         "CREATE TABLE IF NOT EXISTS $name (${columnsStatements.map((column) => column.define()).join(", ")})";
-    print("TableStatement.define: $res");
     return res;
   }
 }

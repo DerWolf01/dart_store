@@ -19,8 +19,6 @@ class OneToOneDefinitionService with DartStoreUtility {
       final OneToOneDefinition oneToOneDefinition =
           OneToOneDefinition(description: manyToManyDescription);
 
-      final String sql = oneToOneDefinition.define();
-      print("Creating one-to-one table for ${column.name} $sql");
       executeSQL(oneToOneDefinition.define());
     }
   }

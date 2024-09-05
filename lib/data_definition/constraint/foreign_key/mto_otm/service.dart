@@ -43,8 +43,7 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
               manyToOneTableDescription: referenced);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: oneToManyDescription);
-      final String sql = oneToManyDefinition.define();
-      print("Creating one-to-many table for ${column.name}");
+
       await executeSQL(oneToManyDefinition.define());
     }
   }

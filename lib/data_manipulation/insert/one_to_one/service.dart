@@ -43,15 +43,15 @@ class OneToOneInsertService with DartStoreUtility {
     for (final foreignColumnInstance
         in entityInstance.oneToOneColumnsInstances()) {
       final mapId = foreignColumnInstance.mapId;
-      print("OneToOneInsertService.postInsert: mapId: $mapId");
+
       final EntityInstance value = foreignColumnInstance.value;
       if (mapId) {
         await _createConnection(entityInstance, value);
-        print("OneToOneInsertService.postInsert: value: $value");
+
         continue;
       }
       late final EntityInstance newValue;
-      print("OneToOneInsertService.postInsert: value: ${value.runtimeType}");
+
       final insertedItemEntityInstance = await _insertForeignColumnItem(value);
       newValue = insertedItemEntityInstance;
       await _createConnection(entityInstance, insertedItemEntityInstance);

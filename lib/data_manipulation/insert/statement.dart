@@ -30,7 +30,7 @@ class InsertStatement {
         UpdateStatement(entityInstance: entityInstance).define();
     final res =
         "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) ON CONFLICT DO NOTHING";
-    print("InsertStatement.define: $res");
+    print(res);
     return res;
   }
 
