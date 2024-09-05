@@ -1,7 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 
-class BinaryData extends SQLDataType<dynamic> {
-  const BinaryData({super.isNullable});
+class Bytea extends SQLDataType<File> {
+  const Bytea({super.isNullable});
 
   @override
   String sqlTypeName() {
@@ -9,16 +12,13 @@ class BinaryData extends SQLDataType<dynamic> {
   }
 
   @override
-  String? convert(value) {
-    //TODO implement convert
-    // if (value == null && isNullable == true) {
-    //   return null;
-    // } else if (value == null && isNullable == false) {
-    //   throw Exception("Value cannot be null");
-    // }
-    // if (value is File) {
-    //   return "'${base64.encode(value.readAsBytesSync())}'";
-    // }
-    return "'$value'";
+  String? convert(File? value) {
+    if (value == null && isNullable == true) {
+      return null;
+    } else if (value == null && isNullable == false) {
+      throw Exception("Value cannot be null");
+    }
+
+    return "'${base64Encode(value!.readAsBytesSync())}'";
   }
 }
