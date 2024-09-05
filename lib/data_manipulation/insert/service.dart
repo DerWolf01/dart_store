@@ -15,11 +15,13 @@ class InsertService with DartStoreUtility {
       final InsertStatement insertStatement =
           InsertStatement(entityInstance: entityInstance);
       final primaryKeyColumn = entityInstance.primaryKeyColumn();
-      final id = (primaryKeyColumn.value == -1 || primaryKeyColumn.value == null
-          ? await dartStore.connection
-              .insert(insertStatement.define(), entityInstance.tableName)
-          : primaryKeyColumn.value);
+      final insertResult = await dartStore.connection
+          .insert(insertStatement.define(), entityInstance.tableName);
 
+      final id =
+          (primaryKeyColumn.value != -1 && primaryKeyColumn.value != null)
+              ? primaryKeyColumn.value
+              : insertResult;
       final isOfPrimaryKeyType =
           entityInstance.primaryKeyColumn().dataType.compareToValue(id);
       if (!isOfPrimaryKeyType) {
