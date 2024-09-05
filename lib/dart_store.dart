@@ -15,6 +15,7 @@ import 'package:dart_store/where/statement.dart';
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';
 export 'package:dart_store/data_definition/data_definition.dart';
+export 'postgres_connection/connection.dart';
 
 DartStore get dartStore => DartStore();
 
