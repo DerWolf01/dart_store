@@ -15,6 +15,7 @@ class OneToOneDefinitionService with DartStoreUtility {
         ),
         OneToOneMemberDefinition(tableDescription: tableDescription)
       ]);
+      await TableService().createTable(TableService().findTable(referenced));
       final OneToOneDefinition oneToOneDefinition =
           OneToOneDefinition(description: manyToManyDescription);
 
