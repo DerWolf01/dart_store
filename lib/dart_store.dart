@@ -14,6 +14,7 @@ import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/where/statement.dart';
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';
+export 'package:dart_store/data_definition/data_definition.dart';
 
 DartStore get dartStore => DartStore();
 
