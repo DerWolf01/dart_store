@@ -23,7 +23,7 @@ class InsertStatement {
     final res =
         "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) ON CONFLICT(id) DO UPDATE SET ${insertIntoColumns.map(
               (e) => "${e.sqlName} = ${e.sqlConformValue}",
-            ).join(", ")} RETURNING";
+            ).join(", ")} RETURNING id;";
     print(res);
     return res;
   }
