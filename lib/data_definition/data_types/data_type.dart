@@ -1,5 +1,5 @@
 export 'bool.dart';
-export 'double.dart';
+export 'decimal.dart';
 export 'integer.dart';
 export './integer_list.dart';
 export './text_list.dart';
