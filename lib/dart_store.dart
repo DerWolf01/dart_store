@@ -14,6 +14,7 @@ import 'package:dart_store/data_query/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
 //TODO: Remove before deployment
@@ -96,11 +97,12 @@ class DartStore {
           "No internal column with name $columnName found in model ${tableDescription.objectType}");
     }
     final updateStatement =
-        "UPDATE ${tableDescription.tableName}  SET ${columnToUpdate.sqlName} = ${columnToUpdate.dataType.convert(value)} ";
-
+        "UPDATE ${tableDescription.tableName} SET ${columnToUpdate.sqlName} = ${columnToUpdate.dataType.convert(value)} ";
     final whereStatements =
         WhereService().defineAndChainWhereStatements(where: where);
-    await connection.execute("$updateStatement $whereStatements");
+    final statementComposition = "$updateStatement $whereStatements";
+    print("updateStatement: $statementComposition");
+    await connection.execute(statementComposition);
 
     return await dartStore.query<T>(type: type, where: where);
   }
