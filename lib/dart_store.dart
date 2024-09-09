@@ -3,7 +3,10 @@ library dart_store;
 export 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/service.dart';
+import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/service.dart';
@@ -71,6 +74,39 @@ class DartStore {
           where: where,
         ),
         type: model.runtimeType);
+  }
+
+  Future<List<T>> updateColumn<T>(
+      {required String columnName,
+      required dynamic value,
+      Type? type,
+      List<Where> where = const []}) async {
+    final TableDescription tableDescription =
+        TableService().findTable(type ?? T);
+
+    final EntityInstance entityInstance = EntityInstance(
+        objectType: tableDescription.objectType,
+        entity: tableDescription.entity,
+        columns: tableDescription.columns
+            .whereType<InternalColumn>()
+            .where(
+              (element) => element.name == columnName,
+            )
+            .map(
+              (e) => InternalColumnInstance(
+                  value: value,
+                  dataType: e.dataType,
+                  constraints: e.constraints,
+                  name: e.name),
+            )
+            .toList());
+
+    await DataManipulationService().update(
+      entityInstance,
+      where: where,
+    );
+
+    return await dartStore.query<T>(type: type, where: where);
   }
 
   Future<void> delete(dynamic model) async =>
