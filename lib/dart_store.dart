@@ -14,6 +14,7 @@ import 'package:dart_store/data_query/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';
@@ -84,27 +85,22 @@ class DartStore {
     final TableDescription tableDescription =
         TableService().findTable(type ?? T);
 
-    final EntityInstance entityInstance = EntityInstance(
-        objectType: tableDescription.objectType,
-        entity: tableDescription.entity,
-        columns: tableDescription.columns
-            .whereType<InternalColumn>()
-            .where(
-              (element) => element.name == columnName,
-            )
-            .map(
-              (e) => InternalColumnInstance(
-                  value: value,
-                  dataType: e.dataType,
-                  constraints: e.constraints,
-                  name: e.name),
-            )
-            .toList());
+    final columnToUpdate = tableDescription.columns
+        .whereType<InternalColumn>()
+        .where(
+          (element) => element.name == columnName,
+        )
+        .firstOrNull;
+    if (columnToUpdate == null) {
+      throw Exception(
+          "No internal column with name $columnName found in model ${tableDescription.objectType}");
+    }
+    final updateStatement =
+        "UPDATE ${tableDescription.tableName}  SET ${columnToUpdate.sqlName} = ${columnToUpdate.dataType.convert(value)} ";
 
-    await DataManipulationService().update(
-      entityInstance,
-      where: where,
-    );
+    final whereStatements =
+        WhereService().defineAndChainWhereStatements(where: where);
+    await connection.execute("$updateStatement $whereStatements");
 
     return await dartStore.query<T>(type: type, where: where);
   }
