@@ -1,4 +1,4 @@
-import 'package:dart_store/data_manipulation/delete/one_to_many/service.dart';
+import 'package:dart_store/data_manipulation/delete/otm_mto/service.dart';
 import 'package:dart_store/data_manipulation/delete/one_to_one/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/delete/many_to_many/service.dart';
@@ -17,7 +17,7 @@ class DeleteService with DartStoreUtility {
       /// Delete all related data
       await ManyToManyDeleteService().preDelete(entityInstance);
       await OneToOneDeleteService().preDelete(entityInstance);
-      await OneToManyDeleteService().preDelete(entityInstance);
+      await OneToManyAndManyToOneDeleteService().preDelete(entityInstance);
 
       /// start deleting actual data
       final DeleteStatement deleteStatement =

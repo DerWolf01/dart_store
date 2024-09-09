@@ -195,7 +195,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "09235288221ca65dbe2127f0a99f11270157a819"
+      resolved-ref: "54b90464d5a46511e20cf4a76119009a0db3ff88"
       url: "https://github.com/DerWolf01/dart_conversion.git"
     source: git
     version: "1.0.0"
@@ -443,10 +443,10 @@ packages:
     dependency: transitive
     description:
       name: shelf_static
-      sha256: a41d3f53c4adf0f57480578c1d61d90342cd617de7fc8077b1304643c2d85c1e
+      sha256: c87c3875f91262785dade62d135760c2c69cb217ac759485334c5857ad89f6e3
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.2"
+    version: "1.1.3"
   shelf_web_socket:
     dependency: transitive
     description:

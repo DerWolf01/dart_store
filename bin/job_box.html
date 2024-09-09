@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+    <div class="greetings">
+        <div>
+            Hallo $username!
+        </div>
+        <div>
+            Du hast ${results.length+1} neue Ergebnise für deinen Job $jobTitle!
+        </div>
+    </div>
+    <div style="height: 35px;"></div>
+    <a href="$url">
+      <div class="card">
+        <img
+          src="https://i.ebayimg.com/thumbs/images/g/18EAAOSwNZdl2-sN/s-l140.jpg"
+          alt=""
+        />
+        <div class="card-inner">
+          <div class="tag">$sellerUserName</div>
+          <div style="width: 15px"></div>
+          <div class="tag">$price</div>
+        </div>
+      </div>
+    </a>
+  </body>
+</html>
+
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .card {
+    box-shadow: 0 0 19px rgba(0, 0, 0, 0.33);
+    border-radius: 29px;
+    overflow: hidden;
+    width: 335px;
+  }
+
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+  .card-inner {
+    padding: 15px;
+    display: flex;
+  }
+
+  .tag {
+    padding: 5px 11px;
+    width: fit-content;
+    border: solid 1px black;
+    border-radius: 9999px;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+</style>

@@ -67,19 +67,17 @@ void main(List<String> arguments) async {
           onOpen: (connection) async =>
               print('Connected to the database $connection'),
           sslMode: SslMode.disable)));
-  await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
-  await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
+  // await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
+  // await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
 
-  print(await dartStore
-      .save(TextListTest.init(id: 0, manyToOneTest: [0, 1], title: 'tte')));
+  final model = TextListTest.init(id: 0, manyToOneTest: [0, 1], title: 'tte');
 
-  print((await dartStore.query<TextListTest>(type: TextListTest, where: [
+  await dartStore.delete(model);
+  print(await dartStore.query<TextListTest>(where: [
     Where(
         comparisonOperator: ComparisonOperator.equals,
         internalColumn:
             InternalColumn(dataType: Serial(), constraints: [], name: "id"),
         value: 0)
-  ]))
-      .firstOrNull
-      ?.manyToOneTest);
+  ]));
 }

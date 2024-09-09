@@ -13,7 +13,7 @@ class DeleteStatement extends Statement {
           (e) => "${e.sqlName} = ${e.sqlConformValue}",
         )
         .join(", ");
-    return "DELETE FROM ${entityInstance.tableName}";
+    return "DELETE FROM ${entityInstance.tableName} CASCADE";
   }
 
   List<InternalColumnInstance> get internalColumns =>

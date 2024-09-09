@@ -1,11 +1,15 @@
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/data_manipulation/insert/conflict.dart';
 import 'package:dart_store/data_manipulation/update/service.dart';
 import 'package:dart_store/data_manipulation/update/statement.dart';
 
 class InsertStatement {
-  InsertStatement({required this.entityInstance});
+  InsertStatement(
+      {required this.entityInstance,
+      this.conflictAlgorithm = ConflictAlgorithm.ignore});
   final EntityInstance entityInstance;
+  final ConflictAlgorithm conflictAlgorithm;
 
   String define() {
     final insertIntoColumns = this.insertIntoColumns;
@@ -19,11 +23,13 @@ class InsertStatement {
     );
 
     final String sqlConformValuesString = sqlConformValues.join(', ');
-
-    final res =
-        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) ON CONFLICT(id) DO UPDATE SET ${insertIntoColumns.map(
+    final onConflict = conflictAlgorithm == ConflictAlgorithm.ignore
+        ? " ON CONFLICT DO NOTHING"
+        : " ON CONFLICT(id) DO UPDATE SET ${insertIntoColumns.map(
               (e) => "${e.sqlName} = ${e.sqlConformValue}",
-            ).join(", ")} RETURNING id;";
+            ).join(", ")}";
+    final res =
+        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) $onConflict RETURNING id;";
     print(res);
     return res;
   }

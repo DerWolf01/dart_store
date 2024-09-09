@@ -1,0 +1,1 @@
+enum ConflictAlgorithm { replace, ignore }
