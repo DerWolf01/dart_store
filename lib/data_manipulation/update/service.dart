@@ -28,7 +28,7 @@ class UpdateService with DartStoreUtility {
       final Result updateResult =
           await executeSQL(statementComposition.define());
 
-      final id = updateResult.first.first;
+      final id = primaryKeyColumn.value;
       final isOfPrimaryKeyType =
           entityInstance.primaryKeyColumn().dataType.compareToValue(id);
       if (!isOfPrimaryKeyType) {
