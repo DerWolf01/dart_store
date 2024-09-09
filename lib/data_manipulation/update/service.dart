@@ -36,10 +36,11 @@ class UpdateService with DartStoreUtility {
             "Couldn't parse resulting id to type ${entityInstance.primaryKeyColumn().dataType.primitiveType} after updateing data into table ${entityInstance.tableName};  ");
       }
 
-      updatedEntityInstance = await ManyToManyUpdateService().postUpdate(
-          await OneToOneUpdateService().postUpdate(
-              await OneToManyUpdateService().postUpdate(entityInstance)),
-          where: where);
+      await ManyToManyUpdateService().postUpdate(entityInstance, where: where);
+      await OneToOneUpdateService().postUpdate(entityInstance);
+      await OneToManyUpdateService().postUpdate(entityInstance);
+      
+      updatedEntityInstance = entityInstance;
     } catch (e, s) {
       print(e);
       print(s);
