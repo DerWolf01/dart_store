@@ -2,6 +2,7 @@ import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dar
 import 'package:dart_store/data_manipulation/update/many_to_many/service.dart';
 import 'package:dart_store/data_manipulation/update/one_to_many/service.dart';
 import 'package:dart_store/data_manipulation/update/one_to_one/service.dart';
+import 'package:dart_store/data_manipulation/update/otm_mto/service.dart';
 import 'package:dart_store/data_manipulation/update/statement.dart';
 import 'package:dart_store/data_manipulation/where_utils.dart';
 import 'package:dart_store/statement/compositor.dart';
@@ -38,8 +39,9 @@ class UpdateService with DartStoreUtility {
 
       await ManyToManyUpdateService().postUpdate(entityInstance, where: where);
       await OneToOneUpdateService().postUpdate(entityInstance);
-      await OneToManyUpdateService().postUpdate(entityInstance);
-      
+      // await OneToManyUpdateService().postUpdate(entityInstance);
+      await OneToManyAndManyToOneUpdateService().postUpdate(entityInstance);
+
       updatedEntityInstance = entityInstance;
     } catch (e, s) {
       print(e);
