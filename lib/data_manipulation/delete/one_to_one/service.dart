@@ -9,10 +9,8 @@ import 'package:postgres/postgres.dart';
 
 // TODO: Implement logic to instanciate EntityInstance using a value
 class OneToOneDeleteService with DartStoreUtility {
-  Future<void> _deleteForeignColumnItem(dynamic item) async {
-    final EntityInstance itemEntityInstance =
-        EntityInstanceService().entityInstanceByValueInstance(item);
-    await DeleteService().delete(itemEntityInstance);
+  Future<void> _deleteForeignColumnItem(EntityInstance item) async {
+    await DeleteService().delete(item);
   }
 
   Future _deleteConnection(
