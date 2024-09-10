@@ -10,6 +10,7 @@ import 'package:dart_store/data_manipulation/entity_instance/column_instance/int
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/service.dart';
+import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'dart:async';
 import 'dart:mirrors';
@@ -46,15 +47,14 @@ class DartStore {
     return _instance!;
   }
 
-  Future<List<T>> query<T>({List<Where> where = const [], Type? type}) async {
+  Future<List<T>> query<T>(
+      {List<Where> where = const [], Type? type, Page? page}) async {
     final dynamic t = type ?? T;
     if (t == dynamic) {
       throw Exception('Generic Type T or type parameter is required');
     }
     final List<EntityInstance> entityInstances = await DataQueryService().query(
-      description: TableService().findTable(t),
-      where: where,
-    );
+        description: TableService().findTable(t), where: where, page: page);
 
     return entityInstances
         .map(
