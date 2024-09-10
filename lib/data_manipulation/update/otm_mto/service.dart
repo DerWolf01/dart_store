@@ -19,8 +19,10 @@ class OneToManyAndManyToOneUpdateService {
     final manyToOnePkey = manyToOneInstance.primaryKeyColumn();
     print(
         "updating connection with values ${oneToManyInstance.tableName}:${oneToManyPKey.value} and ${manyToOneInstance.tableName}${manyToOnePkey.value}");
-    await dartStore.connection.execute(
-        "INSERT INTO $connectionName (${oneToManyInstance.tableName}, ${manyToOneInstance.tableName}) VALUES (${oneToManyPKey.dataType.convert(oneToManyPKey.value)}, ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}) ON CONFLICT(${oneToManyInstance.tableName}) DO UPDATE SET ${oneToManyInstance.tableName} = ${oneToManyPKey.dataType.convert(oneToManyPKey.value)}  WHERE $connectionName.${manyToOneInstance.tableName} = ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}");
+    final statement =
+        "INSERT INTO $connectionName (${oneToManyInstance.tableName}, ${manyToOneInstance.tableName}) VALUES (${oneToManyPKey.dataType.convert(oneToManyPKey.value)}, ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}) ON CONFLICT(${oneToManyInstance.tableName}) DO UPDATE SET ${oneToManyInstance.tableName} = ${oneToManyPKey.dataType.convert(oneToManyPKey.value)}  WHERE $connectionName.${manyToOneInstance.tableName} = ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}";
+    print(statement);
+    await dartStore.connection.execute(statement);
   }
 
   Future updateOneToManyConnection(
