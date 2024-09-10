@@ -2,6 +2,7 @@ import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/definiton.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:postgres/postgres.dart';
 
 class OneToManyAndManyToOneUpdateService {
   Future updateManyToOneConnection(EntityInstance oneToManyInstance,
@@ -13,12 +14,12 @@ class OneToManyAndManyToOneUpdateService {
             manyToOneTableDescription: manyToOneInstance);
     OneToManyAndManyToOneDefinition oneToManyAndManyToOneDefinition =
         OneToManyAndManyToOneDefinition(description: description);
-
+    final connectionName = oneToManyAndManyToOneDefinition.connectionName;
     final oneToManyPKey = oneToManyInstance.primaryKeyColumn();
     final manyToOnePkey = manyToOneInstance.primaryKeyColumn();
 
     await dartStore.connection.execute(
-        "UPDATE ${oneToManyAndManyToOneDefinition.connectionName} SET ${oneToManyInstance.tableName} = ${oneToManyPKey.dataType.convert(oneToManyPKey.value)} WHERE ${manyToOneInstance.tableName} = ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}");
+        "INSERT INTO $connectionName (${oneToManyInstance.tableName}, ${manyToOneInstance.tableName}) VALUES (${oneToManyPKey.dataType.convert(oneToManyPKey.value)}, ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}) ON CONFLICT(${oneToManyInstance.tableName}) DO UPDATE SET ${oneToManyInstance.tableName} = ${oneToManyPKey.dataType.convert(oneToManyPKey.value)} WHERE ${manyToOneInstance.tableName} = ${manyToOnePkey.dataType.convert(manyToOnePkey.value)}");
   }
 
   Future updateOneToManyConnection(
