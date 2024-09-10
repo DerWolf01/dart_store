@@ -111,9 +111,9 @@ class DartStore {
       await DataManipulationService().delete(EntityInstanceService()
           .entityInstanceByValueInstance(reflect(model)));
 
-  Future<bool> exists(Where where) async =>
+  Future<bool> exists<T>(Where where, {Type? type}) async =>
       (await execute(
-              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(model.runtimeType).tableName} ${WhereService().defineAndChainWhereStatements(where: [
+              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
             where
           ])})"))
           .first
