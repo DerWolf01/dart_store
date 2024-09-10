@@ -10,6 +10,6 @@ class Varchar extends SQLDataType<String> {
     } else if (value == null && isNullable == true) {
       return null;
     }
-    return "'${value?..replaceAll("'", "''")}'";
+    return "'${value?.replaceStringLiterals()}'";
   }
 }

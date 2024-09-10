@@ -1,4 +1,5 @@
 import 'package:dart_store/data_definition/data_types/data_type.dart';
+import 'package:characters/characters.dart';
 
 class TextList extends SQLDataType<List<String>> {
   const TextList({this.length, super.isNullable});
@@ -13,12 +14,18 @@ class TextList extends SQLDataType<List<String>> {
       return null;
     }
     return "'{${value?.map(
-          (e) => e..replaceAll("'", "''"),
+          (e) => e.replaceStringLiterals(),
         ).join(",")}}'";
   }
 
   @override
   String sqlTypeName() {
     return length != null ? "text[$length]" : "text[]";
+  }
+}
+
+extension ReplaceStringLiterals on String {
+  String replaceStringLiterals() {
+    return characters.map((e) => e == "'" ? "''" : e).join();
   }
 }
