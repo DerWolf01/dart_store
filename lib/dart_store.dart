@@ -110,6 +110,15 @@ class DartStore {
   Future<void> delete(dynamic model) async =>
       await DataManipulationService().delete(EntityInstanceService()
           .entityInstanceByValueInstance(reflect(model)));
+
+  Future<bool> exists<T>(T model, Where where) async =>
+      (await execute(
+              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(model.runtimeType).tableName} ${WhereService().defineAndChainWhereStatements(where: [
+            where
+          ])})"))
+          .first
+          .first ==
+      true;
 }
 
 extension StringFormatter on String {
