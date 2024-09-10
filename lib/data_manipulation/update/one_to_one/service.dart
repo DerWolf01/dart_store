@@ -11,16 +11,23 @@ class OneToOneUpdateService with DartStoreUtility {
   Future<EntityInstance> _updateForeignColumnItem(EntityInstance item) async =>
       await UpdateService().update(item);
 
-  Future _createConnection(
-      EntityInstance instance, EntityInstance instance2) async {
+  Future _updateConnection(
+      EntityInstance updatedEntityInstance, EntityInstance instance2) async {
     TableConnectionInstance connectionInstance =
         TableConnectionInstanceService()
-            .generateTableConnectionInstance(instance, instance2);
+            .generateTableConnectionInstance(updatedEntityInstance, instance2);
+    final connectionName = connectionInstance.tableName;
+    final pKey1 = updatedEntityInstance.primaryKeyColumn();
+    final pKey2 = instance2.primaryKeyColumn();
 
-    UpdateStatement updateStatement =
-        UpdateStatement(entityInstance: connectionInstance);
+    print(
+        "updating connection with values ${updatedEntityInstance.tableName}:${pKey1.value} and ${instance2.tableName}${pKey2.value}");
+
+    final statement =
+        "INSERT INTO $connectionName (${updatedEntityInstance.tableName}, ${instance2.tableName}) VALUES (${pKey1.dataType.convert(pKey1.value)}, ${pKey2.dataType.convert(pKey2.value)}) ON CONFLICT(${instance2.tableName}) DO UPDATE SET ${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)} WHERE ${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)}";
+    print(statement);
     try {
-      await executeSQL(updateStatement.define());
+      await executeSQL(statement);
     } on PgException catch (e, s) {
       print(e.message);
       print(e.severity);
@@ -43,15 +50,15 @@ class OneToOneUpdateService with DartStoreUtility {
       final EntityInstance value = foreignColumnInstance.value;
       late final EntityInstance newValue;
       if (foreignColumnInstance.mapId) {
-        await _createConnection(entityInstance, value);
+        await _updateConnection(entityInstance, value);
         continue;
       }
 
       final updatedItemEntityInstance = await _updateForeignColumnItem(value);
       newValue = updatedItemEntityInstance;
-      await _createConnection(entityInstance, updatedItemEntityInstance);
+      await _updateConnection(entityInstance, updatedItemEntityInstance);
 
-      entityInstance.setField(foreignColumnInstance.sqlName, newValue);
+      entityInstance.setField(foreignColumnInstance.name, newValue);
     }
 
     return entityInstance;
