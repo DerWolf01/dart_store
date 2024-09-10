@@ -13,7 +13,7 @@ class TextList extends SQLDataType<List<String>> {
       return null;
     }
     return "'{${value?.map(
-          (e) => e,
+          (e) => e..replaceAll("'", "''"),
         ).join(",")}}'";
   }
 
