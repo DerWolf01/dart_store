@@ -10,6 +10,7 @@ import 'package:dart_store/data_query/one_to_many/service.dart';
 import 'package:dart_store/data_query/one_to_one/service.dart';
 import 'package:dart_store/data_query/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
+import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
 
 class DataQueryService {
@@ -19,8 +20,8 @@ class DataQueryService {
     QueryStatement queryStatement =
         QueryStatement(tableDescription: description);
 
-    final StatementComposition statementComposition =
-        StatementComposition(statement: queryStatement, where: where);
+    final StatementComposition statementComposition = StatementComposition(
+        statement: queryStatement, where: filterWheres(where: where));
 
     final statementString = statementComposition.define();
     print("statementString: $statementString");
@@ -42,9 +43,13 @@ class DataQueryService {
       );
 
       await ManyToManyQueryService().postQuery(entityInstance);
-      await OneToManyQueryService().postQuery(entityInstance: entityInstance);
-      await ManyToOneQueryService().postQuery(entityInstance: entityInstance);
-      await OneToOneQueryService().postQuery(entityInstance);
+      await OneToManyQueryService()
+          .postQuery(entityInstance: entityInstance, where: where);
+      await ManyToOneQueryService()
+          .postQuery(entityInstance: entityInstance, where: where);
+      await OneToOneQueryService().postQuery(
+        entityInstance,
+      );
       entityInstances.add(entityInstance);
     }
     return entityInstances;

@@ -15,6 +15,7 @@ import 'package:dart_store/data_query/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/comparison_operator.dart';
+import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
 
 class ManyToOneQueryService with DartStoreUtility {
@@ -26,6 +27,10 @@ class ManyToOneQueryService with DartStoreUtility {
         TableService().findTable(oneToManyColumn.foreignKey.referencedEntity);
     final oneToManyItem = (await DataQueryService()
             .query(description: oneToManyTableDescription, where: [
+      ...filterWheres(
+          where: where,
+          columnName: oneToManyColumn.name,
+          externalColumnType: oneToManyColumn.foreignKey.referencedEntity),
       Where(
           comparisonOperator: ComparisonOperator.equals,
           internalColumn: oneToManyTableDescription.primaryKeyColumn(),
