@@ -4,7 +4,7 @@ import 'package:dart_store/statement/statement.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 // TODO implement or chaining
 
-class Where<ForeignField extends Type?> extends Statement {
+class Where<ForeignField> extends Statement {
   Where(
       {required this.comparisonOperator,
       required this.internalColumn,
