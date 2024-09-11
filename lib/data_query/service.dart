@@ -21,14 +21,13 @@ class DataQueryService {
       Page? page}) async {
     QueryStatement queryStatement =
         QueryStatement(tableDescription: description);
-
+    final List<Where> filteredWhere = filterWheres(where: where);
+    print("filtered-where: $filteredWhere");
     final StatementComposition statementComposition = StatementComposition(
-        statement: queryStatement,
-        where: filterWheres(where: where),
-        page: page);
+        statement: queryStatement, where: filteredWhere, page: page);
 
     final statementString = statementComposition.define();
-    print("statementString: $statementString");
+    print("query-statementString: $statementString");
     final queryResults = await dartStore.connection.query(statementString);
 
     final List<EntityInstance> entityInstances = [];

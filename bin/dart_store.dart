@@ -71,7 +71,7 @@ void main(List<String> arguments) async {
   // await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
 
   final model = await dartStore
-      .save(TextListTest.init(id: 0, manyToOneTest: [0, 1], title: 'tte'));
+      .save(TextListTest.init(id: -1, manyToOneTest: [0, 1], title: 'tte'));
 
   // await dartStore.delete(model);
   print(await dartStore.query<TextListTest>(where: [
@@ -82,11 +82,11 @@ void main(List<String> arguments) async {
         value: 0)
   ]));
 
-  print(await dartStore.exists<TextListTest>(
-      model,
-      Where(
-          comparisonOperator: ComparisonOperator.equals,
-          internalColumn:
-              InternalColumn(dataType: Serial(), constraints: [], name: "id"),
-          value: 0)));
+  print(await dartStore.query<TextListTest>(where: [
+    Where(
+        comparisonOperator: ComparisonOperator.equals,
+        internalColumn:
+            InternalColumn(dataType: Serial(), constraints: [], name: "id"),
+        value: 3)
+  ]));
 }
