@@ -41,11 +41,20 @@ class DataQueryService {
       {required TableDescription description,
       List<Where> where = const [],
       Page? page}) async {
+    final manyToManyPreQuery =
+        await ManyToManyQueryService().preQuery(description, where);
+    final oneToOnePreQuery =
+        await OneToOneQueryService().preQuery(description, where);
+    final manyToOnePreQuery =
+        await ManyToOneQueryService().preQuery(description, where);
+    final oneToManyPreQuery =
+        await OneToManyQueryService().preQuery(description, where);
+
     final List<EntityInstance> entityInstances = [
-      ...(await ManyToManyQueryService().preQuery(description, where)),
-      ...(await OneToOneQueryService().preQuery(description, where)),
-      ...(await ManyToOneQueryService().preQuery(description, where)),
-      ...(await OneToManyQueryService().preQuery(description, where))
+      ...manyToOnePreQuery,
+      ...manyToManyPreQuery,
+      ...oneToManyPreQuery,
+      ...oneToOnePreQuery
     ].unite();
     print("UNITED: ${entityInstances.map(
       (e) => e.columns.map((e) => e.name),
@@ -85,6 +94,23 @@ class DataQueryService {
                   name: e.name,
                   value: queryResult[e.sqlName]))
               .toList());
+
+      if (manyToManyPreQuery.isEmpty) {
+        await ManyToManyQueryService().postQuery(instance, where: where);
+      }
+      if (oneToManyPreQuery.isEmpty) {
+        await OneToManyQueryService()
+            .postQuery(entityInstance: instance, where: where);
+      }
+      if (oneToOnePreQuery.isEmpty) {
+        await OneToOneQueryService().postQuery(
+          instance,
+        );
+      }
+      if (manyToOnePreQuery.isEmpty) {
+        await ManyToOneQueryService()
+            .postQuery(entityInstance: instance, where: where);
+      }
       final pKey = instance.primaryKeyColumn();
       for (final existingInstance in entityInstances) {
         if (existingInstance.primaryKeyColumn().value == pKey.value) {

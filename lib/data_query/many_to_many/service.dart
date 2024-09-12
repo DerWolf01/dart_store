@@ -47,6 +47,34 @@ class ManyToManyQueryService with DartStoreUtility {
     return entityInstances;
   }
 
+  Future<List<TableConnectionInstance>> _queryConnectionUsingWhere(
+      TableDescription instance, TableDescription referencedTableDescription,
+      {required List<Where> where}) async {
+    TableConnectionDescription connectionDescription =
+        TableConnectionDescriptionService()
+            .generateTableDescription(instance, referencedTableDescription);
+
+    QueryStatement queryStatement =
+        QueryStatement(tableDescription: connectionDescription);
+    final primaryKeyColumn = instance.primaryKeyColumn();
+
+    final StatementComposition statementComposition =
+        StatementComposition(statement: queryStatement, where: where);
+    try {
+      return mapListToTableConnectionInstance(
+          maps: await query(statementComposition.define()),
+          tableConnectionDescription: connectionDescription);
+    } on PgException catch (e, s) {
+      print(e.message);
+      print(e.severity);
+      print(s);
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+    return [];
+  }
+
   Future<List<TableConnectionInstance>> _queryConnection(
       EntityInstance instance, TableDescription referencedTableDescription,
       {List<Where> where = const []}) async {
