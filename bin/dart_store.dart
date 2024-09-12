@@ -83,4 +83,5 @@ void main(List<String> arguments) async {
     ]))
         .firstOrNull,
   );
+  await dartStore.delete(model);
 }

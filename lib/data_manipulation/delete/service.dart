@@ -15,9 +15,9 @@ class DeleteService with DartStoreUtility {
   ) async {
     try {
       /// Delete all related data
-      await ManyToManyDeleteService().preDelete(entityInstance);
-      await OneToOneDeleteService().preDelete(entityInstance);
-      await OneToManyAndManyToOneDeleteService().preDelete(entityInstance);
+      // await ManyToManyDeleteService().preDelete(entityInstance);
+      // await OneToOneDeleteService().preDelete(entityInstance);
+      // await OneToManyAndManyToOneDeleteService().preDelete(entityInstance);
 
       /// start deleting actual data
       final DeleteStatement deleteStatement =

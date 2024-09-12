@@ -39,7 +39,7 @@ class ManyToManyDefinition extends DataDefinition {
     final primaryKeyType2 = table2.primaryKeyType();
 
     final res =
-        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $tableName1 ${primaryKeyType1.sqlTypeName()} NOT NULL, $tableName2 ${primaryKeyType2.sqlTypeName()} NOT NULL, FOREIGN KEY ($tableName1) REFERENCES $tableName1(id), FOREIGN KEY ($tableName2) REFERENCES $tableName2(id), UNIQUE($tableName1, $tableName2))";
+        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $tableName1 ${primaryKeyType1.sqlTypeName()} NOT NULL, $tableName2 ${primaryKeyType2.sqlTypeName()} NOT NULL, FOREIGN KEY ($tableName1) REFERENCES $tableName1(id) ON DELETE CASCADE, FOREIGN KEY ($tableName2) REFERENCES $tableName2(id) ON DELETE CASCADE, UNIQUE($tableName1, $tableName2))";
 
     return res;
   }

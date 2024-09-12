@@ -24,7 +24,7 @@ class OneToOneDefinition extends DataDefinition {
 
     final columnName2 = tableName2;
     final res =
-        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE, $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE, FOREIGN KEY ($columnName1) REFERENCES $tableName1(id), FOREIGN KEY ($columnName2) REFERENCES $tableName2(id))";
+        "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $columnName1 ${primaryKeyType1.sqlTypeName()} NOT NULL UNIQUE, $columnName2 ${primaryKeyType2.sqlTypeName()} NOT NULL UNIQUE, FOREIGN KEY ($columnName1) REFERENCES $tableName1(id) ON DELETE CASCADE, FOREIGN KEY ($columnName2) REFERENCES $tableName2(id) ON DELETE CASCADE)";
 
     return res;
   }
