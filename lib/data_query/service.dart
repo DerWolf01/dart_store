@@ -4,6 +4,7 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/data_query/exception.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/many_to_one/service.dart';
 import 'package:dart_store/data_query/one_to_many/service.dart';
@@ -45,7 +46,12 @@ class DataQueryService {
                 value: queryResult[e.sqlName]))
             .toList(),
       );
-      await postQuery(entityInstance: entityInstance, where: where, page: page);
+      try {
+        await postQuery(
+            entityInstance: entityInstance, where: where, page: page);
+      } on ConnecitonNotFoundException catch (e) {
+        continue;
+      }
       entityInstances.add(entityInstance);
     }
     return entityInstances;
@@ -55,7 +61,7 @@ class DataQueryService {
       {required EntityInstance entityInstance,
       List<Where> where = const [],
       Page? page}) async {
-    await ManyToManyQueryService().postQuery(entityInstance);
+    await ManyToManyQueryService().postQuery(entityInstance, where: where);
     await OneToManyQueryService().postQuery(entityInstance, where: where);
     await ManyToOneQueryService().postQuery(entityInstance, where: where);
     await OneToOneQueryService().postQuery(entityInstance, where: where);

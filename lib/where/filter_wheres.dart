@@ -4,15 +4,13 @@ List<Where> filterWheres(
     {required List<Where> where,
     Type? externalColumnType,
     String? columnName}) {
-  if (externalColumnType == null || columnName == null) {
+  if (externalColumnType == null) {
     return where.where((element) => element.foreignField == null).toList();
   }
 
   return where
       .where(
-        (element) =>
-            element.foreignField == externalColumnType &&
-            element.internalColumn.name == columnName,
+        (element) => element.foreignField == externalColumnType,
       )
       .toList();
 }

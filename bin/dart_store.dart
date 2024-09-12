@@ -73,5 +73,14 @@ void main(List<String> arguments) async {
 
   // await dartStore.delete(model);
 
-  print((await dartStore.query<Test1>()).firstOrNull?.test2);
+  print(
+    (await dartStore.query<Test1>(where: [
+      Where<Test2>(
+          comparisonOperator: ComparisonOperator.equals,
+          internalColumn:
+              InternalColumn(dataType: Serial(), constraints: [], name: "id"),
+          value: 1)
+    ]))
+        .firstOrNull,
+  );
 }

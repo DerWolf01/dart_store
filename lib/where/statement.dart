@@ -1,5 +1,7 @@
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/statement/statement.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 // TODO implement or chaining
@@ -25,6 +27,12 @@ class Where<ForeignField> extends Statement {
     final convertedValue = internalColumn.dataType.convert(value);
     if (!caseSensitive && (internalColumn.dataType is Varchar)) {
       return "LOWER(${internalColumn.sqlName}) ${comparisonOperator.operator()} LOWER($convertedValue)";
+    }
+    if (foreignField != dynamic && foreignField != null) {
+      final TableDescription tableDescription =
+          TableService().findTable(foreignField!);
+
+      return "${tableDescription.tableName}.${internalColumn.sqlName} ${comparisonOperator.operator()} $convertedValue";
     }
     return "${internalColumn.sqlName} ${comparisonOperator.operator()} $convertedValue";
   }

@@ -11,6 +11,7 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/data_query/exception.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/data_query/statement.dart';
@@ -18,6 +19,7 @@ import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/filter_wheres.dart';
+import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 
@@ -37,13 +39,17 @@ class OneToOneQueryService with DartStoreUtility {
         .findTable(entityInstance.objectType)
         .oneToOneColumns()) {
       final referencedObjectType = foreignColumn.foreignKey.referencedEntity;
+      final filteredWhere =
+          filterWheres(where: where, externalColumnType: referencedObjectType);
+      print(
+          "ONE TO ONE Filtered where $filteredWhere <-- $where --> $referencedObjectType");
       final referencedTableDescription =
           TableService().findTable(referencedObjectType);
       final TableConnectionDescription connectionDescription =
           TableConnectionDescriptionService().generateTableDescription(
               referencedTableDescription, entityInstance);
       final statement =
-          "SELECT ${referencedTableDescription.tableName}.id as id, ${referencedTableDescription.internalColumnsSqlNamesWithoutId} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)}";
+          "SELECT ${referencedTableDescription.tableName}.id as id, ${referencedTableDescription.internalColumnsSqlNamesWithoutId} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
       print(statement);
       final Result result = await executeSQL(statement);
 
@@ -57,6 +63,9 @@ class OneToOneQueryService with DartStoreUtility {
           where: where,
         );
         items.add(instance);
+      }
+      if (items.isEmpty) {
+        throw ConnecitonNotFoundException("No connection found");
       }
       entityInstance.columns.add(OneToOneColumnInstance(
           mapId: foreignColumn.mapId,
