@@ -21,16 +21,16 @@ import 'package:dart_store/where/statement.dart';
 class ManyToOneQueryService with DartStoreUtility {
   Future<EntityInstance> queryManyToOneColumnData(
       {required EntityInstance connectionInstance,
-      required ForeignColumn oneToManyColumn,
+      required ForeignColumn manyToOneColumn,
       List<Where> where = const []}) async {
     final oneToManyTableDescription =
-        TableService().findTable(oneToManyColumn.foreignKey.referencedEntity);
+        TableService().findTable(manyToOneColumn.foreignKey.referencedEntity);
     final oneToManyItem = (await DataQueryService()
             .query(description: oneToManyTableDescription, where: [
       ...filterWheres(
           where: where,
-          columnName: oneToManyColumn.name,
-          externalColumnType: oneToManyColumn.foreignKey.referencedEntity),
+          columnName: manyToOneColumn.name,
+          externalColumnType: manyToOneColumn.foreignKey.referencedEntity),
       Where(
           comparisonOperator: ComparisonOperator.equals,
           internalColumn: oneToManyTableDescription.primaryKeyColumn(),
@@ -45,10 +45,10 @@ class ManyToOneQueryService with DartStoreUtility {
 
   Future<EntityInstance> queryConnections({
     required EntityInstance manyToOneHolder,
-    required ForeignColumn oneToManyColumn,
+    required ForeignColumn manyToOneColumn,
   }) async {
     final TableDescription oneToManyTableDescription =
-        TableService().findTable(oneToManyColumn.foreignKey.referencedEntity);
+        TableService().findTable(manyToOneColumn.foreignKey.referencedEntity);
     final TableConnectionDescription tableConnectionDescription =
         TableConnectionDescriptionService()
             .generateManyToOneAndOneToManyDescription(
@@ -82,22 +82,23 @@ class ManyToOneQueryService with DartStoreUtility {
   Future<EntityInstance> postQuery(
       {required EntityInstance entityInstance,
       List<Where> where = const []}) async {
-    for (final foreignColumn in TableService()
+    for (final manyToOneColumn in TableService()
         .findTable(entityInstance.objectType)
         .manyToOneColumns()) {
+      print("MANY TO ONE COLUMN --> ${manyToOneColumn.name}");
       final connectionInstance = await queryConnections(
-          manyToOneHolder: entityInstance, oneToManyColumn: foreignColumn);
-
+          manyToOneHolder: entityInstance, manyToOneColumn: manyToOneColumn);
+      print("Connection --> $connectionInstance");
       final EntityInstance oneToManyInstance = await queryManyToOneColumnData(
           connectionInstance: connectionInstance,
-          oneToManyColumn: foreignColumn,
+          manyToOneColumn: manyToOneColumn,
           where: where);
 
       entityInstance.columns.add(ManyToOneColumnInstance(
-          mapId: foreignColumn.mapId,
-          foreignKey: foreignColumn.foreignKey,
-          constraints: foreignColumn.constraints,
-          name: foreignColumn.name,
+          mapId: manyToOneColumn.mapId,
+          foreignKey: manyToOneColumn.foreignKey,
+          constraints: manyToOneColumn.constraints,
+          name: manyToOneColumn.name,
           value: oneToManyInstance));
     }
 

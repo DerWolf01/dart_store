@@ -31,7 +31,6 @@ class ColumnService {
           )
           .toList();
 
-
       final dataType = declaration.metadata
           .where((element) => element.reflectee is SQLDataType);
 
@@ -51,6 +50,7 @@ class ColumnService {
       final foreignKey = declaration.metadata
           .where((element) => element.reflectee is ForeignKey)
           .firstOrNull;
+      print("$name is foreignKey of type $foreignKey");
       if (foreignKey != null) {
         final foreignKeyInstance = foreignKey.reflectee as ForeignKey;
         columns.add(ForeignColumnService().generateForeignColumn(
