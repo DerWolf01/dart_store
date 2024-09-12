@@ -11,7 +11,7 @@ class Where<ForeignField> extends Statement {
       required this.value,
       this.caseSensitive = true})
       : foreignField = ForeignField;
-  final Type? foreignField;
+  Type? foreignField;
   final ComparisonOperator comparisonOperator;
   final InternalColumn internalColumn;
   final dynamic value;
@@ -28,4 +28,15 @@ class Where<ForeignField> extends Statement {
     }
     return "${internalColumn.sqlName} ${comparisonOperator.operator()} $convertedValue";
   }
+
+  @override
+  String toString() =>
+      "WHERE ${foreignField != dynamic ? '$foreignField.' : ''}${define()}";
+}
+
+class OrWhere<ForeignField> extends Where<ForeignField> {
+  OrWhere(
+      {required super.comparisonOperator,
+      required super.internalColumn,
+      required super.value});
 }

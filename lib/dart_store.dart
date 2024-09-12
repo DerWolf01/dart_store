@@ -1,6 +1,7 @@
 library dart_store;
 
 export 'package:dart_store/database/database_connection.dart';
+
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/service.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
@@ -18,6 +19,7 @@ import 'package:dart_store/database/database_connection.dart';
 import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
+import 'package:postgres/postgres.dart' as pg;
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';
 export 'package:dart_store/data_definition/data_definition.dart';
@@ -118,6 +120,15 @@ class DartStore {
           ])})"))
           .first
           .first ==
+      true;
+  Future<bool> rawExists<T>(
+          {required String tablename, required Where where}) async =>
+      (await execute(
+              "SELECT EXISTS (SELECT 1 FROM $tablename ${WhereService().defineAndChainWhereStatements(where: [
+            where
+          ])})") as pg.Result)
+          .firstOrNull
+          ?.firstOrNull ==
       true;
 }
 

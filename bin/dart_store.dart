@@ -22,10 +22,9 @@ import 'package:postgres/postgres.dart';
 // TODO: Finish ManyToMany logic implementation
 // TODO Implement QueryPsuedoColumn.byPrimaryKeyColumn
 @Entity()
-class TextListTest {
-  TextListTest();
-  TextListTest.init(
-      {required this.id, required this.title, required this.manyToOneTest});
+class Test1 {
+  Test1();
+  Test1.init({required this.id, required this.title, required this.test2});
 
   @PrimaryKey(autoIncrement: true)
   @Serial()
@@ -34,15 +33,14 @@ class TextListTest {
   @Varchar()
   late final String title;
 
-  @MapId()
-  @OneToMany<ManyToOneTest>()
-  late final List<int> manyToOneTest;
+  @ManyToMany<Test2>()
+  late final List<Test2> test2;
 }
 
 @Entity()
-class ManyToOneTest {
-  ManyToOneTest();
-  ManyToOneTest.init({
+class Test2 {
+  Test2();
+  Test2.init({
     required this.id,
     @ListOf(type: String) required this.textList,
   });
@@ -67,23 +65,31 @@ void main(List<String> arguments) async {
           onOpen: (connection) async =>
               print('Connected to the database $connection'),
           sslMode: SslMode.disable)));
-  // await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
-  // await dartStore.save(ManyToOneTest.init(id: -1, textList: ['a', 'b']));
+  await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
+  await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
 
-  final model = await dartStore
-      .save(TextListTest.init(id: -1, manyToOneTest: [0, 1], title: 'tte'));
+  final model = await dartStore.save(Test1.init(
+      id: -1,
+      test2: [
+        Test2.init(id: 3, textList: [
+          "test",
+          "test",
+          "test",
+        ])
+      ],
+      title: 'tte'));
 
   // await dartStore.delete(model);
-  print(await dartStore.query<TextListTest>(where: [
-    Where(
-        comparisonOperator: ComparisonOperator.equals,
-        internalColumn:
-            InternalColumn(dataType: Serial(), constraints: [], name: "id"),
-        value: 0)
-  ]));
+  // print(await dartStore.query<Test1>(where: [
+  //   Where(
+  //       comparisonOperator: ComparisonOperator.equals,
+  //       internalColumn:
+  //           InternalColumn(dataType: Serial(), constraints: [], name: "id"),
+  //       value: 0)
+  // ]));
 
-  print(await dartStore.query<TextListTest>(where: [
-    Where(
+  print(await dartStore.query<Test1>(where: [
+    Where<Test2>(
         comparisonOperator: ComparisonOperator.equals,
         internalColumn:
             InternalColumn(dataType: Serial(), constraints: [], name: "id"),

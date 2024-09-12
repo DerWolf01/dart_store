@@ -83,6 +83,62 @@ class OneToOneQueryService {
     return [];
   }
 
+  Future<List<EntityInstance>> preQuery(
+      TableDescription tableDescription, List<Where> where) async {
+    final lefterPKey = tableDescription.primaryKeyColumn();
+
+    Map<dynamic, OneToOneColumnInstance> entityInstances = {};
+    //TODO: implement querying using filteredWhere to ManyToMany righter table and then wuery connections using these to create the List of EntityInstances
+    for (final oneToManyColumn in tableDescription.oneToOneColumns()) {
+      final referencedEntity = oneToManyColumn.foreignKey.referencedEntity;
+      final manyToOneTable = TableService().findTable(referencedEntity);
+      final filteredWhere =
+          filterWheres(where: where, externalColumnType: referencedEntity);
+
+      List<EntityInstance> tempOneToManyRighterResultEntities =
+          (await DataQueryService().query(
+              description: manyToOneTable,
+              where: filteredWhere
+                  .map(
+                    (e) => e..foreignField = dynamic,
+                  )
+                  .toList()));
+
+      for (final tempEntry in tempOneToManyRighterResultEntities) {
+        final connections = await _queryConnection(
+          tempEntry,
+          tableDescription,
+        );
+        for (final connection in connections) {
+          (entityInstances[connection.columns
+                  .firstWhere(
+                    (element) => element.sqlName == tableDescription.tableName,
+                  )
+                  .value] ??=
+              OneToOneColumnInstance(
+                  foreignKey: oneToManyColumn.foreignKey,
+                  constraints: oneToManyColumn.constraints,
+                  name: oneToManyColumn.name,
+                  value: tempEntry,
+                  mapId: oneToManyColumn.mapId));
+        }
+      }
+    }
+    return entityInstances.entries
+        .map((e) => EntityInstance(
+                objectType: tableDescription.objectType,
+                entity: tableDescription.entity,
+                columns: [
+                  InternalColumnInstance(
+                      value: e.key,
+                      dataType: lefterPKey.dataType,
+                      constraints: lefterPKey.constraints,
+                      name: lefterPKey.name),
+                  e.value
+                ]))
+        .toList();
+  }
+
   Future<EntityInstance> postQuery(EntityInstance entityInstance,
       {List<Where> where = const []}) async {
     if (entityInstance.primaryKeyColumn().value == -1 ||
@@ -91,9 +147,7 @@ class OneToOneQueryService {
           "Entity of table ${entityInstance.tableName} has to be queryed before querying foreign columns");
     }
 
-    for (final foreignColumn in TableService()
-        .findTable(entityInstance.objectType)
-        .oneToOneColumns()) {
+    for (final foreignColumn in entityInstance.oneToOneColumns()) {
       final List<TableConnectionInstance> connectionInstances =
           await _queryConnection(
               entityInstance,
