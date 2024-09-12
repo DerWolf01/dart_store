@@ -54,6 +54,14 @@ class TableDescription {
       .where((element) => element.getForeignKey<ManyToOne>() != null)
       .toList();
 
+  String get internalColumnsSqlNamesWithoutId => columns
+      .where(
+        (element) => element is InternalColumn && !element.isPrimaryKey,
+      )
+      .map(
+        (e) => e.sqlName,
+      )
+      .join(", ");
   @override
   String toString() {
     return 'TableDescription{objectType: $objectType, tableName: $tableName, columns: ${columns.map((e) => e.toString()).toList()}';

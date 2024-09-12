@@ -45,17 +45,20 @@ class DataQueryService {
                 value: queryResult[e.sqlName]))
             .toList(),
       );
-
-      await ManyToManyQueryService().postQuery(entityInstance);
-      await OneToManyQueryService()
-          .postQuery(entityInstance: entityInstance, where: where);
-      await ManyToOneQueryService()
-          .postQuery(entityInstance: entityInstance, where: where);
-      await OneToOneQueryService().postQuery(
-        entityInstance,
-      );
+      await postQuery(entityInstance: entityInstance, where: where, page: page);
       entityInstances.add(entityInstance);
     }
     return entityInstances;
+  }
+
+  postQuery(
+      {required EntityInstance entityInstance,
+      List<Where> where = const [],
+      Page? page}) async {
+    await ManyToManyQueryService().postQuery(entityInstance);
+    await OneToManyQueryService().postQuery(entityInstance, where: where);
+    await ManyToOneQueryService().postQuery(entityInstance, where: where);
+    await OneToOneQueryService().postQuery(entityInstance, where: where);
+    return;
   }
 }

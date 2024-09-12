@@ -2,12 +2,39 @@ import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/data_definition/table/table_description.dart';
 
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 
 extension EntityMapConverter on ConversionService {
+  EntityInstance mapToEntityInstance(
+      {required TableDescription description,
+      required Map<String, dynamic> map}) {
+    return EntityInstance(
+        objectType: description.objectType,
+        entity: description.entity,
+        columns: description.columns
+            .whereType<InternalColumn>()
+            .map(
+              (e) => InternalColumnInstance(
+                  constraints: e.constraints,
+                  name: e.name,
+                  value: map[e.name],
+                  dataType: e.dataType),
+            )
+            .toList());
+  }
+
+  List<EntityInstance> mapListToEntityInstances(
+      {required TableDescription description,
+      required List<Map<String, dynamic>> maps}) {
+    return maps
+        .map((map) => mapToEntityInstance(description: description, map: map))
+        .toList();
+  }
+
   List<TableConnectionInstance> mapListToTableConnectionInstance(
           {required List<Map<String, dynamic>> maps,
           required TableConnectionDescription tableConnectionDescription}) =>

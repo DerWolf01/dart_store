@@ -24,7 +24,7 @@ class TableConnectionInstanceService {
         .generateManyToOneAndOneToManyDescription(
             oneToManyTableDescription: oneToMany,
             manyToOneTableDescription: manyToOne);
-    ;
+
     return TableConnectionInstance(entity: description.entity, columns: [
       InternalColumnInstance(
           value: conenctionId,

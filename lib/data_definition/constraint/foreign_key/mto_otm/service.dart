@@ -22,8 +22,8 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
       final OneToManyAndManyToOneDescription manyToOneDescription =
           OneToManyAndManyToOneDescription(
               foreignKey: column.getForeignKey<ManyToOne>()!,
-              oneToManyTableDescription: referenced,
-              manyToOneTableDescription: tableDescription);
+              oneToManyTableDescription: tableDescription,
+              manyToOneTableDescription: referenced);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
       await executeSQL(oneToManyDefinition.define());
@@ -39,8 +39,8 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
       final OneToManyAndManyToOneDescription oneToManyDescription =
           OneToManyAndManyToOneDescription(
               foreignKey: column.getForeignKey<OneToMany>()!,
-              oneToManyTableDescription: tableDescription,
-              manyToOneTableDescription: referenced);
+              oneToManyTableDescription: referenced,
+              manyToOneTableDescription: tableDescription);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: oneToManyDescription);
 
