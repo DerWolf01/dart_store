@@ -48,8 +48,8 @@ class ManyToOneQueryService with DartStoreUtility {
       final OneToManyAndManyToOneDescription manyToOneDescription =
           OneToManyAndManyToOneDescription(
               foreignKey: foreignColumn.foreignKey,
-              oneToManyTableDescription: entityInstance,
-              manyToOneTableDescription: referencedTableDescription);
+              oneToManyTableDescription: referencedTableDescription,
+              manyToOneTableDescription: entityInstance);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
 
