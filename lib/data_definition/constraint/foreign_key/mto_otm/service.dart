@@ -18,7 +18,7 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
           .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity));
       final referenced = TableService()
           .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity);
-
+      await TableService().createTable(referenced);
       final OneToManyAndManyToOneDescription manyToOneDescription =
           OneToManyAndManyToOneDescription(
               foreignKey: column.getForeignKey<ManyToOne>()!,
