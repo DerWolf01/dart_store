@@ -22,11 +22,11 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
       final OneToManyAndManyToOneDescription manyToOneDescription =
           OneToManyAndManyToOneDescription(
               foreignKey: column.getForeignKey<ManyToOne>()!,
-              oneToManyTableDescription: tableDescription,
-              manyToOneTableDescription: referenced);
-      final OneToManyAndManyToOneDefinition oneToManyDefinition =
+              oneToManyTableDescription: referenced,
+              manyToOneTableDescription: tableDescription);
+      final OneToManyAndManyToOneDefinition manyToOneDefinition =
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
-      await executeSQL(oneToManyDefinition.define());
+      await executeSQL(manyToOneDefinition.define());
     }
   }
 
