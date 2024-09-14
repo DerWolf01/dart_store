@@ -14,8 +14,6 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
   Future<void> defineAndExecuteManyToOne(
       TableDescription tableDescription) async {
     for (final column in tableDescription.manyToOneColumns()) {
-      await TableService().createTable(TableService()
-          .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity));
       final referenced = TableService()
           .findTable(column.getForeignKey<ManyToOne>()!.referencedEntity);
       await TableService().createTable(referenced);
