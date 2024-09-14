@@ -40,8 +40,7 @@ class PostgresConnection extends DatabaseConnection<Result> {
 
   @override
   Future<int> insert(String statement, String tableName) async {
-    await execute(statement);
-    return await lastInsertedId(tableName);
+    return (await execute(statement)).first.first as int;
   }
 
   Future<int> lastInsertedId(String tableName) async {

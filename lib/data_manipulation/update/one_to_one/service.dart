@@ -24,7 +24,7 @@ class OneToOneUpdateService with DartStoreUtility {
         "updating connection with values ${updatedEntityInstance.tableName}:${pKey1.value} and ${instance2.tableName}${pKey2.value}");
 
     final statement =
-        "INSERT INTO $connectionName (${updatedEntityInstance.tableName}, ${instance2.tableName}) VALUES (${pKey1.dataType.convert(pKey1.value)}, ${pKey2.dataType.convert(pKey2.value)}) ON CONFLICT(${instance2.tableName}) DO UPDATE SET ${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)} WHERE $connectionName.${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)}";
+        "INSERT INTO $connectionName (${updatedEntityInstance.tableName}, ${instance2.tableName}) VALUES (${pKey1.dataType.convert(pKey1.value)}, ${pKey2.dataType.convert(pKey2.value)}) ON CONFLICT(${instance2.tableName}) DO UPDATE SET ${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)} WHERE $connectionName.${instance2.tableName} = ${pKey2.dataType.convert(pKey2.value)} RETURNING id";
     print(statement);
     try {
       await executeSQL(statement);
