@@ -13,8 +13,8 @@ class ManyToOneInsertService with DartStoreUtility {
     TableConnectionInstance connectionInstance =
         TableConnectionInstanceService()
             .generateManyToOneAndOneToManyConnectionInstance(
-                manyToOne: oneToManyEntityInstance,
-                oneToMany: manyToOneEntityInstance);
+                manyToOne: manyToOneEntityInstance,
+                oneToMany: oneToManyEntityInstance);
 
     InsertStatement insertStatement =
         InsertStatement(entityInstance: connectionInstance);
