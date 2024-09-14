@@ -39,8 +39,8 @@ class PostgresConnection extends DatabaseConnection<Result> {
       (await execute(statement)).map((e) => e.toColumnMap()).toList();
 
   @override
-  Future<int> insert(String statement, String tableName) async {
-    return (await execute(statement)).first.first as int;
+  Future<int?> insert(String statement, String tableName) async {
+    return (await execute(statement)).firstOrNull?.firstOrNull as int?;
   }
 
   Future<int> lastInsertedId(String tableName) async {

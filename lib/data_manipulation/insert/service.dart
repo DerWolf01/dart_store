@@ -15,7 +15,7 @@ class InsertService with DartStoreUtility {
       final InsertStatement insertStatement =
           InsertStatement(entityInstance: entityInstance);
       final primaryKeyColumn = entityInstance.primaryKeyColumn();
-      final insertResult = await dartStore.connection
+      final int? insertResult = await dartStore.connection
           .insert(insertStatement.define(), entityInstance.tableName);
 
       final id =

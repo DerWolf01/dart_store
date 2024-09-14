@@ -12,6 +12,6 @@ abstract class DatabaseConnection<ResultType> {
 
   Future<List<Map<String, dynamic>>> query(String statement);
 
-  Future<int> insert(String statement, String tableName);
+  Future<int?> insert(String statement, String tableName);
   // Future<void> delete(String statement);
 }
