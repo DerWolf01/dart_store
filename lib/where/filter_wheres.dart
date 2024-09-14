@@ -4,7 +4,7 @@ List<Where> filterWheres(
     {required List<Where> where,
     Type? externalColumnType,
     String? columnName}) {
-  if (externalColumnType == null) {
+  if (externalColumnType == dynamic || externalColumnType == null) {
     return where.where((element) => element.foreignField == null).toList();
   }
 
