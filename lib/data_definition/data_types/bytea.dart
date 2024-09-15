@@ -18,6 +18,6 @@ class Bytea extends SQLDataType<File> {
 
   @override
   String sqlTypeName() {
-    return 'TEXT';
+    return 'INTEGER[]';
   }
 }
