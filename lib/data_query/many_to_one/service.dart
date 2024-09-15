@@ -1,26 +1,14 @@
 import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/connection/description/description.dart';
-import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/converter/converter.dart';
-import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/definiton.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/description.dart';
-import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/service.dart';
-import 'package:dart_store/data_definition/data_types/data_type.dart';
-import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
-import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
-import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_one.dart';
-import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/exception.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/service.dart';
-import 'package:dart_store/data_query/statement.dart';
-import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:dart_store/where/comparison_operator.dart';
 import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
@@ -56,13 +44,12 @@ class ManyToOneQueryService with DartStoreUtility {
       final connectionName = oneToManyDefinition.connectionName;
       final statement =
           "SELECT ${referencedTableDescription.tableName}.id as id, ${referencedTableDescription.internalColumnsSqlNamesWithoutId} FROM ${referencedTableDescription.tableName} JOIN $connectionName ON $connectionName.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE $connectionName.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
-      print(statement);
+
       final Result result = await executeSQL(statement);
 
       final List<EntityInstance> items = [];
 
       for (final res in result.withNormalizedNames()) {
-        print("normalized: $res");
         final instance = ConversionService().mapToEntityInstance(
             description: referencedTableDescription, map: res);
         DataQueryService().postQuery(
@@ -74,7 +61,7 @@ class ManyToOneQueryService with DartStoreUtility {
       if (items.isEmpty) {
         throw ConnecitonNotFoundException("No connection found");
       }
-      print(items);
+
       entityInstance.columns.add(ManyToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,

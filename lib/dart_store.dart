@@ -1,26 +1,27 @@
 library dart_store;
 
-export 'package:dart_store/database/database_connection.dart';
+import 'dart:async';
+import 'dart:mirrors';
+
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/service.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
-import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/service.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/service.dart';
-import 'dart:async';
-import 'dart:mirrors';
 import 'package:dart_store/database/database_connection.dart';
-import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
+
 //TODO: Remove before deployment
 export 'package:change_case/change_case.dart';
 export 'package:dart_store/data_definition/data_definition.dart';
+export 'package:dart_store/database/database_connection.dart';
+
 export 'postgres_connection/connection.dart';
 
 DartStore get dartStore => DartStore();
@@ -29,16 +30,6 @@ class DartStore {
   static DartStore? _instance;
   DatabaseConnection connection;
 
-  DartStore._internal(this.connection);
-
-  execute(String statement) async => await connection.execute(statement);
-  static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
-      ConnectionType connection) async {
-    _instance ??= DartStore._internal(connection);
-    await DataDefinitonService().defineData();
-    return _instance!;
-  }
-
   factory DartStore() {
     if (_instance == null) {
       throw Exception('DartStore not initialized');
@@ -46,6 +37,22 @@ class DartStore {
 
     return _instance!;
   }
+
+  DartStore._internal(this.connection);
+  Future<void> delete(dynamic model) async =>
+      await DataManipulationService().delete(EntityInstanceService()
+          .entityInstanceByValueInstance(reflect(model)));
+
+  execute(String statement) async => await connection.execute(statement);
+
+  Future<bool> exists<T>(Where where, {Type? type}) async =>
+      (await execute(
+              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
+            where
+          ])})"))
+          .first
+          .first ==
+      true;
 
   Future<List<T>> query<T>(
       {List<Where> where = const [], Type? type, Page? page}) async {
@@ -101,24 +108,18 @@ class DartStore {
     final whereStatements =
         WhereService().defineAndChainWhereStatements(where: where);
     final statementComposition = "$updateStatement $whereStatements";
-    print("updateStatement: $statementComposition");
+
     await connection.execute(statementComposition);
 
     return await dartStore.query<T>(type: type, where: where);
   }
 
-  Future<void> delete(dynamic model) async =>
-      await DataManipulationService().delete(EntityInstanceService()
-          .entityInstanceByValueInstance(reflect(model)));
-
-  Future<bool> exists<T>(Where where, {Type? type}) async =>
-      (await execute(
-              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
-            where
-          ])})"))
-          .first
-          .first ==
-      true;
+  static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
+      ConnectionType connection) async {
+    _instance ??= DartStore._internal(connection);
+    await DataDefinitonService().defineData();
+    return _instance!;
+  }
 }
 
 extension StringFormatter on String {

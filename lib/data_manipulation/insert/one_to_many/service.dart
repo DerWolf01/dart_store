@@ -7,6 +7,27 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
 class OneToManyInsertService with DartStoreUtility {
+  Future<EntityInstance> postInsert(EntityInstance entityInstance) async {
+    for (final foreignColumnInstance
+        in entityInstance.oneToManyColumnsInstances()) {
+      final List<EntityInstance> values = foreignColumnInstance.value;
+      final List<EntityInstance> newValues =
+          foreignColumnInstance.mapId ? values : [];
+      for (final oneOfManyItems in values) {
+        if (!foreignColumnInstance.mapId) {
+          newValues.add(await InsertService().insert(oneOfManyItems));
+        }
+        await _createConnection(
+            oneToManyEntityInstance: entityInstance,
+            manyToOneEntityInstance: oneOfManyItems);
+      }
+
+      entityInstance.setField(foreignColumnInstance.name, newValues);
+    }
+
+    return entityInstance;
+  }
+
   Future _createConnection(
       {required EntityInstance oneToManyEntityInstance,
       required EntityInstance manyToOneEntityInstance}) async {
@@ -28,27 +49,5 @@ class OneToManyInsertService with DartStoreUtility {
       print(e);
       print(s);
     }
-  }
-
-  Future<EntityInstance> postInsert(EntityInstance entityInstance) async {
-    for (final foreignColumnInstance
-        in entityInstance.oneToManyColumnsInstances()) {
-      print("OneToManyInsertService.postInsert: ${foreignColumnInstance.name}");
-      final List<EntityInstance> values = foreignColumnInstance.value;
-      final List<EntityInstance> newValues =
-          foreignColumnInstance.mapId ? values : [];
-      for (final oneOfManyItems in values) {
-        if (!foreignColumnInstance.mapId) {
-          newValues.add(await InsertService().insert(oneOfManyItems));
-        }
-        await _createConnection(
-            oneToManyEntityInstance: entityInstance,
-            manyToOneEntityInstance: oneOfManyItems);
-      }
-
-      entityInstance.setField(foreignColumnInstance.name, newValues);
-    }
-
-    return entityInstance;
   }
 }

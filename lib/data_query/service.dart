@@ -16,6 +16,17 @@ import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
 
 class DataQueryService {
+  postQuery(
+      {required EntityInstance entityInstance,
+      List<Where> where = const [],
+      Page? page}) async {
+    await ManyToManyQueryService().postQuery(entityInstance, where: where);
+    await OneToManyQueryService().postQuery(entityInstance, where: where);
+    await ManyToOneQueryService().postQuery(entityInstance, where: where);
+    await OneToOneQueryService().postQuery(entityInstance, where: where);
+    return;
+  }
+
   Future<List<EntityInstance>> query(
       {required TableDescription description,
       List<Where> where = const [],
@@ -29,7 +40,7 @@ class DataQueryService {
         page: page);
 
     final statementString = statementComposition.define();
-    print("statementString: $statementString");
+
     final queryResults = await dartStore.connection.query(statementString);
 
     final List<EntityInstance> entityInstances = [];
@@ -55,16 +66,5 @@ class DataQueryService {
       entityInstances.add(entityInstance);
     }
     return entityInstances;
-  }
-
-  postQuery(
-      {required EntityInstance entityInstance,
-      List<Where> where = const [],
-      Page? page}) async {
-    await ManyToManyQueryService().postQuery(entityInstance, where: where);
-    await OneToManyQueryService().postQuery(entityInstance, where: where);
-    await ManyToOneQueryService().postQuery(entityInstance, where: where);
-    await OneToOneQueryService().postQuery(entityInstance, where: where);
-    return;
   }
 }

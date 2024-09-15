@@ -1,4 +1,5 @@
 import 'dart:mirrors';
+
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
@@ -8,14 +9,6 @@ import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/mapping/map_id.dart';
 
 class ColumnService {
-  isConstraint(InstanceMirror instanceMirror) {
-    final constraintClassMirror = reflectClass(SQLConstraint);
-    return instanceMirror.type.isAssignableTo(constraintClassMirror) ||
-        instanceMirror.type.isSubclassOf(constraintClassMirror) ||
-        instanceMirror.type.isSubtypeOf(constraintClassMirror) ||
-        instanceMirror.reflectee is SQLConstraint;
-  }
-
   List<Column> extractColumns(final ClassMirror classMirror) {
     final List<Column> columns = [];
     for (final declaration
@@ -50,7 +43,7 @@ class ColumnService {
       final foreignKey = declaration.metadata
           .where((element) => element.reflectee is ForeignKey)
           .firstOrNull;
-      print("$name is foreignKey of type $foreignKey");
+
       if (foreignKey != null) {
         final foreignKeyInstance = foreignKey.reflectee as ForeignKey;
         columns.add(ForeignColumnService().generateForeignColumn(
@@ -67,5 +60,13 @@ class ColumnService {
       }
     }
     return columns;
+  }
+
+  isConstraint(InstanceMirror instanceMirror) {
+    final constraintClassMirror = reflectClass(SQLConstraint);
+    return instanceMirror.type.isAssignableTo(constraintClassMirror) ||
+        instanceMirror.type.isSubclassOf(constraintClassMirror) ||
+        instanceMirror.type.isSubtypeOf(constraintClassMirror) ||
+        instanceMirror.reflectee is SQLConstraint;
   }
 }

@@ -46,7 +46,7 @@ class ManyToManyDeleteService with DartStoreUtility {
     StatementComposition statementComposition = StatementComposition(
         statement: deleteStatement, where: whereStatements);
 
-    print(statementComposition.define());
+
     try {
       await executeSQL(statementComposition.define());
     } on PgException catch (e, s) {
