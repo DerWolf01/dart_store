@@ -7,17 +7,17 @@ import 'package:dart_store/where/comparison_operator.dart';
 // TODO implement or chaining
 
 class Where<ForeignField> extends Statement {
+  final Type? foreignField;
+  final ComparisonOperator comparisonOperator;
+  final InternalColumn internalColumn;
+  final dynamic value;
+  final bool caseSensitive;
   Where(
       {required this.comparisonOperator,
       required this.internalColumn,
       required this.value,
       this.caseSensitive = true})
       : foreignField = ForeignField;
-  final Type? foreignField;
-  final ComparisonOperator comparisonOperator;
-  final InternalColumn internalColumn;
-  final dynamic value;
-  final bool caseSensitive;
   @override
   String define() {
     if (!internalColumn.dataType.compareToValue(value)) {
