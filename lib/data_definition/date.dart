@@ -1,6 +1,7 @@
 import 'package:dart_store/dart_store.dart';
 
 class Date extends SQLDataType<DateTime> {
+  const Date();
   @override
   String? convert(DateTime? value) {
     if (value == null && isNullable == true) {
