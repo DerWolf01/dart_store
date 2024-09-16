@@ -16,13 +16,12 @@ class Between<ForeignField> with DartStoreUtility implements Where {
   @override
   final InternalColumn internalColumn;
   @override
-  final dynamic value;
+  final dynamic value = null;
   @override
   final bool caseSensitive = true;
 
   Between({
     required this.internalColumn,
-    required this.value,
     required this.start,
     required this.end,
   }) : foreignField = ForeignField;
