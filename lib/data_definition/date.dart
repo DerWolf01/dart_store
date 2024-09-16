@@ -15,6 +15,6 @@ class Date extends SQLDataType<DateTime> {
 
   @override
   String sqlTypeName() {
-    return 'INTEGER[]';
+    return 'timestamp';
   }
 }
