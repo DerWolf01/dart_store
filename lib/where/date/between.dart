@@ -27,16 +27,16 @@ class Between<ForeignField> with DartStoreUtility implements Where {
   }) : foreignField = ForeignField;
   @override
   String define() {
-    final convertedStart = internalColumn.dataType.convert(start);
-    if (!internalColumn.dataType.compareToValue(convertedStart)) {
+    if (!internalColumn.dataType.compareToValue(start)) {
       throw Exception(
-          "Start date of value --> $convertedStart --> is not compoarible to column ${internalColumn.sqlName} of type ${internalColumn.dataType}");
+          "Start date of value --> $start --> is not compoarible to column ${internalColumn.sqlName} of type ${internalColumn.dataType}");
+    }
+    final convertedStart = internalColumn.dataType.convert(start);
+    if (!internalColumn.dataType.compareToValue(end)) {
+      throw Exception(
+          "End date of value --> $end --> is not compoarible to column ${internalColumn.sqlName} of type ${internalColumn.dataType}");
     }
     final convertedEnd = internalColumn.dataType.convert(end);
-    if (!internalColumn.dataType.compareToValue(convertedEnd)) {
-      throw Exception(
-          "End date of value --> $convertedEnd --> is not compoarible to column ${internalColumn.sqlName} of type ${internalColumn.dataType}");
-    }
     if (foreignField != dynamic && foreignField != null) {
       final TableDescription tableDescription =
           TableService().findTable(foreignField!);
