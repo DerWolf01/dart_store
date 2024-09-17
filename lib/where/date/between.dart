@@ -43,6 +43,6 @@ class Between<ForeignField> with DartStoreUtility implements Where {
 
       return "${tableDescription.tableName}.${internalColumn.sqlName} BETWEEN $convertedStart AND $convertedEnd";
     }
-    return "${internalColumn.sqlName} ${comparisonOperator.operator()} BETWEEN $convertedStart AND $convertedEnd";
+    return "${internalColumn.sqlName} BETWEEN $convertedStart AND $convertedEnd";
   }
 }
