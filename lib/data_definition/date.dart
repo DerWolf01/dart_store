@@ -10,11 +10,18 @@ class Date extends SQLDataType<DateTime> {
       throw Exception("Value cannot be null");
     }
 
-    return "'${value!.toIso8601String()}'";
+    return "'${value!.toSqlConformFormat()}'";
   }
 
   @override
   String sqlTypeName() {
     return 'timestamp';
+  }
+}
+
+extension DateTimeFormatter on DateTime {
+  toSqlConformFormat() {
+    final utc = toUtc();
+    return "${utc.year}-${utc.month}-${utc.day} ${utc.hour}:${utc.minute}:${utc.second}.${utc.millisecond}";
   }
 }
