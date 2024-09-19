@@ -17,7 +17,7 @@ class OneToManyInsertService with DartStoreUtility {
         if (!foreignColumnInstance.mapId) {
           newValues.add(await InsertService().insert(oneOfManyItems));
         }
-        await _createConnection(
+        await _insertConnection(
             oneToManyEntityInstance: entityInstance,
             manyToOneEntityInstance: oneOfManyItems);
       }
@@ -28,7 +28,7 @@ class OneToManyInsertService with DartStoreUtility {
     return entityInstance;
   }
 
-  Future _createConnection(
+  Future _insertConnection(
       {required EntityInstance oneToManyEntityInstance,
       required EntityInstance manyToOneEntityInstance}) async {
     TableConnectionInstance connectionInstance =
