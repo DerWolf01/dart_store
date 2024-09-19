@@ -61,7 +61,8 @@ class ManyToOneQueryService with DartStoreUtility {
       if (items.isEmpty) {
         throw ConnecitonNotFoundException("No connection found");
       }
-
+      print(
+          "adding ${items.firstOrNull} from $items to $entityInstance of ${entityInstance.tableName}");
       entityInstance.columns.add(ManyToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,
