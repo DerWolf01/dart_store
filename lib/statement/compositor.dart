@@ -22,7 +22,7 @@ class StatementComposition<T extends Statement>
   @override
   String define() {
     final res =
-        '${statement.define()} ${WhereService().defineAndChainWhereStatements(where: where)} ${page?.define() ?? ""} ${orderBy?.define()}';
+        '${statement.define()} ${WhereService().defineAndChainWhereStatements(where: where)} ${page?.define() ?? ""} ${orderBy?.define() ?? ""}';
 
     return res;
   }
