@@ -16,6 +16,7 @@ class TableService with DartStoreUtility {
         tableDescription.tableName,
         tableDescription.columns.whereType<InternalColumn>().toList());
     final sql = tableStatement.define();
+    print(sql);
     await executeSQL(sql);
 
     await ConstraintService().postTableDefinitionAndExecution(tableDescription);
