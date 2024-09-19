@@ -1,6 +1,6 @@
 import 'package:dart_store/data_definition/constraint/foreign_key/foreign_key.dart';
-import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 /// A service class for defining and executing many-to-many relationships.
@@ -20,6 +20,9 @@ class ManyToManyDefinitionService with DartStoreUtility {
     for (final column in tableDescription.manyToManyColumns()) {
       final referencer = column.getForeignKey<ManyToMany>()!;
       final referenced = referencer.referencedEntity;
+
+      await TableService().createTable(TableService().findTable(referenced));
+
       final ManyToManyDescription manyToManyDescription =
           ManyToManyDescription(members: [
         ManyToManyMemberDefinition(
