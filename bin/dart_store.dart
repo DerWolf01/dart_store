@@ -20,7 +20,8 @@ void main(List<String> arguments) async {
   await dartStore.save(Test2.init(id: 0, textList: ['a', 'b']));
   // await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
 
-  final model = await dartStore.save(Test1.init(id: 0, test2: 0, title: 'tte'));
+  final model =
+      await dartStore.save(Test1.init(id: 0, test2: [0], title: 'tte'));
 
   // await dartStore.delete(model);
 
@@ -53,8 +54,8 @@ class Test1 {
   late final String title;
 
   @MapId()
-  @OneToOne<Test2>()
-  late final int test2;
+  @OneToMany<Test2>()
+  late final List<int> test2;
 
   Test1();
 
