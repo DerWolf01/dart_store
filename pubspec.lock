@@ -195,7 +195,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "1fe2c2d52b7bf9887fb05091d29598a862615e8c"
+      resolved-ref: "1fac67fe07e6a956269d283bb4d3daf0322b1fa2"
       url: "https://github.com/DerWolf01/dart_conversion.git"
     source: git
     version: "1.0.0"
@@ -379,10 +379,10 @@ packages:
     dependency: "direct main"
     description:
       name: postgres
-      sha256: b39a9b4c07430b2f8c8666ef865b556ffac843b75e44ead04741d0fbf851d427
+      sha256: bc3a36f9960d822af1ac4c2e0a32c4e7a3e426d2ce4500c11afca40f53c34612
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "3.4.0"
   pub_semver:
     dependency: transitive
     description:

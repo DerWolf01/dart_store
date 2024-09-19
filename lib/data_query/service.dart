@@ -9,6 +9,7 @@ import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/many_to_one/service.dart';
 import 'package:dart_store/data_query/one_to_many/service.dart';
 import 'package:dart_store/data_query/one_to_one/service.dart';
+import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
@@ -30,14 +31,16 @@ class DataQueryService {
   Future<List<EntityInstance>> query(
       {required TableDescription description,
       List<Where> where = const [],
-      Page? page}) async {
+      Page? page,
+      OrderBy? orderBy}) async {
     QueryStatement queryStatement =
         QueryStatement(tableDescription: description);
 
     final StatementComposition statementComposition = StatementComposition(
         statement: queryStatement,
         where: filterWheres(where: where),
-        page: page);
+        page: page,
+        orderBy: orderBy);
 
     final statementString = statementComposition.define();
 

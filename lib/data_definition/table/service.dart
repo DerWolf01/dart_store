@@ -28,7 +28,7 @@ class TableService with DartStoreUtility {
         .firstOrNull;
     if (classMirror == null) {
       throw Exception(
-          "Table not found for type $tableType with simpleName = ${MirrorSystem.getName(classMirror?.simpleName ?? Symbol("not name found"))}. Anotated with @Entity to ensure table definition");
+          'Table not found for type $tableType with simpleName = ${MirrorSystem.getName(classMirror?.simpleName ?? Symbol('"no name found"'))}. Anotated with @Entity to ensure table definition');
     }
 
     final List<Column> columns = ColumnService().extractColumns(classMirror);
