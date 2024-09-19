@@ -11,6 +11,7 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/service.dart';
+import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/database/database_connection.dart';
@@ -55,13 +56,19 @@ class DartStore {
       true;
 
   Future<List<T>> query<T>(
-      {List<Where> where = const [], Type? type, Page? page}) async {
+      {List<Where> where = const [],
+      Type? type,
+      Page? page,
+      OrderBy? orderBy}) async {
     final dynamic t = type ?? T;
     if (t == dynamic) {
       throw Exception('Generic Type T or type parameter is required');
     }
     final List<EntityInstance> entityInstances = await DataQueryService().query(
-        description: TableService().findTable(t), where: where, page: page);
+        description: TableService().findTable(t),
+        where: where,
+        page: page,
+        orderBy: orderBy);
 
     return entityInstances
         .map(
