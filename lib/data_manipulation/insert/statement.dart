@@ -1,15 +1,19 @@
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/insert/conflict.dart';
-import 'package:dart_store/data_manipulation/update/service.dart';
-import 'package:dart_store/data_manipulation/update/statement.dart';
 
 class InsertStatement {
+  final EntityInstance entityInstance;
+  final ConflictAlgorithm conflictAlgorithm;
   InsertStatement(
       {required this.entityInstance,
       this.conflictAlgorithm = ConflictAlgorithm.ignore});
-  final EntityInstance entityInstance;
-  final ConflictAlgorithm conflictAlgorithm;
+
+  List<InternalColumnInstance> get insertIntoColumns => entityInstance.columns
+      .whereType<InternalColumnInstance>()
+      .where((element) => !(element.isAutoIncrement &&
+          (element.value == -1 || element.value == null)))
+      .toList();
 
   String define() {
     final insertIntoColumns = this.insertIntoColumns;
@@ -23,6 +27,10 @@ class InsertStatement {
     );
 
     final String sqlConformValuesString = sqlConformValues.join(', ');
+
+    if (sqlConformValuesString.isEmpty && sqlConformColumnNameString.isEmpty) {
+      return "INSERT INTO ${entityInstance.tableName} DEFAULT VALUES RETURNING id";
+    }
     final onConflict = conflictAlgorithm == ConflictAlgorithm.ignore
         ? " ON CONFLICT DO NOTHING"
         : " ON CONFLICT(id) DO UPDATE SET ${insertIntoColumns.map(
@@ -33,10 +41,4 @@ class InsertStatement {
     print(res);
     return res;
   }
-
-  List<InternalColumnInstance> get insertIntoColumns => entityInstance.columns
-      .whereType<InternalColumnInstance>()
-      .where((element) => !(element.isAutoIncrement &&
-          (element.value == -1 || element.value == null)))
-      .toList();
 }
