@@ -21,6 +21,7 @@ class DataQueryService {
       {required EntityInstance entityInstance,
       List<Where> where = const [],
       Page? page}) async {
+    print("postQuery --> ${entityInstance.objectType}");
     await ManyToManyQueryService().postQuery(entityInstance, where: where);
     await OneToManyQueryService().postQuery(entityInstance, where: where);
     await ManyToOneQueryService().postQuery(entityInstance, where: where);
