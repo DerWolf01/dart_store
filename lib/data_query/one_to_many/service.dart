@@ -8,9 +8,9 @@ import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dar
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
+import 'package:dart_store/where/statement_filter.dart';
 import 'package:postgres/postgres.dart';
 
 class OneToManyQueryService with DartStoreUtility {
@@ -35,8 +35,15 @@ class OneToManyQueryService with DartStoreUtility {
       final TableConnectionDescription connectionDescription =
           TableConnectionDescriptionService().generateTableDescription(
               referencedTableDescription, entityInstance);
-      final Result result = await executeSQL(
-          "SELECT ${referencedTableDescription.tableName}.id as id, ${referencedTableDescription.internalColumnsSqlNamesWithoutId} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}");
+
+      final String internalColumnsSqlNamesWithoutId =
+          referencedTableDescription.internalColumnsSqlNamesWithoutId;
+
+      final statement =
+          "SELECT ${referencedTableDescription.tableName}.id as id ${internalColumnsSqlNamesWithoutId.isNotEmpty ? ", $internalColumnsSqlNamesWithoutId" : ""} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
+
+      print(statement);
+      final Result result = await executeSQL(statement);
 
       final List<EntityInstance> items = [];
 

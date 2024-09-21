@@ -17,7 +17,7 @@ void main(List<String> arguments) async {
           onOpen: (connection) async =>
               print('Connected to the database $connection'),
           sslMode: SslMode.disable)));
-  await dartStore.save(Test2.init(id: 0, textList: ['a', 'b']));
+  await dartStore.save(Test2.init(id: 0, textList: Test3.init(id: 0)));
   // await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
 
   final model =
@@ -68,13 +68,26 @@ class Test2 {
   @Serial()
   late int id;
   @ListOf(type: String)
-  @TextList()
-  late final List<String> textList;
+  @ManyToOne<Test3>()
+  late Test3 textList;
 
   Test2();
 
   Test2.init({
     required this.id,
-    @ListOf(type: String) required this.textList,
+    @ListOf(type: Test3) required this.textList,
+  });
+}
+
+@Entity()
+class Test3 {
+  @PrimaryKey(autoIncrement: true)
+  @Serial()
+  late int id;
+
+  Test3();
+
+  Test3.init({
+    required this.id,
   });
 }

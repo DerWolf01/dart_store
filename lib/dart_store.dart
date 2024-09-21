@@ -46,14 +46,14 @@ class DartStore {
 
   execute(String statement) async => await connection.execute(statement);
 
-  Future<bool> exists<T>(Where where, {Type? type}) async =>
-      (await execute(
-              "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
-            where
-          ])})"))
-          .first
-          .first ==
-      true;
+  Future<bool> exists<T>(Where where, {Type? type}) async {
+    final statment =
+        "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
+          where
+        ])})";
+    print(statment);
+    return (await execute(statment)).first.first == true;
+  }
 
   Future<List<T>> query<T>(
       {List<Where> where = const [],

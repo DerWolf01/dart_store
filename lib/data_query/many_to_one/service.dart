@@ -9,9 +9,9 @@ import 'package:dart_store/data_query/exception.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
-import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
+import 'package:dart_store/where/statement_filter.dart';
 import 'package:postgres/postgres.dart';
 
 class ManyToOneQueryService with DartStoreUtility {
@@ -42,8 +42,11 @@ class ManyToOneQueryService with DartStoreUtility {
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
 
       final connectionName = oneToManyDefinition.connectionName;
+      final String internalColumnsSqlNamesWithoutId =
+          referencedTableDescription.internalColumnsSqlNamesWithoutId;
+
       final statement =
-          "SELECT ${referencedTableDescription.tableName}.id as id, ${referencedTableDescription.internalColumnsSqlNamesWithoutId} FROM ${referencedTableDescription.tableName} JOIN $connectionName ON $connectionName.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE $connectionName.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
+          "SELECT ${referencedTableDescription.tableName}.id as id ${internalColumnsSqlNamesWithoutId.isNotEmpty ? ", $internalColumnsSqlNamesWithoutId" : ""}  FROM ${referencedTableDescription.tableName} JOIN $connectionName ON $connectionName.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE $connectionName.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
       print(statement);
       final Result result = await executeSQL(statement);
 
@@ -64,6 +67,7 @@ class ManyToOneQueryService with DartStoreUtility {
 
       print(
           "adding typeOf ${items.first.runtimeType} to value of EntityInstance");
+
       entityInstance.columns.add(ManyToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,

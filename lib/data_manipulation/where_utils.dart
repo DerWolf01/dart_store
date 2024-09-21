@@ -1,6 +1,6 @@
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/where/comparison_operator.dart';
-import 'package:dart_store/where/filter_wheres.dart';
+import 'package:dart_store/where/statement_filter.dart';
 import 'package:dart_store/where/statement.dart';
 
 List<Where> updateDefaultWhere(

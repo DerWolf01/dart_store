@@ -13,8 +13,8 @@ import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/statement.dart';
 import 'package:dart_store/statement/compositor.dart';
-import 'package:dart_store/where/filter_wheres.dart';
 import 'package:dart_store/where/statement.dart';
+import 'package:dart_store/where/statement_filter.dart';
 
 class DataQueryService {
   postQuery(
