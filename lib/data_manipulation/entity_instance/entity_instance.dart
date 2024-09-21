@@ -42,8 +42,22 @@ class EntityInstance implements TableDescription {
   // TODO: implement tableName
   String get tableName => entity.name ?? objectType.toString().toSnakeCase();
 
-  void addColumn(dynamic column) {
-    columns = <ColumnInstance>[...columns, column];
+  void addColumn(ColumnInstance column) {
+    try {
+      columns.add(column);
+    } catch (e, s) {
+      print(e);
+      print(s);
+
+      try {
+        columns = <ColumnInstance>[...columns];
+        columns.add(column);
+      } catch (e, s) {
+        print(e);
+        print(s);
+        rethrow;
+      }
+    }
   }
 
   Column columnByName(String name) =>
