@@ -42,27 +42,7 @@ class EntityInstance implements TableDescription {
   // TODO: implement tableName
   String get tableName => entity.name ?? objectType.toString().toSnakeCase();
 
-  void addColumn(ColumnInstance column) {
-    try {
-      columns.add(column);
-    } catch (e, s) {
-      print(e);
-      print(s);
-
-      try {
-        final newColumns = <ColumnInstance>[...columns];
-        newColumns.add(column);
-
-        columns = newColumns;
-      } catch (e, s) {
-        print(e);
-        print(s);
-        print("catched");
-        rethrow;
-      }
-    }
-  }
-
+ 
   Column columnByName(String name) =>
       columns.firstWhere((element) => element.name == name);
   T columnByNameAndType<T extends Column>(String name) => columns

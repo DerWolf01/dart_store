@@ -61,7 +61,7 @@ class ManyToManyQueryService with DartStoreUtility {
       print(
           "adding typeOf ${items.first.runtimeType} to value of EntityInstance and ${entityInstance.columns} ${entityInstance.columns.runtimeType}");
 
-      entityInstance.addColumn(ManyToManyColumnInstance(
+      entityInstance.columns.add(ManyToManyColumnInstance(
           mapId: foreignColumn.mapId,
           value: items,
           foreignKey: foreignColumn.foreignKey,

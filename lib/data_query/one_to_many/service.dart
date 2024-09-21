@@ -56,7 +56,7 @@ class OneToManyQueryService with DartStoreUtility {
         );
         items.add(instance);
       }
-      entityInstance.addColumn(OneToManyColumnInstance(
+      entityInstance.columns.add(OneToManyColumnInstance(
           mapId: foreignColumn.mapId,
           value: items,
           foreignKey: foreignColumn.foreignKey,

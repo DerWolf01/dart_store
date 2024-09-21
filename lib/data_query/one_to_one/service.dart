@@ -59,7 +59,7 @@ class OneToOneQueryService with DartStoreUtility {
       if (items.isEmpty) {
         throw ConnecitonNotFoundException("No connection found");
       }
-      entityInstance.addColumn(OneToOneColumnInstance(
+      entityInstance.columns.add(OneToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,
           foreignKey: foreignColumn.foreignKey,
