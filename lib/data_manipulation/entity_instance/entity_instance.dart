@@ -50,8 +50,10 @@ class EntityInstance implements TableDescription {
       print(s);
 
       try {
-        columns = <ColumnInstance>[...columns];
-        columns.add(column);
+        final newColumns = <ColumnInstance>[...columns];
+        newColumns.add(column);
+
+        columns = newColumns;
       } catch (e, s) {
         print(e);
         print(s);
