@@ -30,9 +30,6 @@ class EntityInstance implements TableDescription {
       columns.whereType<ForeignColumnInstance>().toList();
 
   @override
-  List<ColumnInstance> get getColumns =>
-      List.castFrom<dynamic, ColumnInstance>(columns);
-  @override
   String get internalColumnsSqlNamesWithoutId => columns
       .where(
         (element) => element is InternalColumnInstance && !element.isPrimaryKey,

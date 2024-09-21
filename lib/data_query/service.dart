@@ -17,7 +17,7 @@ import 'package:dart_store/where/statement.dart';
 import 'package:dart_store/where/statement_filter.dart';
 
 class DataQueryService {
-  postQuery(
+  Future postQuery(
       {required EntityInstance entityInstance,
       List<Where> where = const [],
       Page? page}) async {

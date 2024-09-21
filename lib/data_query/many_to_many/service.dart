@@ -51,7 +51,7 @@ class ManyToManyQueryService with DartStoreUtility {
       for (final res in result.withNormalizedNames()) {
         final instance = ConversionService().mapToEntityInstance(
             description: referencedTableDescription, map: res);
-        DataQueryService().postQuery(
+        await DataQueryService().postQuery(
           entityInstance: instance,
           where: where,
         );

@@ -1,6 +1,7 @@
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/dart_store.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/string_utils/sort_names.dart';
@@ -45,23 +46,25 @@ class TableConnectionInstanceService {
             oneToManyTableDescription: oneToMany,
             manyToOneTableDescription: manyToOne);
 
-    return TableConnectionInstance(entity: description.entity, columns: [
-      InternalColumnInstance(
-          value: conenctionId,
-          dataType: Serial(),
-          constraints: [PrimaryKey(autoIncrement: true)],
-          name: "id"),
-      InternalColumnInstance(
-          value: oneToMany.primaryKeyColumn().value,
-          dataType: oneToMany.primaryKeyColumn().dataType,
-          constraints: [],
-          name: oneToMany.tableName.toCamelCase()),
-      InternalColumnInstance(
-          value: manyToOne.primaryKeyColumn().value,
-          dataType: manyToOne.primaryKeyColumn().dataType,
-          constraints: [],
-          name: manyToOne.tableName.toCamelCase())
-    ]);
+    return TableConnectionInstance(
+        entity: description.entity,
+        columns: <ColumnInstance>[
+          InternalColumnInstance(
+              value: conenctionId,
+              dataType: Serial(),
+              constraints: [PrimaryKey(autoIncrement: true)],
+              name: "id"),
+          InternalColumnInstance(
+              value: oneToMany.primaryKeyColumn().value,
+              dataType: oneToMany.primaryKeyColumn().dataType,
+              constraints: [],
+              name: oneToMany.tableName.toCamelCase()),
+          InternalColumnInstance(
+              value: manyToOne.primaryKeyColumn().value,
+              dataType: manyToOne.primaryKeyColumn().dataType,
+              constraints: [],
+              name: manyToOne.tableName.toCamelCase())
+        ]);
   }
 
   TableConnectionInstance generateTableConnectionInstance(
