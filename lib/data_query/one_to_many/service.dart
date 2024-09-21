@@ -3,7 +3,6 @@ import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/table/service.dart';
-import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_many.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
@@ -57,7 +56,7 @@ class OneToManyQueryService with DartStoreUtility {
         );
         items.add(instance);
       }
-      entityInstance.columns.cast<ColumnInstance>().add(OneToManyColumnInstance(
+      entityInstance.addColumn(OneToManyColumnInstance(
           mapId: foreignColumn.mapId,
           value: items,
           foreignKey: foreignColumn.foreignKey,

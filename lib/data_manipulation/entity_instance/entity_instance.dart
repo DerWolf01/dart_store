@@ -18,13 +18,14 @@ class EntityInstance implements TableDescription {
   final Entity entity;
   @override
   final List<ColumnInstance> columns;
+
   EntityInstance(
       {required this.objectType, required this.entity, required this.columns});
-
   @override
   set entity(Entity entity) {
     // TODO: implement entity
   }
+
   @override
   List<ForeignColumnInstance> get foreignKeyColumns =>
       columns.whereType<ForeignColumnInstance>().toList();
@@ -37,10 +38,16 @@ class EntityInstance implements TableDescription {
         (e) => e.sqlName,
       )
       .join(", ");
-
   @override
   // TODO: implement tableName
   String get tableName => entity.name ?? objectType.toString().toSnakeCase();
+
+  void addColumn(dynamic column) {
+    if (column is ColumnInstance) {
+      columns.add(column);
+    }
+  }
+
   Column columnByName(String name) =>
       columns.firstWhere((element) => element.name == name);
   T columnByNameAndType<T extends Column>(String name) => columns
