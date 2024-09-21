@@ -49,12 +49,12 @@ class EntityInstanceService {
             (e) => EntityInstance(
                 objectType: referencedEntity,
                 entity: tableDescription.entity,
-                columns: <ColumnInstance>[
+                columns: List.castFrom<InternalColumnInstance, ColumnInstance>([
                   InternalColumnInstance.fromColumn(
                       column: primaryKeyColumn,
                       value: e,
                       dataType: primaryKeyColumn.dataType)
-                ]),
+                ])),
           )
           .toList();
     }

@@ -18,17 +18,20 @@ class EntityInstance implements TableDescription {
   final Entity entity;
   @override
   List<ColumnInstance> columns;
-
   EntityInstance(
       {required this.objectType, required this.entity, required this.columns});
+
   @override
   set entity(Entity entity) {
     // TODO: implement entity
   }
-
   @override
   List<ForeignColumnInstance> get foreignKeyColumns =>
       columns.whereType<ForeignColumnInstance>().toList();
+
+  @override
+  List<ColumnInstance> get getColumns =>
+      List.castFrom<dynamic, ColumnInstance>(columns);
   @override
   String get internalColumnsSqlNamesWithoutId => columns
       .where(
