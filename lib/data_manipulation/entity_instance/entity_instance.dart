@@ -17,7 +17,7 @@ class EntityInstance implements TableDescription {
   @override
   final Entity entity;
   @override
-  final List<ColumnInstance> columns;
+  List<ColumnInstance> columns;
 
   EntityInstance(
       {required this.objectType, required this.entity, required this.columns});
@@ -43,9 +43,7 @@ class EntityInstance implements TableDescription {
   String get tableName => entity.name ?? objectType.toString().toSnakeCase();
 
   void addColumn(dynamic column) {
-    if (column is ColumnInstance) {
-      columns.add(column);
-    }
+    columns = <ColumnInstance>[...columns, column];
   }
 
   Column columnByName(String name) =>
