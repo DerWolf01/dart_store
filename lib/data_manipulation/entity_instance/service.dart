@@ -44,19 +44,16 @@ class EntityInstanceService {
           "Id $id of type ${id.runtimeType} is not compatible with sql type ${primaryKeyColumn.dataType}");
     }
     if (id is List) {
-      return id
-          .map(
-            (e) => EntityInstance(
-                objectType: referencedEntity,
-                entity: tableDescription.entity,
-                columns: List.castFrom<InternalColumnInstance, ColumnInstance>([
-                  InternalColumnInstance.fromColumn(
-                      column: primaryKeyColumn,
-                      value: e,
-                      dataType: primaryKeyColumn.dataType)
-                ])),
-          )
-          .toList();
+      return id.map((e) => EntityInstance(
+            objectType: referencedEntity,
+            entity: tableDescription.entity,
+            columns: [
+              InternalColumnInstance.fromColumn(
+                  column: primaryKeyColumn,
+                  value: e,
+                  dataType: primaryKeyColumn.dataType)
+            ].whereType<ColumnInstance>().toList(),
+          ));
     }
     return EntityInstance(
         objectType: referencedEntity,
@@ -66,7 +63,7 @@ class EntityInstanceService {
               column: primaryKeyColumn,
               value: id,
               dataType: primaryKeyColumn.dataType)
-        ]);
+        ].whereType<ColumnInstance>().toList());
   }
 
   bool checkId(SQLDataType idDataType, dynamic id) =>

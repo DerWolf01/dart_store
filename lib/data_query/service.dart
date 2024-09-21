@@ -52,15 +52,15 @@ class DataQueryService {
       final entityInstance = EntityInstance(
           objectType: description.objectType,
           entity: description.entity,
-          columns: List.castFrom<InternalColumnInstance, ColumnInstance>(
-              (description.columns
-                  .whereType<InternalColumn>()
-                  .map((InternalColumn e) => InternalColumnInstance(
-                      dataType: e.dataType,
-                      constraints: e.constraints,
-                      name: e.name,
-                      value: queryResult[e.sqlName]))
-                  .toList())));
+          columns: description.columns
+              .whereType<InternalColumn>()
+              .map((InternalColumn e) => InternalColumnInstance(
+                  dataType: e.dataType,
+                  constraints: e.constraints,
+                  name: e.name,
+                  value: queryResult[e.sqlName]))
+              .whereType<ColumnInstance>()
+              .toList());
       try {
         await postQuery(
             entityInstance: entityInstance, where: where, page: page);

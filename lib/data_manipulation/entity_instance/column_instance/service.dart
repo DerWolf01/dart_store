@@ -1,8 +1,8 @@
 import 'dart:mirrors';
-import 'package:dart_conversion/dart_conversion.dart';
-import 'package:dart_store/data_definition/table/column/service.dart';
+
 import 'package:dart_store/data_definition/table/column/foreign/foreign.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/data_definition/table/column/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/service.dart';
@@ -37,6 +37,9 @@ class ColumnInstanceService {
           name: e.name);
     });
 
-    return [...internalColumnsInstances, ...foreignColumnsInstances];
+    return <ColumnInstance>[
+      ...internalColumnsInstances,
+      ...foreignColumnsInstances
+    ];
   }
 }

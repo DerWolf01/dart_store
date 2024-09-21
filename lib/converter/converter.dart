@@ -114,17 +114,17 @@ extension EntityMapConverter on ConversionService {
     return EntityInstance(
         objectType: description.objectType,
         entity: description.entity,
-        columns: List.castFrom<InternalColumnInstance, ColumnInstance>(
-            description.columns
-                .whereType<InternalColumn>()
-                .map(
-                  (e) => InternalColumnInstance(
-                      constraints: e.constraints,
-                      name: e.name,
-                      value: map[e.name],
-                      dataType: e.dataType),
-                )
-                .toList()));
+        columns: description.columns
+            .whereType<InternalColumn>()
+            .map(
+              (e) => InternalColumnInstance(
+                  constraints: e.constraints,
+                  name: e.name,
+                  value: map[e.name],
+                  dataType: e.dataType),
+            )
+            .whereType<ColumnInstance>()
+            .toList());
   }
 
   TableConnectionInstance mapToTableConnectionInstance(
