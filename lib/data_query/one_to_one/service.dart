@@ -3,6 +3,7 @@ import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/one_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/exception.dart';
@@ -59,7 +60,7 @@ class OneToOneQueryService with DartStoreUtility {
       if (items.isEmpty) {
         throw ConnecitonNotFoundException("No connection found");
       }
-      entityInstance.columns.add(OneToOneColumnInstance(
+      entityInstance.columns.cast<ColumnInstance>().add(OneToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,
           foreignKey: foreignColumn.foreignKey,

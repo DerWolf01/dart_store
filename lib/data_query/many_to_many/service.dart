@@ -4,6 +4,7 @@ import 'package:dart_store/connection/description/description.dart';
 import 'package:dart_store/connection/description/service.dart';
 import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_many.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/service.dart';
@@ -61,12 +62,13 @@ class ManyToManyQueryService with DartStoreUtility {
       print(
           "adding typeOf ${items.first.runtimeType} to value of EntityInstance and ${entityInstance.columns} ${entityInstance.columns.runtimeType}");
 
-      entityInstance.columns.add(ManyToManyColumnInstance(
-          mapId: foreignColumn.mapId,
-          value: items,
-          foreignKey: foreignColumn.foreignKey,
-          constraints: foreignColumn.constraints,
-          name: foreignColumn.name));
+      entityInstance.columns.cast<ColumnInstance>().add(
+          ManyToManyColumnInstance(
+              mapId: foreignColumn.mapId,
+              value: items,
+              foreignKey: foreignColumn.foreignKey,
+              constraints: foreignColumn.constraints,
+              name: foreignColumn.name));
     }
 
     return entityInstance;
