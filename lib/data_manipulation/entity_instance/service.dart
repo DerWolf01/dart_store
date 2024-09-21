@@ -1,4 +1,5 @@
 import 'dart:mirrors';
+
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/data_definition/constraint/constraint.dart';
 import 'package:dart_store/data_definition/data_types/data_type.dart';
@@ -10,28 +11,6 @@ import 'package:dart_store/data_manipulation/entity_instance/column_instance/ser
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 
 class EntityInstanceService {
-  dynamic entityInstanceByValueInstance(
-    InstanceMirror instanceMirror,
-  ) {
-    final value = instanceMirror.reflectee;
-
-    if (value is List) {
-      return value
-          .map((e) {
-            entityInstanceByValueInstance(reflect(e));
-          })
-          .whereType<EntityInstance>()
-          .toList();
-    }
-    final List<ColumnInstance> columnsInstances =
-        ColumnInstanceService().extractColumnInstances(instanceMirror);
-    final table = TableService().findTable(value.runtimeType);
-    return EntityInstance(
-        entity: table.entity,
-        objectType: value.runtimeType,
-        columns: columnsInstances);
-  }
-
   dynamic byMappedIdField({
     required InstanceMirror holderInstanceMirror,
     required String fieldName,
@@ -70,7 +49,7 @@ class EntityInstanceService {
             (e) => EntityInstance(
                 objectType: referencedEntity,
                 entity: tableDescription.entity,
-                columns: [
+                columns: <ColumnInstance>[
                   InternalColumnInstance.fromColumn(
                       column: primaryKeyColumn,
                       value: e,
@@ -92,4 +71,26 @@ class EntityInstanceService {
 
   bool checkId(SQLDataType idDataType, dynamic id) =>
       idDataType.compareToValue(id);
+
+  dynamic entityInstanceByValueInstance(
+    InstanceMirror instanceMirror,
+  ) {
+    final value = instanceMirror.reflectee;
+
+    if (value is List) {
+      return value
+          .map((e) {
+            entityInstanceByValueInstance(reflect(e));
+          })
+          .whereType<EntityInstance>()
+          .toList();
+    }
+    final List<ColumnInstance> columnsInstances =
+        ColumnInstanceService().extractColumnInstances(instanceMirror);
+    final table = TableService().findTable(value.runtimeType);
+    return EntityInstance(
+        entity: table.entity,
+        objectType: value.runtimeType,
+        columns: columnsInstances);
+  }
 }

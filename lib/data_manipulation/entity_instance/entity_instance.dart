@@ -42,7 +42,6 @@ class EntityInstance implements TableDescription {
   // TODO: implement tableName
   String get tableName => entity.name ?? objectType.toString().toSnakeCase();
 
- 
   Column columnByName(String name) =>
       columns.firstWhere((element) => element.name == name);
   T columnByNameAndType<T extends Column>(String name) => columns
