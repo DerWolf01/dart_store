@@ -3,6 +3,7 @@ import 'package:dart_store/converter/converter.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/definiton.dart';
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/description.dart';
 import 'package:dart_store/data_definition/table/service.dart';
+import 'package:dart_store/data_manipulation/entity_instance/column_instance/column_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/many_to_one.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_query/exception.dart';
@@ -68,7 +69,7 @@ class ManyToOneQueryService with DartStoreUtility {
       print(
           "adding typeOf ${items.first.runtimeType} to value of EntityInstance and ${entityInstance.columns} ${entityInstance.columns.runtimeType}");
 
-      entityInstance.addColumn(ManyToOneColumnInstance(
+      entityInstance.columns.cast<ColumnInstance>().add(ManyToOneColumnInstance(
           mapId: foreignColumn.mapId,
           value: items.first,
           foreignKey: foreignColumn.foreignKey,

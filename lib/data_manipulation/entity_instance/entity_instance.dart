@@ -57,6 +57,7 @@ class EntityInstance implements TableDescription {
       } catch (e, s) {
         print(e);
         print(s);
+        print("catched");
         rethrow;
       }
     }
