@@ -2,8 +2,12 @@ import 'package:dart_store/where/statement.dart';
 
 class WhereService {
   String defineAndChainWhereStatements({required List<Where> where}) {
+    final orWheres = where.whereType<OrWhere>();
+    final andWheres = where.where(
+      (element) => element is! OrWhere,
+    );
     final res = where.isNotEmpty
-        ? "WHERE ${where.map((e) => e.define()).join(' AND ')}"
+        ? "WHERE ${andWheres.map((e) => e.define()).join(' AND ')} ${orWheres.isNotEmpty ? 'OR ${orWheres.map((e) => e.define()).join(' OR ')}' : ''}"
         : "";
 
     print(res);

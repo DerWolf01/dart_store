@@ -4,6 +4,14 @@ import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/statement/statement.dart';
 import 'package:dart_store/where/comparison_operator.dart';
+
+class OrWhere extends Where {
+  OrWhere(
+      {required super.comparisonOperator,
+      required super.internalColumn,
+      required super.value});
+}
+
 // TODO implement or chaining
 
 class Where<ForeignField> extends Statement {
