@@ -5,7 +5,7 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/statement/statement.dart';
 import 'package:dart_store/where/comparison_operator.dart';
 
-class OrWhere extends Where {
+class OrWhere<ForeignField> extends Where<ForeignField> {
   OrWhere(
       {required super.comparisonOperator,
       required super.internalColumn,
