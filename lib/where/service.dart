@@ -6,8 +6,10 @@ class WhereService {
     final andWheres = where.where(
       (element) => element is! OrWhere,
     );
+
+    final or = andWheres.isNotEmpty ? 'OR' : '';
     final res = where.isNotEmpty
-        ? "WHERE ${andWheres.map((e) => e.define()).join(' AND ')} ${orWheres.isNotEmpty ? 'OR ${orWheres.map((e) => e.define()).join(' OR ')}' : ''}"
+        ? "WHERE ${andWheres.map((e) => e.define()).join(' AND ')} ${orWheres.isNotEmpty ? '$or ${orWheres.map((e) => e.define()).join(' OR ')}' : ''}"
         : "";
 
     print(res);
