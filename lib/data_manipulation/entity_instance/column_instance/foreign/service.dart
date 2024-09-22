@@ -17,7 +17,7 @@ class ForeignColumnInstanceService extends ForeignColumnService {
           foreignKey: foreignKey,
           constraints: constraints,
           name: name,
-          value: value,
+          value: value.toList(),
           mapId: mapId);
     }
     if (foreignKey is ManyToOne) {
@@ -42,7 +42,7 @@ class ForeignColumnInstanceService extends ForeignColumnService {
           foreignKey: foreignKey,
           constraints: constraints,
           name: name,
-          value: value,
+          value: value.toList(),
           mapId: mapId);
     }
 
