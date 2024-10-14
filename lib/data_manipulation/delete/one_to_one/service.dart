@@ -3,7 +3,6 @@ import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/delete/service.dart';
 import 'package:dart_store/data_manipulation/delete/statement.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
-import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
@@ -34,12 +33,12 @@ class OneToOneDeleteService with DartStoreUtility {
     try {
       await executeSQL(deleteStatement.define());
     } on PgException catch (e, s) {
-      myLogger.log(e.message);
-      myLogger.log(e.severity);
-      myLogger.log(s);
+      myLogger.i(e.message);
+      myLogger.i(e.severity);
+      myLogger.i(s);
     } catch (e, s) {
-      myLogger.log(e);
-      myLogger.log(s);
+      myLogger.i(e);
+      myLogger.i(s);
     }
   }
 

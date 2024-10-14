@@ -65,12 +65,12 @@ class ManyToManyDeleteService with DartStoreUtility {
     try {
       await executeSQL(statementComposition.define());
     } on PgException catch (e, s) {
-      myLogger.log(e.message);
-      myLogger.log(e.severity);
-      myLogger.log(s);
+      myLogger.i(e.message);
+      myLogger.i(e.severity);
+      myLogger.i(s);
     } catch (e, s) {
-      myLogger.log(e);
-      myLogger.log(s);
+      myLogger.i(e);
+      myLogger.i(s);
     }
   }
 

@@ -13,7 +13,7 @@ class WhereService {
         ? "WHERE ${andWheres.map((e) => e.define()).join(' AND ')} ${orWheres.isNotEmpty ? '$or ${orWheres.map((e) => e.define()).join(' OR ')}' : ''}"
         : "";
 
-    myLogger.log(res);
+    myLogger.i(res);
     return res;
   }
 

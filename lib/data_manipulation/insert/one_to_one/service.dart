@@ -1,7 +1,6 @@
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
-import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/insert/service.dart';
 import 'package:dart_store/data_manipulation/insert/statement.dart';
 import 'package:dart_store/my_logger.dart';
@@ -52,12 +51,12 @@ class OneToOneInsertService with DartStoreUtility {
     try {
       await executeSQL(insertStatement.define());
     } on PgException catch (e, s) {
-      myLogger.log(e.message);
-      myLogger.log(e.severity);
-      myLogger.log(s);
+      myLogger.i(e.message);
+      myLogger.i(e.severity);
+      myLogger.i(s);
     } catch (e, s) {
-      myLogger.log(e);
-      myLogger.log(s);
+      myLogger.i(e);
+      myLogger.i(s);
     }
   }
 

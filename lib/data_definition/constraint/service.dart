@@ -8,7 +8,7 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 class ConstraintService with DartStoreUtility {
   Future<void> postTableDefinitionAndExecution(
       TableDescription tableDescription) async {
-    myLogger.log(
+    myLogger.i(
         "---------------------- ConstraintService.postTableDefinitionAndExecution ----------------------");
     await ManyToManyDefinitionService().defineAndExecute(tableDescription);
     await OneToOneDefinitionService().defineAndExecute(tableDescription);

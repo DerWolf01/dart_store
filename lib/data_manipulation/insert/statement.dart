@@ -39,7 +39,7 @@ class InsertStatement {
             ).join(", ")}";
     final res =
         "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) $onConflict RETURNING id;";
-    myLogger.log(res);
+    myLogger.i(res);
     return res;
   }
 }

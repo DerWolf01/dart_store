@@ -9,7 +9,7 @@ class DataDefinitonService with DartStoreUtility {
     final tableService = TableService();
     List<TableDescription> tables = tableService.findTables();
     for (final table in tables) {
-      myLogger.log("found table: ${table.tableName}");
+      myLogger.i("found table: ${table.tableName}");
       await tableService.createTable(table);
     }
     return;

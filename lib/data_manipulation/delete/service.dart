@@ -33,8 +33,8 @@ class DeleteService with DartStoreUtility {
 
       await executeSQL(statementComposition.define());
     } catch (e, s) {
-      myLogger.log(e);
-      myLogger.log(s);
+      myLogger.i(e);
+      myLogger.i(s);
     }
   }
 

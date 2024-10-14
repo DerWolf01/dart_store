@@ -125,7 +125,7 @@ class DartStore {
   static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
       ConnectionType connection,
       {bool enableLogging = false}) async {
-    (await MyLogger.init(enabled: enableLogging)).log("Initializing DartStore");
+    MyLogger.init(enabled: enableLogging).i("Initializing DartStore");
     _instance ??= DartStore._internal(connection);
     await DataDefinitonService().defineData();
     return _instance!;

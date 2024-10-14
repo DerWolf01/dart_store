@@ -26,7 +26,7 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
       final OneToManyAndManyToOneDefinition manyToOneDefinition =
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
       final statement = manyToOneDefinition.define();
-      myLogger.log(statement);
+      myLogger.i(statement);
       await executeSQL(statement);
     }
   }
@@ -47,7 +47,7 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
           OneToManyAndManyToOneDefinition(description: oneToManyDescription);
       final statement = oneToManyDefinition.define();
 
-      myLogger.log(statement);
+      myLogger.i(statement);
       await executeSQL(statement);
     }
   }

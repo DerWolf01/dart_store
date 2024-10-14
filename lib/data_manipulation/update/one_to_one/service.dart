@@ -42,7 +42,7 @@ class OneToOneUpdateService with DartStoreUtility {
     final pKey1 = updatedEntityInstance.primaryKeyColumn();
     final pKey2 = instance2.primaryKeyColumn();
 
-    myLogger.log(
+    myLogger.i(
         "updating connection with values ${updatedEntityInstance.tableName}:${pKey1.value} and ${instance2.tableName}${pKey2.value}");
 
     final statement =
@@ -51,12 +51,12 @@ class OneToOneUpdateService with DartStoreUtility {
     try {
       await executeSQL(statement);
     } on PgException catch (e, s) {
-      myLogger.log(e.message);
-      myLogger.log(e.severity);
-      myLogger.log(s);
+      myLogger.i(e.message);
+      myLogger.i(e.severity);
+      myLogger.i(s);
     } catch (e, s) {
-      myLogger.log(e);
-      myLogger.log(s);
+      myLogger.i(e);
+      myLogger.i(s);
     }
   }
 

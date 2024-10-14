@@ -43,7 +43,7 @@ class OneToOneQueryService with DartStoreUtility {
           referencedTableDescription.internalColumnsSqlNamesWithoutId;
       final statement =
           "SELECT ${referencedTableDescription.tableName}.id as id ${internalColumnsSqlNamesWithoutId.isNotEmpty ? ", $internalColumnsSqlNamesWithoutId" : ""} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
-      myLogger.log(statement);
+      myLogger.i(statement);
       final Result result = await executeSQL(statement);
 
       final List<EntityInstance> items = [];
