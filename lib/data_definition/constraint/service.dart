@@ -10,6 +10,8 @@ class ConstraintService with DartStoreUtility {
       TableDescription tableDescription) async {
     myLogger.i(
         "---------------------- ConstraintService.postTableDefinitionAndExecution ----------------------");
+    await OneToManyAndManyToOneDefintionService()
+        .defineAndExecuteManyToOne(tableDescription);
     await ManyToManyDefinitionService().defineAndExecute(tableDescription);
     await OneToOneDefinitionService().defineAndExecute(tableDescription);
     await OneToManyAndManyToOneDefintionService()
@@ -17,9 +19,4 @@ class ConstraintService with DartStoreUtility {
 
     return;
   }
-
-  Future<void> preTableDefinitionAndExecution(
-          TableDescription tableDescription) async =>
-      await OneToManyAndManyToOneDefintionService()
-          .defineAndExecuteManyToOne(tableDescription);
 }
