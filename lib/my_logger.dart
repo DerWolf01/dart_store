@@ -77,6 +77,11 @@ class MyLogger {
     this.enabled = true,
   });
 
+  void d(dynamic message) {
+    if (!enabled) return;
+    internalLogger.d(message);
+  }
+
   e(message) {
     if (!enabled) return;
     internalLogger.e(message);

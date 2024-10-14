@@ -51,8 +51,8 @@ class ManyToOneInsertService with DartStoreUtility {
       myLogger.i(e.severity);
       myLogger.i(s);
     } catch (e, s) {
-      myLogger.i(e);
-      myLogger.i(s);
+      myLogger.e(e);
+      myLogger.e(s);
     }
   }
 }
