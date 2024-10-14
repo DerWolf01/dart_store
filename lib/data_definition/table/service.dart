@@ -37,12 +37,12 @@ class TableService with DartStoreUtility {
 
     await ConstraintService().postTableDefinitionAndExecution(tableDescription);
 
-    createdTables[tableDescription.tableName] = tableDescription;
+    existingTables[tableDescription.objectType] = tableDescription;
   }
 
   TableDescription findTable(Type tableType) {
-    if (createdTablesByType.containsKey(tableType)) {
-      return createdTablesByType[tableType]!;
+    if (existingTables.containsKey(tableType)) {
+      return existingTables[tableType]!;
     }
     final classMirror = CollectorService()
         .searchClassesWithAnnotation<Entity>()
