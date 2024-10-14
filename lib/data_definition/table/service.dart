@@ -42,6 +42,8 @@ class TableService with DartStoreUtility {
 
   TableDescription findTable(Type tableType) {
     if (existingTables.containsKey(tableType)) {
+      myLogger.warning(
+          "Returning existing table: ${existingTables[tableType]!.tableName}");
       return existingTables[tableType]!;
     }
     final classMirror = CollectorService()
