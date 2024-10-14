@@ -77,7 +77,7 @@ class MyLogger {
     this.enabled = true,
   });
 
-  error(String message) {
+  e(message) {
     if (!enabled) return;
     internalLogger.e(message);
   }
@@ -87,7 +87,7 @@ class MyLogger {
     internalLogger.i(message);
   }
 
-  void warning(String message) {
+  void w(String message) {
     if (!enabled) return;
     internalLogger.w(message);
   }

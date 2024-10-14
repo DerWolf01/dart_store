@@ -24,7 +24,7 @@ class TableService with DartStoreUtility {
 
   Future<void> createTable(TableDescription tableDescription) async {
     if (existingTables.containsKey(tableDescription.objectType)) {
-      myLogger.warning("Table exists already: ${tableDescription.tableName}");
+      myLogger.w("Table exists already: ${tableDescription.tableName}");
       return;
     }
     final TableStatement tableStatement = TableStatement(
@@ -42,7 +42,7 @@ class TableService with DartStoreUtility {
 
   TableDescription findTable(Type tableType) {
     if (existingTables.containsKey(tableType)) {
-      myLogger.warning(
+      myLogger.w(
           "Returning existing table: ${existingTables[tableType]!.tableName}");
       return existingTables[tableType]!;
     }

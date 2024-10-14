@@ -34,7 +34,7 @@ extension PostgreSQLUpdatedAtTrigger on DataDefinitonService {
               'trigger "update_timestamp" for relation "$tableName" already exists')) {
         return;
       }
-      throw Exception("Error enabling updatedAt trigger: $e");
+      myLogger.e(e);
     }
     return;
   }
