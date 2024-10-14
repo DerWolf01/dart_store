@@ -12,6 +12,7 @@ import 'package:dart_store/data_query/one_to_one/service.dart';
 import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/statement.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:dart_store/where/statement_filter.dart';
@@ -21,7 +22,7 @@ class DataQueryService {
       {required EntityInstance entityInstance,
       List<Where> where = const [],
       Page? page}) async {
-    print("postQuery --> ${entityInstance.objectType}");
+    myLogger.log("postQuery --> ${entityInstance.objectType}");
     await ManyToManyQueryService().postQuery(entityInstance, where: where);
     await OneToManyQueryService().postQuery(entityInstance, where: where);
     await ManyToOneQueryService().postQuery(entityInstance, where: where);

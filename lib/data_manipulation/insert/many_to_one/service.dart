@@ -3,33 +3,11 @@ import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/insert/service.dart';
 import 'package:dart_store/data_manipulation/insert/statement.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
 class ManyToOneInsertService with DartStoreUtility {
-  Future _createConnection(
-      {required EntityInstance oneToManyEntityInstance,
-      required EntityInstance manyToOneEntityInstance}) async {
-    TableConnectionInstance connectionInstance =
-        TableConnectionInstanceService()
-            .generateManyToOneAndOneToManyConnectionInstance(
-                manyToOne: manyToOneEntityInstance,
-                oneToMany: oneToManyEntityInstance);
-
-    InsertStatement insertStatement =
-        InsertStatement(entityInstance: connectionInstance);
-    try {
-      await executeSQL(insertStatement.define());
-    } on PgException catch (e, s) {
-      print(e.message);
-      print(e.severity);
-      print(s);
-    } catch (e, s) {
-      print(e);
-      print(s);
-    }
-  }
-
   Future<EntityInstance> postInsert(
       EntityInstance manyToOneEntityInstance) async {
     for (final foreignColumnInstance
@@ -53,5 +31,28 @@ class ManyToOneInsertService with DartStoreUtility {
     }
 
     return manyToOneEntityInstance;
+  }
+
+  Future _createConnection(
+      {required EntityInstance oneToManyEntityInstance,
+      required EntityInstance manyToOneEntityInstance}) async {
+    TableConnectionInstance connectionInstance =
+        TableConnectionInstanceService()
+            .generateManyToOneAndOneToManyConnectionInstance(
+                manyToOne: manyToOneEntityInstance,
+                oneToMany: oneToManyEntityInstance);
+
+    InsertStatement insertStatement =
+        InsertStatement(entityInstance: connectionInstance);
+    try {
+      await executeSQL(insertStatement.define());
+    } on PgException catch (e, s) {
+      myLogger.log(e.message);
+      myLogger.log(e.severity);
+      myLogger.log(s);
+    } catch (e, s) {
+      myLogger.log(e);
+      myLogger.log(s);
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/update/service.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
@@ -41,7 +42,7 @@ class OneToOneUpdateService with DartStoreUtility {
     final pKey1 = updatedEntityInstance.primaryKeyColumn();
     final pKey2 = instance2.primaryKeyColumn();
 
-    print(
+    myLogger.log(
         "updating connection with values ${updatedEntityInstance.tableName}:${pKey1.value} and ${instance2.tableName}${pKey2.value}");
 
     final statement =
@@ -50,12 +51,12 @@ class OneToOneUpdateService with DartStoreUtility {
     try {
       await executeSQL(statement);
     } on PgException catch (e, s) {
-      print(e.message);
-      print(e.severity);
-      print(s);
+      myLogger.log(e.message);
+      myLogger.log(e.severity);
+      myLogger.log(s);
     } catch (e, s) {
-      print(e);
-      print(s);
+      myLogger.log(e);
+      myLogger.log(s);
     }
   }
 

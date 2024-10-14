@@ -3,6 +3,7 @@ import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/insert/service.dart';
 import 'package:dart_store/data_manipulation/insert/statement.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
@@ -42,12 +43,12 @@ class OneToManyInsertService with DartStoreUtility {
     try {
       await executeSQL(insertStatement.define());
     } on PgException catch (e, s) {
-      print(e.message);
-      print(e.severity);
-      print(s);
+      myLogger.log(e.message);
+      myLogger.log(e.severity);
+      myLogger.log(s);
     } catch (e, s) {
-      print(e);
-      print(s);
+      myLogger.log(e);
+      myLogger.log(s);
     }
   }
 }

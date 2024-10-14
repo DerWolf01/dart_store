@@ -5,6 +5,7 @@ import 'package:dart_store/data_manipulation/insert/many_to_one/service.dart';
 import 'package:dart_store/data_manipulation/insert/one_to_many/service.dart';
 import 'package:dart_store/data_manipulation/insert/one_to_one/service.dart';
 import 'package:dart_store/data_manipulation/insert/statement.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class InsertService with DartStoreUtility {
@@ -36,8 +37,8 @@ class InsertService with DartStoreUtility {
       await ManyToOneInsertService().postInsert(entityInstance);
       insertedEntityInstance = entityInstance;
     } catch (e, s) {
-      print(e);
-      print(s);
+      myLogger.log(e);
+      myLogger.log(s);
     }
 
     return insertedEntityInstance;

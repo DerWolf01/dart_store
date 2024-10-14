@@ -1,49 +1,16 @@
 import 'package:dart_store/connection/instance/instance.dart';
 import 'package:dart_store/connection/instance/service.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
-import 'package:dart_store/data_manipulation/entity_instance/service.dart';
 import 'package:dart_store/data_manipulation/update/service.dart';
 import 'package:dart_store/data_manipulation/update/statement.dart';
 import 'package:dart_store/data_manipulation/where_utils.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 
 // TODO: Implement logic to instanciate EntityInstance using a value
 class ManyToManyUpdateService with DartStoreUtility {
-  Future<EntityInstance> _updateForeignColumnItem(
-      EntityInstance itemEntityInstance, String columnName,
-      {List<Where> where = const []}) async {
-    final itemPrimaryKeyColumnInstance = itemEntityInstance.primaryKeyColumn();
-    return await UpdateService().update(itemEntityInstance,
-        where: automaticallyFilterWhere(
-            where: where,
-            id: itemPrimaryKeyColumnInstance.value,
-            primaryKeyColumn: itemPrimaryKeyColumnInstance,
-            columnName: columnName,
-            externalColumnType: itemEntityInstance.objectType));
-  }
-
-  Future _updateConnection(
-      EntityInstance instance, EntityInstance instance2) async {
-    TableConnectionInstance connectionInstance =
-        TableConnectionInstanceService()
-            .generateTableConnectionInstance(instance, instance2);
-
-    UpdateStatement updateStatement =
-        UpdateStatement(entityInstance: connectionInstance);
-    try {
-      await executeSQL(updateStatement.define());
-    } on PgException catch (e, s) {
-      print(e.message);
-      print(e.severity);
-      print(s);
-    } catch (e, s) {
-      print(e);
-      print(s);
-    }
-  }
-
   Future<EntityInstance> postUpdate(EntityInstance entityInstance,
       {List<Where> where = const []}) async {
     final primaryKeyColumn = entityInstance.primaryKeyColumn();
@@ -73,5 +40,38 @@ class ManyToManyUpdateService with DartStoreUtility {
     }
 
     return entityInstance;
+  }
+
+  Future _updateConnection(
+      EntityInstance instance, EntityInstance instance2) async {
+    TableConnectionInstance connectionInstance =
+        TableConnectionInstanceService()
+            .generateTableConnectionInstance(instance, instance2);
+
+    UpdateStatement updateStatement =
+        UpdateStatement(entityInstance: connectionInstance);
+    try {
+      await executeSQL(updateStatement.define());
+    } on PgException catch (e, s) {
+      myLogger.log(e.message);
+      myLogger.log(e.severity);
+      myLogger.log(s);
+    } catch (e, s) {
+      myLogger.log(e);
+      myLogger.log(s);
+    }
+  }
+
+  Future<EntityInstance> _updateForeignColumnItem(
+      EntityInstance itemEntityInstance, String columnName,
+      {List<Where> where = const []}) async {
+    final itemPrimaryKeyColumnInstance = itemEntityInstance.primaryKeyColumn();
+    return await UpdateService().update(itemEntityInstance,
+        where: automaticallyFilterWhere(
+            where: where,
+            id: itemPrimaryKeyColumnInstance.value,
+            primaryKeyColumn: itemPrimaryKeyColumnInstance,
+            columnName: columnName,
+            externalColumnType: itemEntityInstance.objectType));
   }
 }

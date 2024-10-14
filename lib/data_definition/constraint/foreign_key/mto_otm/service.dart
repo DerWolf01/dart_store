@@ -3,6 +3,7 @@ import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/defini
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/description.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 class OneToManyAndManyToOneDefintionService with DartStoreUtility {
@@ -25,7 +26,7 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
       final OneToManyAndManyToOneDefinition manyToOneDefinition =
           OneToManyAndManyToOneDefinition(description: manyToOneDescription);
       final statement = manyToOneDefinition.define();
-      print(statement);
+      myLogger.log(statement);
       await executeSQL(statement);
     }
   }
@@ -33,19 +34,20 @@ class OneToManyAndManyToOneDefintionService with DartStoreUtility {
   Future<void> defineAndExecuteOneToMany(
       TableDescription tableDescription) async {
     for (final column in tableDescription.oneToManyColumns()) {
-      final manyToOneTable = TableService()
-          .findTable(column.getForeignKey<OneToMany>()!.referencedEntity);
+      final foreignKey = column.getForeignKey<OneToMany>()!;
+      final manyToOneTable =
+          TableService().findTable(foreignKey.referencedEntity);
 
       final OneToManyAndManyToOneDescription oneToManyDescription =
           OneToManyAndManyToOneDescription(
-              foreignKey: column.getForeignKey<OneToMany>()!,
+              foreignKey: foreignKey,
               oneToManyTableDescription: tableDescription,
               manyToOneTableDescription: manyToOneTable);
       final OneToManyAndManyToOneDefinition oneToManyDefinition =
           OneToManyAndManyToOneDefinition(description: oneToManyDescription);
       final statement = oneToManyDefinition.define();
 
-      print(statement);
+      myLogger.log(statement);
       await executeSQL(statement);
     }
   }

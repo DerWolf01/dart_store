@@ -1,6 +1,7 @@
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/insert/conflict.dart';
+import 'package:dart_store/my_logger.dart';
 
 class InsertStatement {
   final EntityInstance entityInstance;
@@ -38,7 +39,7 @@ class InsertStatement {
             ).join(", ")}";
     final res =
         "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) $onConflict RETURNING id;";
-    print(res);
+    myLogger.log(res);
     return res;
   }
 }

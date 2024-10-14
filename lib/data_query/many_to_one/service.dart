@@ -9,6 +9,7 @@ import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dar
 import 'package:dart_store/data_query/exception.dart';
 import 'package:dart_store/data_query/many_to_many/service.dart';
 import 'package:dart_store/data_query/service.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
@@ -48,7 +49,7 @@ class ManyToOneQueryService with DartStoreUtility {
 
       final statement =
           "SELECT ${referencedTableDescription.tableName}.id as id ${internalColumnsSqlNamesWithoutId.isNotEmpty ? ", $internalColumnsSqlNamesWithoutId" : ""}  FROM ${referencedTableDescription.tableName} JOIN $connectionName ON $connectionName.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE $connectionName.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll("WHERE", "AND")}";
-      print(statement);
+      myLogger.log(statement);
       final Result result = await executeSQL(statement);
 
       final List<EntityInstance> items = [];
@@ -66,7 +67,7 @@ class ManyToOneQueryService with DartStoreUtility {
         throw ConnecitonNotFoundException("No connection found");
       }
 
-      print(
+      myLogger.log(
           "adding typeOf ${items.first.runtimeType} to value of EntityInstance and ${entityInstance.columns} ${entityInstance.columns.runtimeType}");
 
       entityInstance.columns.cast<ColumnInstance>().add(ManyToOneColumnInstance(

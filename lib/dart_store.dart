@@ -15,6 +15,7 @@ import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
 import 'package:dart_store/data_query/service.dart';
 import 'package:dart_store/database/database_connection.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/where/service.dart';
 import 'package:dart_store/where/statement.dart';
 
@@ -51,7 +52,7 @@ class DartStore {
         "SELECT EXISTS (SELECT 1 FROM ${TableService().findTable(type ?? T).tableName} ${WhereService().defineAndChainWhereStatements(where: [
           where
         ])})";
-    print(statment);
+    (statment);
     return (await execute(statment)).first.first == true;
   }
 
@@ -122,7 +123,9 @@ class DartStore {
   }
 
   static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
-      ConnectionType connection) async {
+      ConnectionType connection,
+      {bool enableLogging = false}) async {
+    (await MyLogger.init(enabled: enableLogging)).log("Initializing DartStore");
     _instance ??= DartStore._internal(connection);
     await DataDefinitonService().defineData();
     return _instance!;

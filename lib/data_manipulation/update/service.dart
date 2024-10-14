@@ -1,10 +1,10 @@
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/update/many_to_many/service.dart';
-
 import 'package:dart_store/data_manipulation/update/one_to_one/service.dart';
 import 'package:dart_store/data_manipulation/update/otm_mto/service.dart';
 import 'package:dart_store/data_manipulation/update/statement.dart';
 import 'package:dart_store/data_manipulation/where_utils.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/statement/compositor.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:dart_store/where/statement.dart';
@@ -44,8 +44,8 @@ class UpdateService with DartStoreUtility {
 
       updatedEntityInstance = entityInstance;
     } catch (e, s) {
-      print(e);
-      print(s);
+      myLogger.log(e);
+      myLogger.log(s);
     }
 
     return updatedEntityInstance;

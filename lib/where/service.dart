@@ -1,3 +1,4 @@
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/where/statement.dart';
 
 class WhereService {
@@ -12,7 +13,7 @@ class WhereService {
         ? "WHERE ${andWheres.map((e) => e.define()).join(' AND ')} ${orWheres.isNotEmpty ? '$or ${orWheres.map((e) => e.define()).join(' OR ')}' : ''}"
         : "";
 
-    print(res);
+    myLogger.log(res);
     return res;
   }
 
