@@ -37,6 +37,7 @@ class TableService with DartStoreUtility {
 
     await ConstraintService().postTableDefinitionAndExecution(tableDescription);
 
+    myLogger.d("Table created: ${tableDescription.tableName}");
     existingTables[tableDescription.objectType] = tableDescription;
   }
 
