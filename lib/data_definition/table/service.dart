@@ -15,16 +15,15 @@ TableService get tableService => TableService();
 
 class TableService with DartStoreUtility {
   static TableService? _instance;
-  Map<String, TableDescription> createdTables = {};
-  Map<Type, TableDescription> createdTablesByType = {};
+
+  Map<Type, TableDescription> existingTables = {};
   factory TableService() {
     return _instance ??= TableService._internal();
   }
   TableService._internal();
 
   Future<void> createTable(TableDescription tableDescription) async {
-    if (createdTables.containsKey(tableDescription.tableName) ||
-        createdTablesByType.containsKey(tableDescription.objectType)) {
+    if (existingTables.containsKey(tableDescription.objectType)) {
       myLogger.warning("Table exists already: ${tableDescription.tableName}");
       return;
     }
