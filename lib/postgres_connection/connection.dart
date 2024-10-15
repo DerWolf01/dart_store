@@ -19,7 +19,10 @@ class PostgresConnection extends DatabaseConnection<Result> {
     try {
       myLogger.d("Inserting into $tableName: $statement",
           header: "PostgresConnection");
-      return (await execute(statement)).firstOrNull?.firstOrNull as int?;
+      final result = (await execute(statement));
+      final row = result.first;
+      print(row);
+      return row.firstOrNull as int?;
     } catch (e, s) {
       myLogger.e(e, header: "PostgresConnection", stackTrace: s);
       return null;
