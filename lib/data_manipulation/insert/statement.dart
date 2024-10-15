@@ -30,7 +30,7 @@ class InsertStatement {
     final String sqlConformValuesString = sqlConformValues.join(', ');
 
     if (sqlConformValuesString.isEmpty && sqlConformColumnNameString.isEmpty) {
-      return "INSERT INTO ${entityInstance.tableName} DEFAULT VALUES SELECT id FROM rows RETURNING id;";
+      return "INSERT INTO ${entityInstance.tableName} DEFAULT VALUES RETURNING id";
     }
     final onConflict = conflictAlgorithm == ConflictAlgorithm.ignore
         ? " ON CONFLICT DO NOTHING"
@@ -38,7 +38,7 @@ class InsertStatement {
               (e) => "${e.sqlName} = ${e.sqlConformValue}",
             ).join(", ")}";
     final res =
-        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) $onConflict SELECT id FROM rows RETURNING id;";
+        "INSERT INTO ${entityInstance.tableName} ($sqlConformColumnNameString) VALUES ($sqlConformValuesString) $onConflict RETURNING id;";
     myLogger.i(res);
     return res;
   }
