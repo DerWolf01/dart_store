@@ -16,9 +16,14 @@ class PostgresConnection extends DatabaseConnection<Result> {
 
   @override
   Future<int?> insert(String statement, String tableName) async {
-    myLogger.d("Inserting into $tableName: $statement",
-        header: "PostgresConnection");
-    return (await execute(statement)).firstOrNull?.firstOrNull as int?;
+    try {
+      myLogger.d("Inserting into $tableName: $statement",
+          header: "PostgresConnection");
+      return (await execute(statement)).firstOrNull?.firstOrNull as int?;
+    } catch (e, s) {
+      myLogger.e(e, header: "PostgresConnection", stackTrace: s);
+      return null;
+    }
   }
 
   // @override
