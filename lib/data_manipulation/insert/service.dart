@@ -30,11 +30,16 @@ class InsertService with DartStoreUtility {
             "Couldn't parse resulting id to type ${entityInstance.primaryKeyColumn().dataType.primitiveType} after inserting data into table ${entityInstance.tableName};  ");
       }
       entityInstance.setField("id", id);
-
+      myLogger.i(
+          "Inserted ${entityInstance.objectType} with id: ${entityInstance.primaryKeyColumn().value}",
+          header: "InsertService");
       await ManyToManyInsertService().postInsert(entityInstance);
       await OneToOneInsertService().postInsert(entityInstance);
       await OneToManyInsertService().postInsert(entityInstance);
       await ManyToOneInsertService().postInsert(entityInstance);
+      myLogger.i(
+          "Inserted foreign fields of model ${entityInstance.objectType} with id: ${entityInstance.primaryKeyColumn().value}",
+          header: "InsertService");
       insertedEntityInstance = entityInstance;
     } catch (e, s) {
       myLogger.e(e, stackTrace: s);
