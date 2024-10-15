@@ -44,8 +44,7 @@ class UpdateService with DartStoreUtility {
 
       updatedEntityInstance = entityInstance;
     } catch (e, s) {
-      myLogger.e(e);
-      myLogger.e(s);
+      myLogger.e(e, stackTrace: s);
     }
 
     return updatedEntityInstance;

@@ -4,12 +4,15 @@ import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 import 'package:postgres/postgres.dart';
 
+/// A service to define data in the database.
 class DataDefinitonService with DartStoreUtility {
+  /// Defines the data in the database.
   Future<void> defineData() async {
     final tableService = TableService();
     List<TableDescription> tables = tableService.findTables();
     for (final table in tables) {
-      myLogger.i("found table: ${table.tableName}");
+      myLogger.d("found table: ${table.tableName}",
+          header: "DataDefinitonService");
       try {
         await tableService.createTable(table);
       } catch (e, s) {

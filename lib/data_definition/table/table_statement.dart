@@ -1,7 +1,8 @@
-import 'package:dart_store/data_definition/table/column/statement.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
+import 'package:dart_store/data_definition/table/column/statement.dart';
 import 'package:dart_store/statement/statement.dart';
 
+/// A class that defines and DDL table statement
 class TableStatement extends Statement {
   String name;
   List<ColumnStatement> columnsStatements;

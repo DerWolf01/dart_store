@@ -1,9 +1,10 @@
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 
+/// A data type to define a list of integers.
 class IntegerList extends SQLDataType<List<int>> {
-  const IntegerList({this.length, super.isNullable});
-
   final int? length;
+
+  const IntegerList({this.length, super.isNullable});
 
   @override
   convert(value) {

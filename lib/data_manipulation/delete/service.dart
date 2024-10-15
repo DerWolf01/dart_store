@@ -12,6 +12,10 @@ class DeleteService with DartStoreUtility {
     EntityInstance entityInstance,
   ) async {
     try {
+      myLogger.d(
+          "Deleting ${entityInstance.objectType} with id: ${entityInstance.primaryKeyColumn().value}",
+          header: "DeleteService");
+
       /// Delete all related data
       // await ManyToManyDeleteService().preDelete(entityInstance);
       // await OneToOneDeleteService().preDelete(entityInstance);
@@ -33,8 +37,7 @@ class DeleteService with DartStoreUtility {
 
       await executeSQL(statementComposition.define());
     } catch (e, s) {
-      myLogger.e(e);
-      myLogger.e(s);
+      myLogger.e(e, stackTrace: s, header: "DeleteService");
     }
   }
 

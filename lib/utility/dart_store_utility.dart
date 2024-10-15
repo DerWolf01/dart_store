@@ -4,7 +4,7 @@ import 'package:postgres/postgres.dart';
 
 mixin class DartStoreUtility {
   Future<Result> executeSQL(String sql) async {
-    myLogger.i("Executing SQL: $sql");
+    myLogger.d("Executing SQL: $sql", header: "DartStoreUtility");
     return await dartStore.execute(sql);
   }
 

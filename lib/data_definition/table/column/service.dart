@@ -8,7 +8,9 @@ import 'package:dart_store/data_definition/table/column/foreign/service.dart';
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/mapping/map_id.dart';
 
+/// A service to extract columns from a class mirror.
 class ColumnService {
+  /// Extracts columns from a class mirror.
   List<Column> extractColumns(final ClassMirror classMirror) {
     final List<Column> columns = [];
     for (final declaration
@@ -62,6 +64,7 @@ class ColumnService {
     return columns;
   }
 
+  /// Checks if a mirror is a constraint.
   isConstraint(InstanceMirror instanceMirror) {
     final constraintClassMirror = reflectClass(SQLConstraint);
     return instanceMirror.type.isAssignableTo(constraintClassMirror) ||

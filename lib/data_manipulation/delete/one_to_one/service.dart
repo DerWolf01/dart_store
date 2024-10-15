@@ -37,8 +37,7 @@ class OneToOneDeleteService with DartStoreUtility {
       myLogger.i(e.severity);
       myLogger.i(s);
     } catch (e, s) {
-      myLogger.e(e);
-      myLogger.e(s);
+      myLogger.e(e, stackTrace: s);
     }
   }
 

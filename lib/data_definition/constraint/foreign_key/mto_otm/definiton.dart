@@ -1,11 +1,15 @@
 import 'package:dart_store/data_definition/constraint/foreign_key/mto_otm/description.dart';
 import 'package:dart_store/data_definition/data_definition.dart';
 
+/// A data definition to define a one to many relationship between two tables.
 class OneToManyAndManyToOneDefinition extends DataDefinition {
+
+  /// The description of the one to many and many to one relationship.
   final OneToManyAndManyToOneDescription description;
 
   OneToManyAndManyToOneDefinition({required this.description});
 
+  /// The name of the connection table.
   String get connectionName =>
       "${description.oneToManyTableDescription.tableName}_${description.manyToOneTableDescription.tableName}";
 

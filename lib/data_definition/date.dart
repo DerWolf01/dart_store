@@ -1,5 +1,6 @@
 import 'package:dart_store/dart_store.dart';
 
+/// A data type for a Date.
 class Date extends SQLDataType<DateTime> {
   const Date();
   @override

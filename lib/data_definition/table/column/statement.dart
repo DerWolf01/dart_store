@@ -1,5 +1,6 @@
 import 'package:dart_store/data_definition/table/column/internal.dart';
 
+/// A statement to define a column in a table.
 class ColumnStatement {
   final InternalColumn column;
 
@@ -8,8 +9,7 @@ class ColumnStatement {
   String define() =>
       "${column.sqlName} ${column.dataType.sqlTypeName()} ${unique()} ${notNull()} ${primaryKey()} ";
 
-      
-  String unique() => column.isUniqe ? "UNIQUE" : "";
-  String primaryKey() => column.isPrimaryKey ? "PRIMARY KEY" : "";
   String notNull() => column.isNullable ? "" : "NOT NULL";
+  String primaryKey() => column.isPrimaryKey ? "PRIMARY KEY" : "";
+  String unique() => column.isUniqe ? "UNIQUE" : "";
 }

@@ -1,6 +1,6 @@
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:characters/characters.dart';
-
+/// A data type to define a list of text values.
 class TextList extends SQLDataType<List<String>> {
   const TextList({this.length, super.isNullable});
 

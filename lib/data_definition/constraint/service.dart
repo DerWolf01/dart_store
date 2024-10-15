@@ -5,11 +5,13 @@ import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
+/// A service to define and execute constraints.
 class ConstraintService with DartStoreUtility {
   Future<void> postTableDefinitionAndExecution(
       TableDescription tableDescription) async {
-    myLogger.i(
-        "---------------------- ConstraintService.postTableDefinitionAndExecution ----------------------");
+    myLogger.d(
+        "postTableDefinitionAndExecution --> ${tableDescription.tableName}",
+        header: "ConstraintService");
     await OneToManyAndManyToOneDefintionService()
         .defineAndExecuteManyToOne(tableDescription);
     await ManyToManyDefinitionService().defineAndExecute(tableDescription);

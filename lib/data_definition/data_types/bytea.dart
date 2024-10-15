@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 
+/// A data type to define a byte array.
 class Bytea extends SQLDataType<File> {
   const Bytea({super.isNullable});
 

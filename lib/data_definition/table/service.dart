@@ -13,15 +13,18 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 
 TableService get tableService => TableService();
 
+/// A service to define and execute table DDL statements.
 class TableService with DartStoreUtility {
   static TableService? _instance;
 
+  /// A map of existing tables.
   Map<Type, TableDescription> existingTables = {};
   factory TableService() {
     return _instance ??= TableService._internal();
   }
   TableService._internal();
 
+  /// Create a table from a [TableDescription].
   Future<void> createTable(TableDescription tableDescription) async {
     if (existingTables.containsKey(tableDescription.objectType)) {
       myLogger.w("Table exists already: ${tableDescription.tableName}");
@@ -41,9 +44,10 @@ class TableService with DartStoreUtility {
     existingTables[tableDescription.objectType] = tableDescription;
   }
 
+  /// Find a table by type.
   TableDescription findTable(Type tableType) {
     if (existingTables.containsKey(tableType)) {
-      myLogger.w(
+      myLogger.d(
           "Returning existing table: ${existingTables[tableType]!.tableName}");
       return existingTables[tableType]!;
     }
@@ -68,6 +72,7 @@ class TableService with DartStoreUtility {
         columns: columns);
   }
 
+  /// Find all tables by looping through all class mirrors in the project.
   /// Use this only if necessary as it searches all classes with @Entity annotation and computes a lot of data
   List<TableDescription> findTables() =>
       CollectorService().searchClassesWithAnnotation<Entity>().map(

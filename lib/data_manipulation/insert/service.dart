@@ -37,8 +37,7 @@ class InsertService with DartStoreUtility {
       await ManyToOneInsertService().postInsert(entityInstance);
       insertedEntityInstance = entityInstance;
     } catch (e, s) {
-      myLogger.e(e);
-      myLogger.e(s);
+      myLogger.e(e, stackTrace: s);
     }
 
     return insertedEntityInstance;
