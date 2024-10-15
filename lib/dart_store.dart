@@ -10,6 +10,7 @@ import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
 import 'package:dart_store/data_manipulation/entity_instance/service.dart';
+import 'package:dart_store/data_manipulation/insert/conflict.dart';
 import 'package:dart_store/data_manipulation/service.dart';
 import 'package:dart_store/data_query/order_by/order_by.dart';
 import 'package:dart_store/data_query/pagination/page.dart';
@@ -78,11 +79,15 @@ class DartStore {
         .toList();
   }
 
-  Future<T> save<T>(T model) async => entityInstanceToModel<T>(
-      await DataManipulationService().insert(
-          entityInstance: EntityInstanceService()
-              .entityInstanceByValueInstance(reflect(model))),
-      type: model.runtimeType);
+  Future<T> save<T>(T model,
+          {ConflictAlgorithm conflictAlgorithm =
+              ConflictAlgorithm.replace}) async =>
+      entityInstanceToModel<T>(
+          await DataManipulationService().insert(
+              entityInstance: EntityInstanceService()
+                  .entityInstanceByValueInstance(reflect(model)),
+              conflictAlgorithm: conflictAlgorithm),
+          type: model.runtimeType);
 
   Future<T> update<T>(T model, {List<Where> where = const []}) async {
     return entityInstanceToModel<T>(
