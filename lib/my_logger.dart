@@ -10,7 +10,7 @@ class MyLogger {
       printer: PrettyPrinter(
           methodCount: 2,
           // number of method calls to be displayed
-          errorMethodCount: 17,
+          errorMethodCount: 25,
           stackTraceBeginIndex: 1,
           levelEmojis: {
             Level.info: 'ℹ️',
