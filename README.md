@@ -24,7 +24,7 @@ To get started with DartStore, follow these steps:
            dependencies:
              portal: ^latest_version
            ```
-       2. **Define Models**: Create portals annotated with `@Entity` to handle specific paths and actions. Use `@SQLDataType`'s and `@ForeignKey`'s to define methods for handling requests and responses. See all possible annotations in the [API Reference](https://pub.dev/documentation/portal/latest/portal/portal-library.html).
+       2. **Define Models**: Create portals annotated with `@Entity` to handle specific paths and actions. Use `@SQLDataType`'s and `@ForeignKey`'s to define methods for handling requests and responses. See all possible annotations in the [API Reference](https://html-preview.github.io/?url=https://raw.githubusercontent.com/DerWolf01/dart_store/main/doc/api/data_definition_data_definition/data_definition_data_definition-library.html).
 
 
 **Exmaple:**
