@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the postQuery method from the OneToManyQueryService class, for the Dart programming language.">
+  <title>postQuery method - OneToManyQueryService class - service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">dart_store</a></li>
+    <li><a href="../../data_query_one_to_many_service/data_query_one_to_many_service-library.html">data_query&#47;one_to_many&#47;service.dart</a></li>
+    <li><a href="../../data_query_one_to_many_service/OneToManyQueryService-class.html">OneToManyQueryService</a></li>
+    <li class="self-crumb">postQuery method</li>
+  </ol>
+  <div class="self-name">postQuery</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="data_query_one_to_many_service&#47;OneToManyQueryService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">postQuery</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../data_manipulation_entity_instance_entity_instance/EntityInstance-class.html">EntityInstance</a></span>&gt;</span></span>
+<span class="name ">postQuery</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="postQuery-param-entityInstance"><span class="type-annotation"><a href="../../data_manipulation_entity_instance_entity_instance/EntityInstance-class.html">EntityInstance</a></span> <span class="parameter-name">entityInstance</span>, {</span></li>
+<li><span class="parameter" id="postQuery-param-where"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../where_statement/Where-class.html">Where</a></span>&gt;</span></span> <span class="parameter-name">where</span> = <span class="default-value">const []</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;EntityInstance&gt; postQuery(EntityInstance entityInstance,
+    {List&lt;Where&gt; where = const []}) async {
+  final pKey = entityInstance.primaryKeyColumn();
+  final pKeyValue = pKey.value;
+  if (entityInstance.primaryKeyColumn().value == -1 ||
+      entityInstance.primaryKeyColumn().value == null) {
+    throw Exception(
+        &quot;Entity of table ${entityInstance.tableName} has to be queryed before querying foreign columns&quot;);
+  }
+
+  for (final foreignColumn in TableService()
+      .findTable(entityInstance.objectType)
+      .oneToManyColumns()) {
+    final referencedObjectType = foreignColumn.foreignKey.referencedEntity;
+    final filteredWhere =
+        filterWheres(where: where, externalColumnType: referencedObjectType);
+    final referencedTableDescription =
+        TableService().findTable(referencedObjectType);
+    final TableConnectionDescription connectionDescription =
+        TableConnectionDescriptionService().generateTableDescription(
+            referencedTableDescription, entityInstance);
+
+    final String internalColumnsSqlNamesWithoutId =
+        referencedTableDescription.internalColumnsSqlNamesWithoutId;
+
+    final statement =
+        &quot;SELECT ${referencedTableDescription.tableName}.id as id ${internalColumnsSqlNamesWithoutId.isNotEmpty ? &quot;, $internalColumnsSqlNamesWithoutId&quot; : &quot;&quot;} FROM ${referencedTableDescription.tableName} JOIN ${connectionDescription.tableName} ON ${connectionDescription.tableName}.${referencedTableDescription.tableName} =${referencedTableDescription.tableName}.id WHERE ${connectionDescription.tableName}.${entityInstance.tableName} = ${pKey.dataType.convert(pKeyValue)} ${WhereService().defineAndChainWhereStatements(where: filteredWhere).replaceAll(&quot;WHERE&quot;, &quot;AND&quot;)}&quot;;
+
+    myLogger.i(statement);
+    final Result result = await executeSQL(statement);
+
+    final List&lt;EntityInstance&gt; items = [];
+
+    for (final res in result.withNormalizedNames()) {
+      final instance = ConversionService().mapToEntityInstance(
+          description: referencedTableDescription, map: res);
+      await DataQueryService().postQuery(
+        entityInstance: instance,
+        where: where,
+      );
+      items.add(instance);
+    }
+    entityInstance.columns.add(OneToManyColumnInstance(
+        mapId: foreignColumn.mapId,
+        value: items,
+        foreignKey: foreignColumn.foreignKey,
+        constraints: foreignColumn.constraints,
+        name: foreignColumn.name));
+  }
+
+  return entityInstance;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">dart_store</a></li>
+    <li><a href="../../data_query_one_to_many_service/data_query_one_to_many_service-library.html">service</a></li>
+    <li><a href="../../data_query_one_to_many_service/OneToManyQueryService-class.html">OneToManyQueryService</a></li>
+    <li class="self-crumb">postQuery method</li>
+</ol>
+
+
+    <h5>OneToManyQueryService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    dart_store
+      1.0.0
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the TableConnectionInstance class from the instance library, for the Dart programming language.">
+  <title>TableConnectionInstance class - instance library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">dart_store</a></li>
+    <li><a href="../connection_instance_instance/connection_instance_instance-library.html">connection&#47;instance&#47;instance.dart</a></li>
+    <li class="self-crumb">TableConnectionInstance class</li>
+  </ol>
+  <div class="self-name">TableConnectionInstance</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="connection_instance_instance&#47;connection_instance_instance-library-sidebar.html"
+    data-below-sidebar="connection_instance_instance&#47;TableConnectionInstance-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">TableConnectionInstance</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A class to define a connection instance between to tables. Usually contians the primary key values of thr associated entities.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance-class.html">EntityInstance</a></li>
+      <li>TableConnectionInstance</li>
+    </ul>
+  </dd>
+
+        
+        
+
+
+
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+
+    <dl class="constructor-summary-list">
+        <dt id="TableConnectionInstance" class="callable">
+          <span class="name"><a href="../connection_instance_instance/TableConnectionInstance/TableConnectionInstance.html">TableConnectionInstance</a></span><span class="signature">({<span class="parameter" id="-param-entity"><span>required</span> <span class="type-annotation"><a href="../data_definition_table_entity/Entity-class.html">Entity</a></span> <span class="parameter-name">entity</span>, </span><span class="parameter" id="-param-columns"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_column_instance/ColumnInstance-class.html">ColumnInstance</a></span>&gt;</span></span> <span class="parameter-name">columns</span></span>})</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="columns" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/columns.html">columns</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_column_instance/ColumnInstance-class.html">ColumnInstance</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd class="inherited">
+  The columns that this table has.
+These were generated by the class model attributes that were anotated with an <a href="../data_definition_data_types_data_type/SQLDataType-class.html">SQLDataType</a>.
+  <div class="features"><span class="feature">getter/setter pair</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="entity" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/entity.html">entity</a></span>
+  <span class="signature">&#8596; <a href="../data_definition_table_entity/Entity-class.html">Entity</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The @Entity anotation the model was anotated and detected by.
+  <div class="features"><span class="feature">final</span><span class="feature">getter/setter pair</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="foreignKeyColumns" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/foreignKeyColumns.html">foreignKeyColumns</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_foreign/ForeignColumnInstance-class.html">ForeignColumnInstance</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd class="inherited">
+  The columns that are in a relationship with another table.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="internalColumnsSqlNamesWithoutId" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/internalColumnsSqlNamesWithoutId.html">internalColumnsSqlNamesWithoutId</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The columns that are not the primary key.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="objectType" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/objectType.html">objectType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The model type that this table is based on.
+  <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="tableName" class="property inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/tableName.html">tableName</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  the name of the table.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="columnByName" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/columnByName.html">columnByName</a></span><span class="signature">(<wbr><span class="parameter" id="columnByName-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../data_definition_table_column_column/Column-class.html">Column</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="columnByNameAndType" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/columnByNameAndType.html">columnByNameAndType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../data_definition_table_column_column/Column-class.html">Column</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="columnByNameAndType-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="columnDescription" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/columnDescription.html">columnDescription</a></span><span class="signature">(<wbr><span class="parameter" id="columnDescription-param-columnName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">columnName</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../data_manipulation_entity_instance_column_instance_column_instance/ColumnInstance-class.html">ColumnInstance</a>?</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the column with the given name.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="columnsByConstraint" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/columnsByConstraint.html">columnsByConstraint</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../data_definition_constraint_constraint/SQLConstraint-class.html">SQLConstraint</a></span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_column_instance/ColumnInstance-class.html">ColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the columns that have a constraint of type <code>T</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="foreignColumns" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/foreignColumns.html">foreignColumns</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_foreign/ForeignColumnInstance-class.html">ForeignColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the columns that have a constraint that extends ForeignKey.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="foreignColumnsByForeignKeyType" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/foreignColumnsByForeignKeyType.html">foreignColumnsByForeignKeyType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../data_definition_constraint_foreign_key_foreign_key/ForeignKey-class.html">ForeignKey</a></span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_foreign/ForeignColumnInstance-class.html">ForeignColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Returns the columns that have a constraint of type <code>T extends ForeignKey</code>.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="manyToManyColumns" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/manyToManyColumns.html">manyToManyColumns</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_table_column_foreign_foreign/ForeignColumn-class.html">ForeignColumn</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_constraint_foreign_key_foreign_key/ForeignKey-class.html">ForeignKey</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="manyToManyColumnsInstances" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/manyToManyColumnsInstances.html">manyToManyColumnsInstances</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_many_to_many/ManyToManyColumnInstance-class.html">ManyToManyColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="manyToOneColumns" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/manyToOneColumns.html">manyToOneColumns</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_table_column_foreign_foreign/ForeignColumn-class.html">ForeignColumn</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_constraint_foreign_key_foreign_key/ForeignKey-class.html">ForeignKey</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="manyToOneColumnsInstances" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/manyToOneColumnsInstances.html">manyToOneColumnsInstances</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_many_to_one/ManyToOneColumnInstance-class.html">ManyToOneColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="oneToManyColumns" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/oneToManyColumns.html">oneToManyColumns</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_table_column_foreign_foreign/ForeignColumn-class.html">ForeignColumn</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_constraint_foreign_key_foreign_key/ForeignKey-class.html">ForeignKey</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="oneToManyColumnsInstances" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/oneToManyColumnsInstances.html">oneToManyColumnsInstances</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_one_to_many/OneToManyColumnInstance-class.html">OneToManyColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="oneToOneColumns" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/oneToOneColumns.html">oneToOneColumns</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_table_column_foreign_foreign/ForeignColumn-class.html">ForeignColumn</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_definition_constraint_foreign_key_foreign_key/ForeignKey-class.html">ForeignKey</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="oneToOneColumnsInstances" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/oneToOneColumnsInstances.html">oneToOneColumnsInstances</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../data_manipulation_entity_instance_column_instance_foreign_one_to_one/OneToOneColumnInstance-class.html">OneToOneColumnInstance</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="primaryKeyColumn" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/primaryKeyColumn.html">primaryKeyColumn</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../data_manipulation_entity_instance_column_instance_internal_column/InternalColumnInstance-class.html">InternalColumnInstance</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="setField" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/setField.html">setField</a></span><span class="signature">(<wbr><span class="parameter" id="setField-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span>, </span><span class="parameter" id="setField-param-value"><span class="type-annotation">dynamic</span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="../data_manipulation_entity_instance_entity_instance/EntityInstance/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">dart_store</a></li>
+    <li><a href="../connection_instance_instance/connection_instance_instance-library.html">instance</a></li>
+    <li class="self-crumb">TableConnectionInstance class</li>
+</ol>
+
+
+    <h5>instance library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    dart_store
+      1.0.0
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
