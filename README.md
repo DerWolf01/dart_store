@@ -3,7 +3,7 @@
 * **Bring your backend development to the next level with DartStore!**  
 * Dart-based open source persistence API that dynamically handles "Entity" models and corresponding **CRUD** and even more! 
 * It provides a structured way to manage database models, making it easier to develop scalable and maintainable real-time backend applications.
-* It works exceptionally good in connection with **Flutter** Apps as it allows you to have the same code base in terms of models.
+* It works exceptionally good in connection with **Flutter** and dart- or flutter_portal Apps as it allows you to have the same code base in terms of models.
 
 > :warning: **Still in development**: The library is still under development und not meant to be used in production environments by third parties yet.
 
@@ -11,7 +11,7 @@
 
 - **Model-Based Architecture**: Organize your code into models for both server & client to handle specific data structures and actions, improving modularity and readability.
 - **Serializable Models**: Define models that can be automatically serialized and deserialized from JSON, streamlining client-server data exchange using the `ConversionService`.
-- **Reflectable**: Utilizes Dart's reflectable package for runtime reflection, enabling dynamic invocation of methods based on request paths.
+
 
 ## Getting Started
 
