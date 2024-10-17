@@ -7,4 +7,7 @@ export 'foreign_key/foreign_key.dart';
 /// A constraint to be applied to a column.
 abstract class SQLConstraint {
   const SQLConstraint();
+
+  @override
+  String toString() => runtimeType.toString();
 }

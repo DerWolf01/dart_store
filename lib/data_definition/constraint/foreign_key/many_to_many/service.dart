@@ -1,6 +1,7 @@
 import 'package:dart_store/data_definition/constraint/foreign_key/foreign_key.dart';
 import 'package:dart_store/data_definition/table/service.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/utility/dart_store_utility.dart';
 
 /// A service class for defining and executing many-to-many relationships.
@@ -17,9 +18,20 @@ class ManyToManyDefinitionService with DartStoreUtility {
   /// The [tableDescription] parameter provides the details of the table
   /// for which the many-to-many relationships are being defined.
   Future<void> defineAndExecute(TableDescription tableDescription) async {
+    myLogger.d(
+      "ManyToManyDefinitionService --> defineAndExecute(tableDescription: ${tableDescription.tableName})",
+    );
     for (final column in tableDescription.manyToManyColumns()) {
+      myLogger.d(
+        "for (final $column in tableDescription.manyToManyColumns())",
+        header: "ManyToManyDefinitionService --> defineAndExecute()",
+      );
       final referencer = column.getForeignKey<ManyToMany>()!;
       final referenced = referencer.referencedEntity;
+      myLogger.d(
+        "ManyToMany: referencer: $referencer <-> referenced: $referenced",
+        header: "ManyToManyDefinitionService --> defineAndExecute()",
+      );
 
       await TableService().createTable(TableService().findTable(referenced));
 
@@ -30,10 +42,14 @@ class ManyToManyDefinitionService with DartStoreUtility {
         ),
         ManyToManyMemberDefinition(tableDescription: tableDescription)
       ]);
+      myLogger.d(manyToManyDescription,
+          header: "ManyToManyDefinitionService --> defineAndExecute()");
       final ManyToManyDefinition manyToManyDefinition =
           ManyToManyDefinition(description: manyToManyDescription);
-
-      executeSQL(manyToManyDefinition.define());
+      final definition = manyToManyDefinition.define();
+      myLogger.d(definition,
+          header: "ManyToManyDefinitionService --> defineAndExecute()");
+      executeSQL(definition);
     }
   }
 }

@@ -54,7 +54,6 @@ class TableDescription {
           .where((element) => element.getForeignKey<T>() != null)
           .toList();
 
-  
   List<ForeignColumn> manyToManyColumns() => foreignKeyColumns
       .where((element) => element.getForeignKey<ManyToMany>() != null)
       .toList();
@@ -79,6 +78,6 @@ class TableDescription {
       ) as InternalColumn;
   @override
   String toString() {
-    return 'TableDescription{objectType: $objectType, tableName: $tableName, columns: ${columns.map((e) => e.toString()).toList()}';
+    return 'TableDescription{objectType: $objectType, tableName: $tableName, columns: ${columns.map((e) => e.toString()).toList().join(", ")}}';
   }
 }

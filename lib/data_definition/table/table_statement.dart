@@ -1,5 +1,6 @@
 import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/data_definition/table/column/statement.dart';
+import 'package:dart_store/my_logger.dart';
 import 'package:dart_store/statement/statement.dart';
 
 /// A class that defines and DDL table statement
@@ -14,6 +15,12 @@ class TableStatement extends Statement {
   String define() {
     final res =
         "CREATE TABLE IF NOT EXISTS $name (${columnsStatements.map((column) => column.define()).join(", ")})";
+    myLogger.d(res, header: "TableStatement --> define()");
     return res;
+  }
+
+  @override
+  String toString() {
+    return 'TableStatement(name: $name, columnsStatements: $columnsStatements) --> ${define()}';
   }
 }

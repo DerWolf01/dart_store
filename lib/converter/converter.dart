@@ -7,6 +7,7 @@ import 'package:dart_store/data_manipulation/entity_instance/column_instance/col
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/foreign/foreign.dart';
 import 'package:dart_store/data_manipulation/entity_instance/column_instance/internal_column.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/my_logger.dart';
 
 Map<String, dynamic> entityInstanceToMap(EntityInstance entityInstance) {
   final internalColumnsInstances =
@@ -111,35 +112,53 @@ extension EntityMapConverter on ConversionService {
   EntityInstance mapToEntityInstance(
       {required TableDescription description,
       required Map<String, dynamic> map}) {
-    return EntityInstance(
+    final entityInstance = EntityInstance(
         objectType: description.objectType,
         entity: description.entity,
         columns: description.columns
             .whereType<InternalColumn>()
             .map(
-              (e) => InternalColumnInstance(
-                  constraints: e.constraints,
-                  name: e.name,
-                  value: map[e.name],
-                  dataType: e.dataType),
+              (e) {
+                final column = InternalColumnInstance(
+                    constraints: e.constraints,
+                    name: e.name,
+                    value: map[e.name],
+                    dataType: e.dataType);
+                myLogger.d("$e --> $column",
+                    header: "ConversionService --> mapToEntityInstance()");
+              },
             )
             .whereType<ColumnInstance>()
             .toList());
+
+    myLogger.d("$entityInstance",
+        header:
+            "ConversionService --> mapToEntityInstance(description: $description, map: $map)");
+    return entityInstance;
   }
 
   TableConnectionInstance mapToTableConnectionInstance(
-          {required Map<String, dynamic> map,
-          required TableConnectionDescription tableConnectionDescription}) =>
-      TableConnectionInstance(
-          entity: tableConnectionDescription.entity,
-          columns: tableConnectionDescription.columns
-              .whereType<InternalColumnInstance>()
-              .map(
-                (e) => InternalColumnInstance(
-                    value: map[e.name],
-                    dataType: e.dataType,
-                    constraints: e.constraints,
-                    name: e.name),
-              )
-              .toList());
+      {required Map<String, dynamic> map,
+      required TableConnectionDescription tableConnectionDescription}) {
+    final connectionInstance = TableConnectionInstance(
+        entity: tableConnectionDescription.entity,
+        columns: tableConnectionDescription.columns
+            .whereType<InternalColumnInstance>()
+            .map((e) {
+          final column = InternalColumnInstance(
+              value: map[e.name],
+              dataType: e.dataType,
+              constraints: e.constraints,
+              name: e.name);
+
+          myLogger.d("$e --> $column",
+              header:
+                  "ConversionService --> mapToTableConnectionInstance(map: $map, tableConnectionDescription: $tableConnectionDescription)");
+          return column;
+        }).toList());
+    myLogger.d("$connectionInstance",
+        header:
+            "ConversionService --> mapToTableConnectionInstance(map: $map, tableConnectionDescription: $tableConnectionDescription)");
+    return connectionInstance;
+  }
 }

@@ -1,11 +1,15 @@
 import 'package:dart_store/data_definition/data_types/data_type.dart';
 import 'package:dart_store/data_definition/table/table_description.dart';
+import 'package:dart_store/my_logger.dart';
 
 /// A class that defines a member in a many-to-many relationship.
 ///
 /// This class holds the table description and provides methods to
 /// retrieve the table name and primary key type.
 class ManyToManyMemberDefinition {
+  /// The description of the table involved in the many-to-many relationship.
+  final TableDescription tableDescription;
+
   /// Creates a new instance of [ManyToManyMemberDefinition].
   ///
   /// The [tableDescription] parameter is required and provides the
@@ -13,9 +17,6 @@ class ManyToManyMemberDefinition {
   ManyToManyMemberDefinition({
     required this.tableDescription,
   });
-
-  /// The description of the table involved in the many-to-many relationship.
-  final TableDescription tableDescription;
 
   /// Returns the name of the table.
   ///
@@ -29,5 +30,10 @@ class ManyToManyMemberDefinition {
   /// column is missing.
   ///
   /// Returns an [SQLDataType] representing the primary key type.
-  SQLDataType primaryKeyType() => tableDescription.primaryKeyColumn().dataType;
+  SQLDataType primaryKeyType() {
+    final key = tableDescription.primaryKeyColumn().dataType;
+    myLogger.d("$key",
+        header: "ManyToManyMemberDefinition --> primaryKeyType()");
+    return key;
+  }
 }

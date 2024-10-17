@@ -27,15 +27,19 @@ class TableService with DartStoreUtility {
   /// Create a table from a [TableDescription].
   Future<void> createTable(TableDescription tableDescription) async {
     if (existingTables.containsKey(tableDescription.objectType)) {
-      myLogger.w("Table exists already: ${tableDescription.tableName}");
+      myLogger.d("Table exists already: ${tableDescription.tableName}",
+          header: "TableService --> createTable()");
       return;
     }
     final TableStatement tableStatement = TableStatement(
         tableDescription.tableName,
         tableDescription.columns.whereType<InternalColumn>().toList());
 
+    myLogger.d("$tableStatement",
+        header:
+            "TableService --> createTable(tableDescription: $tableDescription)");
     final sql = tableStatement.define();
-    myLogger.i(sql);
+
     await executeSQL(sql);
 
     await ConstraintService().postTableDefinitionAndExecution(tableDescription);

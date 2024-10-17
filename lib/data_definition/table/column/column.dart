@@ -32,5 +32,8 @@ abstract class Column {
 
   @override
   String toString() =>
+      "Column(name: $name, constraints: $constraints, sqlName: $sqlName)";
+
+  toStringDetailed() =>
       "Column(name: $name, constraints: $constraints, sqlName: $sqlName, isPrimaryKey: $isPrimaryKey, isUniqe: $isUniqe, isNullable: $isNullable, isAutoIncrement: $isAutoIncrement, isForeignKey: $isForeignKey)";
 }

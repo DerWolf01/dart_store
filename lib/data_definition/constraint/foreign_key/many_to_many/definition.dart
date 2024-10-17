@@ -1,5 +1,5 @@
-import 'package:dart_store/data_definition/constraint/foreign_key/many_to_many/description.dart';
 import 'package:dart_store/data_definition/data_definition.dart';
+import 'package:dart_store/my_logger.dart';
 
 /// A class that defines a many-to-many relationship between two tables.
 ///
@@ -40,7 +40,7 @@ class ManyToManyDefinition extends DataDefinition {
 
     final res =
         "CREATE TABLE IF NOT EXISTS $connectionName (id SERIAL PRIMARY KEY, $tableName1 ${primaryKeyType1.sqlTypeName()} NOT NULL, $tableName2 ${primaryKeyType2.sqlTypeName()} NOT NULL, FOREIGN KEY ($tableName1) REFERENCES $tableName1(id) ON DELETE CASCADE, FOREIGN KEY ($tableName2) REFERENCES $tableName2(id) ON DELETE CASCADE, UNIQUE($tableName1, $tableName2))";
-
+    myLogger.d(res, header: "ManyToManyDefinition --> define()");
     return res;
   }
 }
