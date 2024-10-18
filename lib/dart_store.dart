@@ -25,7 +25,7 @@ export 'package:change_case/change_case.dart';
 export 'package:dart_store/data_definition/data_definition.dart';
 export 'package:dart_store/database/database_connection.dart';
 
-export 'postgres_connection/connection.dart';
+export 'postgres/connection.dart';
 
 DartStore get dartStore => DartStore();
 
@@ -42,6 +42,7 @@ class DartStore {
   }
 
   DartStore._internal(this.connection);
+  Future<void> close() async => await connection.close();
   Future<void> delete(dynamic model) async =>
       await DataManipulationService().delete(EntityInstanceService()
           .entityInstanceByValueInstance(reflect(model)));
@@ -128,9 +129,18 @@ class DartStore {
   }
 
   static Future<DartStore> init<ConnectionType extends DatabaseConnection>(
-      ConnectionType connection,
-      {bool enableLogging = false}) async {
-    MyLogger.init(enabled: enableLogging).i("Initializing DartStore");
+    ConnectionType connection, {
+    bool debugLogging = false,
+    bool errorLogging = true,
+    warningLogging = true,
+    bool infoLogging = true,
+  }) async {
+    MyLogger.init(
+            debug: debugLogging,
+            error: errorLogging,
+            info: infoLogging,
+            warning: warningLogging)
+        .i("Initializing DartStore");
     _instance ??= DartStore._internal(connection);
     await DataDefinitonService().defineData();
     return _instance!;

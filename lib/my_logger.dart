@@ -33,36 +33,50 @@ class MyLogger {
           ),
       output: ConsoleOutput());
 
-  final bool enabled;
+  final bool debug;
+  final bool info;
+  final bool warning;
+  final bool error;
   factory MyLogger() {
     if (_instance == null) {
       throw Exception("Logger not initialized");
     }
     return _instance!;
   }
-  factory MyLogger.init({bool enabled = true}) {
+  factory MyLogger.init({
+    final bool debug = false,
+    final bool info = true,
+    final bool warning = true,
+    final bool error = true,
+  }) {
     Logger.level = Level.trace;
     _instance = MyLogger._internal(
-      enabled: enabled,
+      debug: debug,
+      info: info,
+      warning: warning,
+      error: error,
     );
 
     return _instance!;
   }
   MyLogger._internal({
-    this.enabled = true,
+    required this.debug,
+    required this.info,
+    required this.warning,
+    required this.error,
   });
   void d(dynamic message, {Object? header}) {
-    if (!enabled) return;
+    if (!debug) return;
     internalLogger.d(message, error: header);
   }
 
   e(dynamic message, {Object? header, StackTrace? stackTrace}) {
-    if (!enabled) return;
+    if (!error) return;
     internalLogger.e(message, error: header, stackTrace: stackTrace);
   }
 
   void i(dynamic message, {Object? header}) {
-    if (!enabled) return;
+    if (!info) return;
     internalLogger.i(
       message,
       error: header,
@@ -71,7 +85,7 @@ class MyLogger {
   }
 
   void w(String message, {Object? header}) {
-    if (!enabled) return;
+    if (!warning) return;
     internalLogger.w(message, error: header);
   }
 }

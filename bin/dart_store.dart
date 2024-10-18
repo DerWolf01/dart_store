@@ -1,46 +1,21 @@
 import 'package:dart_conversion/dart_conversion.dart';
 import 'package:dart_store/dart_store.dart';
-import 'package:dart_store/data_definition/table/column/internal.dart';
 import 'package:dart_store/mapping/map_id.dart';
-import 'package:dart_store/where/comparison_operator.dart';
-import 'package:dart_store/where/statement.dart';
 import 'package:postgres/postgres.dart';
 
 void main(List<String> arguments) async {
   await DartStore.init(
-      await PostgresConnection.init(
-          endpoint: Endpoint(
-              host: 'localhost',
-              database: 'ebay_watcher',
-              username: 'ebay_watcher',
-              password: 'ebay_watcher'),
-          settings: ConnectionSettings(
-              onOpen: (connection) async =>
-                  print('Connected to the database $connection'),
-              sslMode: SslMode.disable)),
-      enableLogging: true);
-  await dartStore
-      .save(Test2.init(id: 0, textList: Test1.init(id: 0, test2: [])));
-  // await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
-
-  final model = await dartStore.save(Test1.init(
-    id: 0,
-    test2: [0],
-  ));
-
-  // await dartStore.delete(model);
-
-  print(
-    (await dartStore.query<Test1>(where: [
-      Where<Test2>(
-          comparisonOperator: ComparisonOperator.equals,
-          internalColumn:
-              InternalColumn(dataType: Serial(), constraints: [], name: "id"),
-          value: 1)
-    ]))
-        .firstOrNull,
+    await PostgresConnection.init(
+        endpoint: Endpoint(
+            host: 'localhost',
+            database: 'ebay_watcher',
+            username: 'ebay_watcher',
+            password: 'ebay_watcher'),
+        settings: ConnectionSettings(
+            onOpen: (connection) async =>
+                print('Connected to the database $connection'),
+            sslMode: SslMode.disable)),
   );
-  await dartStore.delete(model);
 }
 
 // TODO: search for after-query-implementation and implement missing functionality

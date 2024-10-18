@@ -10,6 +10,11 @@ class PostgresConnection extends DatabaseConnection<Result> {
   PostgresConnection._internal(this.connection);
 
   @override
+  Future close() async {
+    await connection.close();
+  }
+
+  @override
   Future<Result> execute(String statement) async {
     return await connection.execute(statement);
   }
