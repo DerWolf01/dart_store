@@ -19,10 +19,11 @@ void main(List<String> arguments) async {
                   print('Connected to the database $connection'),
               sslMode: SslMode.disable)),
       enableLogging: true);
-  await dartStore
-      .save(Test2.init(id: 0, textList: Test1.init(id: 0, test2: [])));
+  await dartStore.save(
+      Test2.init(id: 0, name: "saved", textList: Test1.init(id: 0, test2: [])));
   // await dartStore.save(Test2.init(id: -1, textList: ['a', 'b']));
-
+  await dartStore.save(Test2.init(
+      id: 0, name: "updated", textList: Test1.init(id: 1, test2: [])));
   final model = await dartStore.save(Test1.init(
     id: 0,
     test2: [0],
@@ -71,6 +72,9 @@ class Test2 {
   @Serial()
   late int id;
 
+  @Varchar()
+  late String name;
+
   @ManyToOne<Test1>()
   late Test1 textList;
 
@@ -78,6 +82,7 @@ class Test2 {
 
   Test2.init({
     required this.id,
+    required this.name,
     @ListOf(type: Test1) required this.textList,
   });
 }

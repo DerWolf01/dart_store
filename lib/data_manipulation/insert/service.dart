@@ -1,5 +1,6 @@
 import 'package:dart_store/dart_store.dart';
 import 'package:dart_store/data_manipulation/entity_instance/entity_instance.dart';
+import 'package:dart_store/data_manipulation/insert/conflict.dart';
 import 'package:dart_store/data_manipulation/insert/many_to_many/service.dart';
 import 'package:dart_store/data_manipulation/insert/many_to_one/service.dart';
 import 'package:dart_store/data_manipulation/insert/one_to_many/service.dart';
@@ -10,11 +11,12 @@ import 'package:dart_store/utility/dart_store_utility.dart';
 
 class InsertService with DartStoreUtility {
   ///
-  Future<EntityInstance> insert(EntityInstance entityInstance) async {
+  Future<EntityInstance> insert(EntityInstance entityInstance,
+      {ConflictAlgorithm conflictAlgorithm = ConflictAlgorithm.replace}) async {
     late final EntityInstance insertedEntityInstance;
     try {
-      final InsertStatement insertStatement =
-          InsertStatement(entityInstance: entityInstance);
+      final InsertStatement insertStatement = InsertStatement(
+          entityInstance: entityInstance, conflictAlgorithm: conflictAlgorithm);
       final primaryKeyColumn = entityInstance.primaryKeyColumn();
       final int? insertResult = await dartStore.connection
           .insert(insertStatement.define(), entityInstance.tableName);

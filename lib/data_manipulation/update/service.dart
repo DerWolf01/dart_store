@@ -26,10 +26,17 @@ class UpdateService with DartStoreUtility {
               where: where,
               primaryKeyColumn: primaryKeyColumn,
               id: primaryKeyColumn.value));
-      final Result updateResult =
-          await executeSQL(statementComposition.define());
+
+      final statement = statementComposition.define();
+      myLogger.i(
+        statement,
+      );
+
+      await executeSQL(statementComposition.define());
 
       final id = primaryKeyColumn.value;
+
+      myLogger.i("Updated data into table ${entityInstance.tableName}");
       final isOfPrimaryKeyType =
           entityInstance.primaryKeyColumn().dataType.compareToValue(id);
       if (!isOfPrimaryKeyType) {
@@ -39,7 +46,7 @@ class UpdateService with DartStoreUtility {
 
       await ManyToManyUpdateService().postUpdate(entityInstance, where: where);
       await OneToOneUpdateService().postUpdate(entityInstance);
-      // await OneToManyUpdateService().postUpdate(entityInstance);
+
       await OneToManyAndManyToOneUpdateService().postUpdate(entityInstance);
 
       updatedEntityInstance = entityInstance;
